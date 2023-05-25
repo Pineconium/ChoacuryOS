@@ -14,7 +14,7 @@ end:
 jmp $
 
 variableName:
-    db "CHOACURY!",
+    db "Choacury Bootloader (ChoLoader)",
 
 times 510-($-$$) db 0
 db 0x55, 0xaa
