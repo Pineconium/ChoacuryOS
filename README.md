@@ -11,9 +11,7 @@ If you want to help on the project, heres what you will need:
 # Stuff needed to be worked on
 
 Key:
-{P} - Partially Added
-{N} - Not yet added
-{G} - Added
+{P} - Partially Added | {N} - Not yet added | {G} - Added
 
 1. Bootloader {P}
 2. Kernel {N}
