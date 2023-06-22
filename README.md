@@ -14,9 +14,9 @@ Key:
 {P} - Partially Added | {N} - Not yet added | {G} - Added
 
 1. Bootloader {P}
-2. Kernel {N}
+2. Kernel {P}
 3. Compiler (for Linux) {G}
-4. Compiler (for Windows) {G}
+4. Compiler (for Windows) {N}
 5. Shell {N}
 6. GUI {N}
 7. Software {N}
