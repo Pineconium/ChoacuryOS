@@ -1,5 +1,0 @@
-These are meant to be local STD-based headers included in Choacury/OS for some of the /kernel/ directories .c and .h files to work. As such, because they are local clones which are required for the compiler, do not remove this folder or the contents of this folder. You can copy the .h files here if you having stuggles installing these headers and/or using or compiling any C/C++/C# files that depend on these headers
-
-
-Yes they are copy-pasted from the GitHub page and I wish to give credit to them ;-)
-AKA the GNU and GCC devs.
