@@ -10,5 +10,5 @@ TBA
 If you want to help with the project, here's what you will need:
 1. A text editing program like Notepad, or Visual Studio Code.
 2. NASM and QEMU installed.
-3. A Linux computer (recommended but Windows or Mac should work).
+3. A computer running any Linux distro (a Windows batch compiler is being made).
 4. A standard knowledge of Assembly and C.
