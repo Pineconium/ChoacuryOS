@@ -1,7 +1,0 @@
-==TO DO==
-
-Make Bootloader
-Make Kernel
-Make Shell
-Make UI+GUI
-Make Software
