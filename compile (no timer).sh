@@ -10,7 +10,6 @@ required_objs=(
     "driv_utils.o"
     "driv_vga.o"
     "driv_isrc.o"
-    "driv_timer.o"
 )
 
 # Compiles the files from /src/ as .o files
@@ -23,8 +22,7 @@ gcc -m32 -c src/drivers/idt.c -o driv_idt.o
 gcc -m32 -c src/drivers/utils.c -o driv_utils.o
 gcc -m32 -c src/drivers/vga.c -o driv_vga.o
 gcc -m32 -c src/drivers/isr.c -o driv_isrc.o
-gcc -m32 -c src/drivers/timer.c -o driv_timer.o
-ld -m elf_i386 -T src/linker.ld --allow-multiple-definition krnent.o krnc.o driv_port.o driv_idt.o driv_utils.o driv_vga.o driv_isrc.o driv_interpasm.o driv_timer.o -o ChoacuryOS.bin -nostdlib
+ld -m elf_i386 -T src/linker.ld --allow-multiple-definition krnent.o krnc.o driv_port.o driv_idt.o driv_utils.o driv_vga.o driv_isrc.o driv_interpasm.o -o ChoacuryOS.bin -nostdlib
 
 # Checks if a .o file is missing..
 check_file_exists() {

@@ -1,5 +1,9 @@
-/* k_clear_screen : to clear the entire text screen */
-#define WHITE_TXT 0x07 /* light gray on black text */
+/*
+AKA the grapeehics part of Choacury
+*/
+
+/* k_clear_screen : This clears the entire text screen */
+#define WHITE_TXT 0x07 /* light grey on black text */
 
 void k_clear_screen()
 {
