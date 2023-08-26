@@ -1,4 +1,18 @@
-# ChoacuryOS
+<p align="center">
+
+  <a href="https://github.com/Pineconium/ChoacuryOS/releases/latest">
+    <img src="https://img.shields.io/github/v/release/Pineconium/ChoacuryOS" />
+  </a>
+
+  <a href="https://github.com/Pineconium/ChoacuryOS/blob/main/license.txt">
+    <img src="https://img.shields.io/badge/license-PineSLS-purple" />
+  </a>
+  
+  <a href="https://discord.gg/qhgDWrzCvg">
+    <img src="https://img.shields.io/discord/1109529461667414037" />
+  </a>
+
+</p>
 Stylized as Choacury/OS or simply Choacury, this project is a custom-built OS written in C and uses the GRUB bootloader. 
 Choacury is currently in a **Pre-Zeta** stage, meaning some stuff isn't complete yet...
 
