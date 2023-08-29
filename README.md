@@ -14,7 +14,7 @@
 
 </p>
 Stylized as Choacury/OS or simply Choacury, this project is a custom-built OS written in C and uses the GRUB bootloader. 
-Choacury is currently in a **Pre-Zeta** stage, meaning some stuff isn't complete yet...
+Choacury is currently in a <i>very, very</i> early stage, meaning some stuff isn't complete yet...
 
 # System Requirements
 TBA
