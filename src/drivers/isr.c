@@ -115,7 +115,7 @@ char *exception_messages[] = {
 };
 
 void isr_handler(registers_t r) {
-    // here add an error msg
+    k_printf("FATAL!", 0);
 }
 
 void register_interrupt_handler(u8 n, isr_t handler) {

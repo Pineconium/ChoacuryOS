@@ -11,8 +11,8 @@ static void timer_callback(registers_t regs) {
     
     char tick_ascii[256];
     // int_to_ascii(tick, tick_ascii);
-    // k_printf(tick_ascii);
-    // k_printf("\n");
+    k_printf(tick_ascii, 0);
+    k_printf("\n", 0);
 }
 
 void init_timer(u32 freq) {
