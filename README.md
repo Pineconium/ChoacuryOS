@@ -1,7 +1,7 @@
 # ChoacuryOS
 Stylized as Choacury/OS or simply Choacury, this project is a custom-built OS written in C/C++ and Assembly. Choacury is currently in a **Pre-Zeta** stage, meaning some stuff isn't complete yet...
 
-If you want to help or make your own distro to Choacury, don't worry, it is completely open-source!
+If you want to help or make your own version of Choacury, don't worry, you are free to modify it to your liking. You are also free to help contribute to the project! (see TODO.MD for what is needed doing).
 
 # System Requirements
 TBA
