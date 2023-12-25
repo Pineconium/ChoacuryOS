@@ -1,0 +1,11 @@
+########################################################################
+REPLACE GRUB.CFG CONTENTS WITH THIS WHEN SPLASH IMAGE SUPPORT IS READY!
+########################################################################
+
+menuentry "Start Choacury" {
+	background_image /boot/splash_image.png
+	multiboot /boot/ChoacuryOS.bin
+}
+menuentry "Reboot System" {
+	reboot
+}

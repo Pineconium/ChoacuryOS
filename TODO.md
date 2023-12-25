@@ -1,16 +1,22 @@
-## Bare Bones
-- [ ] Bootloader (ASM)
-- [x] Bootloader (GRUB)
-- [x] Kernel Message
+# Todo for Choacury
+
+### Barebones
+
 - [x] Compiler (Linux)
-- [x] Compiler (Windows)
-## Kernel and Shell
-- [ ] Interrupt Control (Keyboard)
-- [ ] Interrupt Control (Mouse)
-- [ ] Interrupt Control (Other Stuff)
-- [x] Kernel Entry
-- [ ] Commands
-## Graphical Stuff
-- [x] Display (Monochrome)
-- [ ] Display (Colour)
-- [ ] G.U.I  
+- [ ] Compiler (Windows)
+- [ ] Makefile
+- [x] 16-colour support (aka DOS Colours.)
+
+### Kernel
+- [x] String Message
+- [ ] Keyboard Input
+
+### Graphics
+- Supported Colour(s): 16 DOS, next step will be 256 colours (Mode 13h)
+
+### File Management
+- [ ] FAT Support
+- [ ] Custom File System
+
+### Command Line
+TBA...

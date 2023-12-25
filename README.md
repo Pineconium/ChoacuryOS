@@ -5,10 +5,11 @@ If you want to help or make your own distro to Choacury, don't worry, it is comp
 
 # System Requirements
 TBA
-# To Compile
-To compile Choacury, here what you need:
 
-1. NASM installed.
-2. QEMU installed. (uses the `x86_64` version. If you don't use that version of QEMU, replace `qemu-system-x86_64` in the compiler files with your version of QEMU)
-3. A computer running any Linux distro (recommended, but there is a Windows Compiler for Windows devices along as you have WSL enabled).
-4. A standard knowledge of Assembly and C.
+# For helpers
+If you want to help with the project, here's what you will need:
+1. A text editing program like Notepad, or Visual Studio Code.
+2. NASM installed.
+3. QEMU installed. (uses the `x86_64` version. If you don't use that version of QEMU, replace `qemu-system-x86_64` in the compiler files with your version of QEMU)
+4. A computer running any Linux distro (recommended but there is a Windows Compiler for Windows devices along as you have WSL enabled).
+5. A standard knowledge of Assembly and C.

@@ -1,0 +1,15 @@
+NOTES: These contain string characters that can be used in any C string code in Choacury!
+All of these characters are from the Code page 437 (CCSID 437) character set, which can be seen in
+many versions of DOS.
+
+https://en.wikipedia.org/wiki/Code_page_437
+
+===================================================================================================
+\n      - New Line
+\1      - Happy Face                (HEX 0x1)
+\2      - Happy Face                (HEX 0x2)
+\3      - Heart                     (HEX 0x3)
+\4      - Diamond                   (HEX 0x4)
+\5      - Clubs                     (HEX 0x5)
+\6      - Spades                    (HEX 0x6)
+\7      - Dot                       (HEX 0x7)

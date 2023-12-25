@@ -1,24 +1,36 @@
+#!/bin/bash
+DRIV_DIR=src/drivers
+KERN_DIR=src/kernel
+BUILD=build/
+FOLDER_MAIN=src/files
+
 clear
+# Make /build/ directory
+mkdir build
 # Start making stuff
 echo "Compiling file(s)..."
+
 # krnxxx.o are from the kernel folder
 # drivxxx.o are for drivers.
-nasm -f elf32 src/kernel/krnentry.asm -o krnent.o
-gcc -m32 -c src/kernel/kernel.c -o krnc.o
-gcc -m32 -c src/drivers/ports.c -o drivport.o
-gcc -m32 -c src/drivers/idt.c -o drividt.o
-gcc -m32 -c src/drivers/utils.c -o driv_utils.o
-gcc -m32 -c src/drivers/vga.c -o driv_vga.o
-ld -m elf_i386 -T src/linker.ld --allow-multiple-definition krnent.o krnc.o drivport.o drividt.o driv_utils.o driv_vga.o -o ChoacuryOS.bin -nostdlib
+nasm -f elf32 $KERN_DIR/krnentry.asm -o $BUILD/krnent.o
+gcc -m32 -c $KERN_DIR/kernel.c -o $BUILD/krnc.o -m32 -fno-stack-protector
+gcc -m32 -c $DRIV_DIR/ports.c -o $BUILD/drivport.o
+gcc -m32 -c $DRIV_DIR/idt.c -o $BUILD/drividt.o
+gcc -m32 -c $DRIV_DIR/utils.c -o $BUILD/driv_utils.o
+gcc -m32 -c $DRIV_DIR/vga.c -o $BUILD/driv_vga.o
+ld -m elf_i386 -T src/linker.ld --allow-multiple-definition $BUILD/krnent.o $BUILD/krnc.o $BUILD/drivport.o $BUILD/drividt.o $BUILD/driv_utils.o $BUILD/driv_vga.o -o $BUILD/ChoacuryOS.bin -nostdlib
+
 # Check the binary file is x86 multiboot file or not
 echo "Checking if BINARY is GRUB-Ready..."
-grub-file --is-x86-multiboot ChoacuryOS.bin
+grub-file --is-x86-multiboot $BUILD/ChoacuryOS.bin
+
 # Building the ISO file
 echo "Making ISO file"
 mkdir -p isodir/boot/grub
-cp ChoacuryOS.bin isodir/boot/ChoacuryOS.bin
+cp $BUILD/ChoacuryOS.bin isodir/boot/ChoacuryOS.bin
 cp src/boot/grub.cfg isodir/boot/grub/grub.cfg
-grub-mkrescue -o ChoacuryOS.iso isodir
+grub-mkrescue -o $BUILD/ChoacuryOS.iso isodir
+
 # Add some code for when the rest of the code is ready ;-)
 echo "Booting into QEMU"
-qemu-system-x86_64 -cdrom ChoacuryOS.iso
+qemu-system-x86_64 -cdrom $BUILD/ChoacuryOS.iso
