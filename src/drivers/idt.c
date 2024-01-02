@@ -1,5 +1,6 @@
-#include "idt.h"
 #include "gdt.h"
+#include "idt.h"
+#include "pic.h"
 #include "utils.h"
 #include "vga.h"
 
@@ -84,6 +85,7 @@ void c_irq_handler(u8 irq) {
     }
 
     handler();
+    pic_send_eoi(irq);
 }
 
 static void set_idt_gate(int n, void (*handler)()) {

@@ -8,6 +8,8 @@
 #include "../drivers/gdt.h"
 #include "../drivers/idt.h"
 #include "../drivers/pic.h"
+#include "../drivers/ps2.h"
+#include "../drivers/ps2_keymap_fi.h"
 #include "../drivers/types.h"
 #include "../drivers/vga.h"
 
@@ -25,7 +27,9 @@ void k_main()
     
     pic_init();
 
-    k_printf("No Keyboard Input :(", 5, 12);       // 6 months or so and still no keyboard input ._.
+    ps2_init();
+    /* FIXME: support more keymaps :) */
+    ps2_init_keymap_fi();
     
     /* DOS 16 Colour Test */
     k_printf("\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB", 6, 4); 
@@ -56,4 +60,29 @@ void k_main()
     position += port_byte_in(0x3d5);
 
     int offset_from_vga = position * 2;
+
+    /* Enable interrupts to make keyboard work */
+    asm volatile("sti");
+
+    /* Quick hack to print keyboard input */
+    u16* vga_mem = (u16*)0xb8000;
+    vga_mem += 80 * 4;
+
+    for (;;) {
+        key_event_t event;
+        ps2_get_key_event(&event);
+
+        if (event.key == KEY_NONE || (event.modifiers & KEY_EVENT_MODIFIERS_RELEASED)) {
+            asm volatile("hlt");
+            continue;
+        }
+
+        const char* utf8 = key_to_utf8(&event);
+        if (!utf8)
+            continue;
+
+        while (*utf8) {
+            *vga_mem++ = (TC_BRIGHT << 8) | *utf8++;
+        }
+    }
 };
