@@ -9,14 +9,13 @@
 
 ### Kernel
 - [x] String Message
-- [ ] Keyboard Input
+- [x] Keyboard Input
+- [ ] Terminal/Text Shell
 
 ### Graphics
 - Supported Colour(s): 16 DOS, next step will be 256 colours (Mode 13h)
+- [ ] VESA/VBE support
 
 ### File Management
 - [ ] FAT Support
 - [ ] Custom File System
-
-### Command Line
-TBA...
