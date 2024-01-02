@@ -5,12 +5,17 @@
 
 /* Includes needed for the kernel to actually work.*/
 #include "../drivers/ports.h"
+#include "../drivers/gdt.h"
 #include "../drivers/idt.h"
 #include "../drivers/types.h"
+#include "../drivers/vga.h"
 
 /* A Simple kernel written in C */
 void k_main() 
 {
+    gdt_init();
+    idt_init();
+
     /* Display Info Message */
     k_clear_screen();
     k_printf("WELCOME TO CHOAKERN\nThe Choacury Kernel!\n"
