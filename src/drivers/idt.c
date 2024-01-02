@@ -28,8 +28,6 @@ typedef struct {
     void* base;
 } __attribute__((packed)) idt_register_t;
 
-#define IRQ_BASE 32
-
 #define IDT_ENTRIES 256
 static idt_gate_t idt[IDT_ENTRIES];
 static idt_register_t idt_reg;

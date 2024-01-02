@@ -7,6 +7,7 @@
 #include "../drivers/ports.h"
 #include "../drivers/gdt.h"
 #include "../drivers/idt.h"
+#include "../drivers/pic.h"
 #include "../drivers/types.h"
 #include "../drivers/vga.h"
 
@@ -22,6 +23,8 @@ void k_main()
              "Version: Post Reset Build Dec 25th 2023\n"                
              "Copyright (C) \2 Pineconium 2023-\n", 0, 7);
     
+    pic_init();
+
     k_printf("No Keyboard Input :(", 5, 12);       // 6 months or so and still no keyboard input ._.
     
     /* DOS 16 Colour Test */
