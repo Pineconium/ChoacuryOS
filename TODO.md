@@ -9,7 +9,7 @@
 
 ### Kernel
 - [x] String Message
-- [x] Keyboard Input
+- [x] Keyboard Input  (Currently only works with QEMU)
 - [ ] Terminal/Text Shell
 
 ### Graphics
