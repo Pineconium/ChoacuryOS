@@ -5,7 +5,6 @@
 - [x] Compiler (Linux)
 - [ ] Compiler (Windows)
 - [ ] Makefile
-- [x] 16-colour support (aka DOS Colours.)
 
 ### Kernel
 - [x] String Message
@@ -13,8 +12,10 @@
 - [ ] Terminal/Text Shell
 
 ### Graphics
-- Supported Colour(s): 16 DOS, next step will be 256 colours (Mode 13h)
-- [ ] VESA/VBE support
+- [x] 4-bit colour support (16 colours/Standard DOS colour)
+- [ ] 8-bit colour support (256 colours)
+- [ ] VESA/VBE support (>=256 colours)
+- [ ] Graphical Shell (GUI)
 
 ### File Management
 - [ ] FAT Support
