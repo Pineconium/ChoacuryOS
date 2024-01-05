@@ -21,9 +21,9 @@ void k_main()
 
     /* Display Info Message */
     k_clear_screen();
-    k_printf("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0", 0, 10);
-    k_printf("Version: Post Reset Build Jan 3rd 2024\n"                
-             "(C)opyright: \2 Pineconium 2023, 2024\n", 1, 15);
+    k_printf("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0", 0, 9);
+    k_printf("Version: Post Reset Build Jan 5th 2024\n"                
+             "(C)opyright: \2 Pineconium 2023, 2024\n", 1, 7);
     
     pic_init();
 
@@ -51,6 +51,7 @@ void k_main()
     u16* vga_mem = (u16*)0xb8000;
     vga_mem += 80 * 4;
 
+    /* Allow Keyboard Entry stuff, but this doesnt work on VirtualBox */
     for (;;) {
         key_event_t event;
         ps2_get_key_event(&event);
@@ -60,12 +61,20 @@ void k_main()
             continue;
         }
 
+        /* Backspace handler */
+        if (event.key == KEY_Backspace) {
+            if (vga_mem > (u16*)0xb8000 + 80 * 4) {
+                *(--vga_mem) = (TC_WHITE << 8) | ' ';   // <-- Replaces the previous character with a blank space
+            }
+            continue;
+        }
+        
         const char* utf8 = key_to_utf8(&event);
         if (!utf8)
             continue;
 
         while (*utf8) {
-            *vga_mem++ = (TC_BRIGHT << 8) | *utf8++;
+            *vga_mem++ = (TC_WHITE << 8) | *utf8++;
         }
     }
 };
