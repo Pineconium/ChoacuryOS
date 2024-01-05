@@ -68,7 +68,15 @@ void k_main()
             }
             continue;
         }
-        
+
+        /* Enter Key/New Line Character */
+        if (event.key == KEY_Enter) {
+            u32 line = (vga_mem - (u16*)0xb8000) / 80;
+            vga_mem = (u16*)0xb8000 + (line + 1) * 80;  // <-- Prints a new line, but it kinda fills the remaining spaces in the line above with space characters
+                                                        // Meaning it can be annoying to edit the line above without arrow support
+            continue;
+        }
+
         const char* utf8 = key_to_utf8(&event);
         if (!utf8)
             continue;
