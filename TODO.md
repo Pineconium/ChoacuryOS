@@ -9,6 +9,7 @@
 ### Kernel
 - [x] String Message
 - [x] Keyboard Input  (Currently only works with QEMU)
+      (currently it's in the Finnish Input, need to do English UK/US input next)
 - [ ] Terminal/Text Shell
 
 ### Graphics
