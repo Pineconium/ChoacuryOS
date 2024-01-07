@@ -18,6 +18,10 @@
 - [ ] VESA/VBE support (>=256 colours)
 - [ ] Graphical Shell (GUI)
 
+### Audio
+- [x] PC Speaker/DOS Beeps
+- [ ] Standard Audio
+
 ### File Management
 - [ ] FAT Support
 - [ ] Custom File System

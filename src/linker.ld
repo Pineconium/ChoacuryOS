@@ -8,3 +8,4 @@ SECTIONS
     .data   BLOCK(4K) : ALIGN(4K) { *(.data) }
     .bss    BLOCK(4K) : ALIGN(4K) { *(.bss) }
 }
+

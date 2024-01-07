@@ -39,6 +39,6 @@ start:
     jmp 0x08:flush_cs
 flush_cs:
 
-    call k_main
+    call k_main  ; <-- Jumps to the kernel
 
-    hlt ; halt the CPU
+    hlt ; <-- Halt the CPU

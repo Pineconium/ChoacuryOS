@@ -8,10 +8,47 @@
 #include "../drivers/gdt.h"
 #include "../drivers/idt.h"
 #include "../drivers/pic.h"
+#include "../drivers/pit.h"
 #include "../drivers/ps2.h"
-#include "../drivers/ps2_keymap_fi.h"
+#include "../drivers/ps2_keymap_fi.h"   // <-- Finnish Keyboard Layout.
 #include "../drivers/types.h"
 #include "../drivers/vga.h"
+
+/* PC Speaker Stuff */
+static void startbeep(__UINT32_TYPE__ nFrequence) {
+    __UINT32_TYPE__ Div;
+    __UINT8_TYPE__ tmp;
+
+    /* Sets the PIT to the desired freq */
+    Div = 1193180 / nFrequence;
+    port_byte_out(0x43, 0xb6);
+    port_byte_out(0x42, (__UINT8_TYPE__) (Div));
+    port_byte_out(0x42, (__UINT8_TYPE__) (Div >> 8));
+
+    /* Now lets actually BEEP */
+    tmp = port_byte_in(0x61);
+    if (tmp != (tmp | 3)) {
+        port_byte_out(0x61, tmp | 3);
+    }
+}
+
+/* Make the beeper shut up */
+static void mutebeep() {
+    __UINT8_TYPE__ tmp = port_byte_in(0x61) & 0xFC;
+
+    port_byte_out(0x61, tmp);
+}
+
+/* Startup Beep*/
+void StartUp_Beeps() {
+    startbeep(600);
+    pit_sleep_ms(100);
+    mutebeep();
+    pit_sleep_ms(500);
+    startbeep(600);
+    pit_sleep_ms(100);
+    mutebeep();
+}
 
 /* A Simple kernel written in C */
 void k_main() 
@@ -22,17 +59,22 @@ void k_main()
     /* Display Info Message */
     k_clear_screen();
     k_printf("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0", 0, 9);
-    k_printf("Version: Post Reset Build Jan 5th 2024\n"                
-             "(C)opyright: \2 Pineconium 2023, 2024\n", 1, 7);
+    k_printf("Version: Post Reset Build Jan 7th 2024\n"                
+             "(C)opyright: \2 Pineconium 2023, 2024.", 1, 7);
     
-    pic_init();
+    pic_init();     // <-- Enable clock stuff
+
+    pit_init();     // <-- Enable Timer
+
+    /* Enable interrupts to make keyboard work */
+    asm volatile("sti");
 
     ps2_init();
     /* FIXME: support more keymaps :) */
     ps2_init_keymap_fi();
 
-    /* I think we should put some keyboard control here */
-
+    StartUp_Beeps();
+    
     /* Text Cursor control */
     // Note QEMU might cause some weird artifacts when loaded.
     port_byte_out(0x3d4, 14);
@@ -44,9 +86,6 @@ void k_main()
 
     int offset_from_vga = position * 2;
 
-    /* Enable interrupts to make keyboard work */
-    asm volatile("sti");
-
     /* Quick hack to print keyboard input */
     u16* vga_mem = (u16*)0xb8000;
     vga_mem += 80 * 4;
@@ -55,7 +94,6 @@ void k_main()
     for (;;) {
         key_event_t event;
         ps2_get_key_event(&event);
-
         if (event.key == KEY_NONE || (event.modifiers & KEY_EVENT_MODIFIERS_RELEASED)) {
             asm volatile("hlt");
             continue;
@@ -73,7 +111,7 @@ void k_main()
         if (event.key == KEY_Enter) {
             u32 line = (vga_mem - (u16*)0xb8000) / 80;
             vga_mem = (u16*)0xb8000 + (line + 1) * 80;  // <-- Prints a new line, but it kinda fills the remaining spaces in the line above with space characters
-                                                        // Meaning it can be annoying to edit the line above without arrow support
+                                                        // Meaning it can be annoying to edit the line above without arrow support.
             continue;
         }
 

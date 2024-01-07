@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 
+/* I assume this is the mapping for a Finnish/Swedish Layout */
 static const char* s_key_to_utf8_lower[] = {
 	NULL,
 	"0",
