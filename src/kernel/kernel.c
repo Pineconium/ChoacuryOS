@@ -84,8 +84,6 @@ void k_main()
     port_byte_out(0x3d4, 15);
     position += port_byte_in(0x3d5);
 
-    int offset_from_vga = position * 2;
-
     /* Quick hack to print keyboard input */
     u16* vga_mem = (u16*)0xb8000;
     vga_mem += 80 * 4;
