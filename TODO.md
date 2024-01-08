@@ -4,9 +4,7 @@
 
 - [x] Compiler (Linux)
 - [ ] Compiler (Windows)
-- (kinda done) Makefile
-  
-  Need to actually fix something with ISO making
+- [ ] (kinda done) Makefile (Need to actually fix something with ISO making)
 
 ### Kernel
 - [x] String Message
