@@ -70,7 +70,7 @@ static const char* isr_names[] = {
     "Reserved 31"
 };
 
-void c_isr_handler(u8 isr, u32 error) {
+void c_isr_handler(u8 isr, u32) {
     k_printf(isr_names[isr], 0, TC_LRED);
     for (;;) {
         asm volatile("hlt");

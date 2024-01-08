@@ -93,6 +93,8 @@ void ps2_keyboard_new_byte(ps2_device_t* keyboard) {
 				keyboard->keyboard_info.modifiers ^= KEY_EVENT_MODIFIERS_CAPS_LOCK;
 			}
 			break;
+		default:
+			break;
 	}
 
 	keyboard->event_queue_len++;

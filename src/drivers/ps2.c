@@ -71,7 +71,7 @@ void ps2_device_send_byte(ps2_device_t* device, u8 byte) {
     port_byte_out(PS2_PORT_DATA, byte);
 }
 
-static u8 ps2_device_read_byte(ps2_device_t* device) {
+static u8 ps2_device_read_byte(ps2_device_t*) {
     /* FIXME: timeout */
     while (!(port_byte_in(PS2_PORT_STATUS) & PS2_STATUS_OUTPUT)) {
         continue;

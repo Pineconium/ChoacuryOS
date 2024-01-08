@@ -35,14 +35,16 @@ unsigned int k_printf(const char *message, unsigned int line, unsigned int tcolo
         {
             line++;
             i=(line*80*2);
-            *message++;
+            message++;
         } else {
             vidmem[i]=*message;
-            *message++;
+            message++;
             i++;
             vidmem[i]=tcolour;          // <-- Text Colour Controller.
                                         // E.g. if you want it lime (TC_LIME), you do k_printf("string", 0, 10) as 10 as A in hexadecimal (0x0A)
             i++;
         };
     };
+
+    return 0;
 };
