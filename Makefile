@@ -11,6 +11,7 @@ ASMFLAGS := -f elf32
 LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib
 
 SRCS :=						\
+	drivers/debug.c			\
 	drivers/gdt.c			\
 	drivers/idt.c			\
 	drivers/interrupt.asm	\
@@ -44,7 +45,7 @@ iso: kernel
 	grub-mkrescue -o $(BUILD_DIR)/ChoacuryOS.iso $(ISO_DIR)
 
 run: iso
-	qemu-system-x86_64 -cdrom $(BUILD_DIR)/ChoacuryOS.iso -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0
+	qemu-system-x86_64 -cdrom $(BUILD_DIR)/ChoacuryOS.iso -serial stdio -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0
 
 clean:
 	rm -rf $(BUILD_DIR) $(ISO_DIR)
