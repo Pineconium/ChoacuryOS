@@ -5,20 +5,12 @@
 #define PS2_TYPE_NONE		0
 #define PS2_TYPE_KEYBOARD	1
 
-#define PS2_STATE_NORMAL	0
-#define PS2_STATE_WAIT_ACK	1
-
 #define PS2_COMMAND_QUEUE_SIZE 32
 #define PS2_BYTE_BUFFER_SIZE 32
 #define PS2_EVENT_QUEUE_SIZE 32
 
 typedef struct ps2_device_t {
     u8 type;
-	u8 state;
-
-    u8 command_queue_read;
-    u8 command_queue_write;
-    u8 command_queue[PS2_COMMAND_QUEUE_SIZE];
 
 	u8 byte_buffer_len;
 	u8 byte_buffer[PS2_BYTE_BUFFER_SIZE];
@@ -34,5 +26,6 @@ typedef struct ps2_device_t {
 } ps2_device_t;
 
 void ps2_init();
-void ps2_device_append_command_queue(ps2_device_t* device, u8 byte);
+void ps2_device_append_command_queue(ps2_device_t* device, u8 command, u8 response_size);
+void ps2_device_append_command_queue_with_data(ps2_device_t* device, u8 command, u8 data, u8 response_size);
 ps2_device_t* ps2_get_device(u8 index);
