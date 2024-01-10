@@ -1,7 +1,8 @@
+#include "critical.h"
+#include "debug.h"
 #include "ps2_keyboard.h"
 #include "ps2.h"
 #include "utils.h"
-#include "vga.h"
 
 #define PS2_KEYBOARD_COMMAND_SET_LEDS           0xED
 #define PS2_KEYBOARD_COMMAND_SET_SCANCODE       0xF0
@@ -17,15 +18,13 @@ void ps2_init_keyboard(ps2_device_t* keyboard) {
 	keyboard->keyboard_info.modifiers = 0;
 
     /* Turn off all keyboard leds (caps lock, num lock, ...)*/
-	ps2_device_append_command_queue(keyboard, PS2_KEYBOARD_COMMAND_SET_LEDS);
-	ps2_device_append_command_queue(keyboard, 0x00);
+	ps2_device_append_command_queue_with_data(keyboard, PS2_KEYBOARD_COMMAND_SET_LEDS, 0x00, 0);
 
     /* Set keyboard to use scancode set 2 */
-    ps2_device_append_command_queue(keyboard, PS2_KEYBOARD_COMMAND_SET_SCANCODE);
-    ps2_device_append_command_queue(keyboard, 2);
+    ps2_device_append_command_queue_with_data(keyboard, PS2_KEYBOARD_COMMAND_SET_SCANCODE, 2, 0);
 
     /* Enable scanning (reading user keypresses) */
-    ps2_device_append_command_queue(keyboard, PS2_KEYBOARD_COMMAND_ENABLE_SCANNING);
+    ps2_device_append_command_queue(keyboard, PS2_KEYBOARD_COMMAND_ENABLE_SCANNING, 0);
 }
 
 void ps2_keyboard_new_byte(ps2_device_t* keyboard) {
@@ -35,23 +34,45 @@ void ps2_keyboard_new_byte(ps2_device_t* keyboard) {
 		return;
 	}
 
-	u32 scancode = 0;
-	bool extended = false;
-	bool released = false;
-
-	/* NOTE: This assumes that keyboard sends valid data */
-	for (u8 i = 0; i < keyboard->byte_buffer_len; i++) {
-		if (keyboard->byte_buffer[i] == 0xE0) {
-			extended = true;
-		} else if (keyboard->byte_buffer[i] == 0xF0) {
-			released = true;
-		} else {
-			scancode = (scancode << 8) | keyboard->byte_buffer[i];
-		}
+	if (last_byte == 0x00 || last_byte == 0xFF) {
+		dprintln("PS/2 Keyboard: keydetection error or internal buffer overflow");
+		keyboard->byte_buffer_len = 0;
+		return;
 	}
 
+	if (keyboard->byte_buffer_len > 3) {
+		dprintln("PS/2 Keyboard: corrupted package");
+		keyboard->byte_buffer_len = 0;
+		return;
+	}
+
+	u8 index = 0;
+
+	bool extended = false;
+	if (index < keyboard->byte_buffer_len && keyboard->byte_buffer[index] == 0xE0) {
+		extended = true;
+		index++;
+	}
+
+	bool released = false;
+	if (index < keyboard->byte_buffer_len && keyboard->byte_buffer[index] == 0xF0) {
+		released = true;
+		index++;
+	}
+
+	bool corrupted = (index + 1 != keyboard->byte_buffer_len);
+	keyboard->byte_buffer_len = 0;
+
+	if (corrupted)
+	{
+		dprintln("PS/2 Keyboard: corrupted packet");
+		return;
+	}
+
+	u8 scancode = keyboard->byte_buffer[index];
+
 	if (keyboard->event_queue_len >= PS2_EVENT_QUEUE_SIZE) {
-		k_printf("PS/2 Keyboard: event queue full", 0, TC_YELLO);
+		dprintln("PS/2 Keyboard: event queue full");
 		keyboard->event_queue_len %= PS2_EVENT_QUEUE_SIZE;
 	}
 
@@ -98,7 +119,6 @@ void ps2_keyboard_new_byte(ps2_device_t* keyboard) {
 	}
 
 	keyboard->event_queue_len++;
-	keyboard->byte_buffer_len = 0;
 }
 
 void ps2_get_key_event(key_event_t* out) {
@@ -107,7 +127,10 @@ void ps2_get_key_event(key_event_t* out) {
 		if (device->type != PS2_TYPE_KEYBOARD) {
 			continue;
 		}
+
+		ENTER_CRITICAL();
 		if (device->event_queue_len == 0) {
+			LEAVE_CRITICAL();
 			continue;
 		}
 		
@@ -122,6 +145,7 @@ void ps2_get_key_event(key_event_t* out) {
 			(u8*)&device->keyboard_event_queue[1],
 			device->event_queue_len * sizeof(key_event_t)
 		);
+		LEAVE_CRITICAL();
 
 		return;
 	}

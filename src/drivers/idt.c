@@ -78,13 +78,18 @@ void c_isr_handler(u8 isr, u32) {
 }
 
 void c_irq_handler(u8 irq) {
-    irq_handler_t handler = irq_handlers[irq];
-    if (handler == 0) {
-        k_printf("no handler for irq", 0, TC_YELLO);
+    /* Spurious interrupt */
+    if (!pic_is_in_service(irq)) {
         return;
     }
 
-    handler();
+    irq_handler_t handler = irq_handlers[irq];
+    if (handler == 0) {
+        k_printf("no handler for irq", 0, TC_YELLO);
+    } else {
+        handler();
+    }
+
     pic_send_eoi(irq);
 }
 

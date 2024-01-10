@@ -19,6 +19,7 @@
 #define ICW4_BUF_MASTER 0x0C /* Buffered mode/master */
 #define ICW4_SFNM       0x10 /* Special fully nested (not) */
 
+#define PIC_CMD_ISR 0x0B
 #define PIC_CMD_EOI 0x20
 
 void pic_init() {
@@ -39,7 +40,7 @@ void pic_init() {
     port_byte_out(PIC_PORT_DATA_SLAVE,  ICW4_8086);
 
     /* Initially mask everything but slave */
-    port_byte_out(PIC_PORT_DATA_MASTER, 0xFD);
+    port_byte_out(PIC_PORT_DATA_MASTER, 0xFB);
     port_byte_out(PIC_PORT_DATA_SLAVE,  0xFF);
 }
 
@@ -61,4 +62,14 @@ void pic_send_eoi(u8 irq) {
         port_byte_out(PIC_PORT_CMD_SLAVE, PIC_CMD_EOI);
     }
     port_byte_out(PIC_PORT_CMD_MASTER, PIC_CMD_EOI);
+}
+
+bool pic_is_in_service(u8 irq) {
+    u16 port = PIC_PORT_CMD_MASTER;
+    if (irq >= 8) {
+        port = PIC_PORT_CMD_SLAVE;
+        irq -= 8;
+    }
+    port_byte_out(port, PIC_CMD_ISR);
+    return port_byte_in(port) & (1 << irq);
 }
