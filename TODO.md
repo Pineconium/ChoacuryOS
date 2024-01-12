@@ -4,12 +4,11 @@
 
 - [x] Compiler (Linux)
 - [ ] Compiler (Windows)
-- [ ] (kinda done) Makefile (Need to actually fix something with ISO making)
+- [x] Makefile
 
 ### Kernel
 - [x] String Message
-- [x] Keyboard Input  (Currently only works with QEMU)
-      (currently it's in the Finnish Input, need to do English UK/US input next)
+- [x] Keyboard Input (currently it's in the Finnish Input, need to do English UK/US input next)
 - [ ] Terminal/Text Shell
 
 ### Graphics
