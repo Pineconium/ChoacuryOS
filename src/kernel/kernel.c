@@ -59,7 +59,7 @@ void k_main()
     /* Display Info Message */
     k_clear_screen();
     k_printf("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0", 0, 9);
-    k_printf("Version: Post Reset Build Jan 7th 2024\n"                
+    k_printf("Version: Post Reset Build Jan 13th 2024\n"      // <-- If the source code gets updated (even if it's not for the kernel), replace the date ;-)          
              "(C)opyright: \2 Pineconium 2023, 2024.", 1, 7);
     
     pic_init();     // <-- Enable clock stuff
