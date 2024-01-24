@@ -14,7 +14,7 @@
 ### Graphics
 - [x] 4-bit colour support (16 colours/Standard DOS colour)
 - [ ] 8-bit colour support (256 colours)
-- [ ] VESA/VBE support (>=256 colours)
+- [ ] High-colour/True colour support (>=256 colours)
 - [ ] Graphical Shell (GUI)
 
 ### Audio
