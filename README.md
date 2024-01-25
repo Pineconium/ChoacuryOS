@@ -4,7 +4,7 @@ Choacury, (pronounced as coch-curry or /kʰɔx-ˈkʌr.i/), is a custom-built OS 
 If you want to help or make your own version of Choacury, don't worry, you are free to modify it to your liking. You are also free to help contribute to the project! (see TODO.MD for what is needed doing).
 
 # System Requirements
-Choacury currently doesn't work with live (real) hardware, currently, it only works with virtual machines.
+Choacury currently does work with real hardware but compatibility is pretty weird. Currently, it only works best with virtual machines.
 
 For VirtualBox Users, here are the recommended VM requirements:
 - Operating System: Other/Unknown
