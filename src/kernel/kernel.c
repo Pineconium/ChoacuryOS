@@ -41,11 +41,7 @@ static void mutebeep() {
 
 /* Startup Beep*/
 void StartUp_Beeps() {
-    startbeep(600);
-    pit_sleep_ms(100);
-    mutebeep();
-    pit_sleep_ms(500);
-    startbeep(600);
+    startbeep(450);
     pit_sleep_ms(100);
     mutebeep();
 }
@@ -59,9 +55,9 @@ void k_main()
     /* Display Info Message */
     k_clear_screen();
     k_printf("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0", 0, 9);
-    k_printf("Version: Post Reset Build Jan 13th 2024\n"      // <-- If the source code gets updated (even if it's not for the kernel), replace the date ;-)          
+    k_printf("Version: Post Reset Build Jan 31st 2024\n"                // <-- If the source code gets updated (even if it's not for the kernel), replace the date ;-)      
              "(C)opyright: \2 Pineconium 2023, 2024.", 1, 7);
-    
+
     pic_init();     // <-- Enable clock stuff
 
     pit_init();     // <-- Enable Timer
@@ -88,7 +84,7 @@ void k_main()
     u16* vga_mem = (u16*)0xb8000;
     vga_mem += 80 * 4;
 
-    /* Allow Keyboard Entry stuff, but this doesnt work on VirtualBox */
+    /* Allow Keyboard Entry stuff */
     for (;;) {
         key_event_t event;
         ps2_get_key_event(&event);
@@ -100,7 +96,7 @@ void k_main()
         /* Backspace handler */
         if (event.key == KEY_Backspace) {
             if (vga_mem > (u16*)0xb8000 + 80 * 4) {
-                *(--vga_mem) = (TC_WHITE << 8) | ' ';   // <-- Replaces the previous character with a blank space
+                *(--vga_mem) = (TC_WHITE << 8) | ' ';   // <-- Replaces the previous character with a blank space.
             }
             continue;
         }
@@ -112,6 +108,15 @@ void k_main()
                                                         // Meaning it can be annoying to edit the line above without arrow support.
             continue;
         }
+
+        /* Terminal Bell */
+        if (event.key == KEY_LeftCtrl) {
+            startbeep(800);
+            pit_sleep_ms(15);
+            mutebeep();
+        }
+
+        // TODO: Terminal and Beeper stuff
 
         const char* utf8 = key_to_utf8(&event);
         if (!utf8)
