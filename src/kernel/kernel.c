@@ -55,7 +55,7 @@ void k_main()
     /* Display Info Message */
     k_clear_screen();
     k_printf("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0", 0, 9);
-    k_printf("Version: Post Reset Build Jan 31st 2024\n"                // <-- If the source code gets updated (even if it's not for the kernel), replace the date ;-)      
+    k_printf("Version: Build Feb 3rd 2024 (Pre-Terminal Shell)\n"                // <-- If the source code gets updated (even if it's not for the kernel), replace the date ;-)      
              "(C)opyright: \2 Pineconium 2023, 2024.", 1, 7);
 
     pic_init();     // <-- Enable clock stuff
@@ -106,6 +106,8 @@ void k_main()
             u32 line = (vga_mem - (u16*)0xb8000) / 80;
             vga_mem = (u16*)0xb8000 + (line + 1) * 80;  // <-- Prints a new line, but it kinda fills the remaining spaces in the line above with space characters
                                                         // Meaning it can be annoying to edit the line above without arrow support.
+
+            /* I assume we can just put many of the terminal stuff here. */
             continue;
         }
 
@@ -115,8 +117,6 @@ void k_main()
             pit_sleep_ms(15);
             mutebeep();
         }
-
-        // TODO: Terminal and Beeper stuff
 
         const char* utf8 = key_to_utf8(&event);
         if (!utf8)
