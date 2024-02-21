@@ -19,3 +19,13 @@ u16 port_word_in (u16 port) {
 void port_word_out (u16 port, u16 data) {
     __asm__ __volatile__("out %%ax, %%dx" : : "a" (data), "d" (port));
 }
+
+u32 port_dword_in (u16 port) {
+    u32 result;
+    asm volatile("inl %1, %0" : "=a"(result) : "Nd"(port));
+    return result;
+}
+
+void port_dword_out (u16 port, u32 data) {
+    asm volatile ("outl %0, %1" : : "a"(data), "Nd"(port));
+}
