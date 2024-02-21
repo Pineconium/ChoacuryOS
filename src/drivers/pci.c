@@ -68,6 +68,13 @@ void debug_print_pci() {
                 dprintbyte((u8)(desc.device_id & 0xFF));
 
                 dprint("\r\n");
+
+                //an example for using the PCI information: detecting USB devices
+
+                if((desc.class_id == 0x0C) && (desc.subclass_id == 0x03)) //standard class and subclass IDs for USB devices
+                {
+                    dprintln("USB device found ^^");
+                }
             }
         }
     }
