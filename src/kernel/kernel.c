@@ -13,6 +13,7 @@
 #include "../drivers/ps2_keymap_fi.h"   // <-- Finnish Keyboard Layout.
 #include "../drivers/types.h"
 #include "../drivers/vga.h"
+#include "../drivers/pci.h"
 
 /* PC Speaker Stuff */
 static void startbeep(__UINT32_TYPE__ nFrequence) {
@@ -79,6 +80,9 @@ void k_main()
 
     port_byte_out(0x3d4, 15);
     position += port_byte_in(0x3d5);
+
+    /* Print PCI devices */
+    debug_print_pci();
 
     /* Quick hack to print keyboard input */
     u16* vga_mem = (u16*)0xb8000;
