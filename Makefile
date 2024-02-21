@@ -24,6 +24,7 @@ SRCS :=						\
 	drivers/ps2.c			\
 	drivers/utils.c			\
 	drivers/vga.c			\
+	drivers/pci.c			\
 	kernel/kernel.c			\
 	kernel/krnentry.asm		\
 
