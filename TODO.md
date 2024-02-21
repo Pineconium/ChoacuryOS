@@ -20,7 +20,9 @@
 
 ### Audio
 - [x] PC Speaker/DOS Beeps
-- [ ] Standard Audio
+- [ ] Sound Blaster 16
+- [ ] Audio Codec '97
+- [ ] Intel High Definition Audio
 
 ### File Management
 - [ ] FAT Support
