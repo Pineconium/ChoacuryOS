@@ -10,7 +10,7 @@
 - [x] String Message
 - [x] Keyboard Input (currently it's in the Finnish Input, need to do English UK/US input next)
 - [ ] Terminal/Text Shell
-- [ ] Multi Tasking
+- [ ] Multi-Tasking
 
 ### Graphics
 - [x] 4-bit colour support (16 colours/Standard DOS colours)
@@ -27,3 +27,7 @@
 ### File Management
 - [ ] FAT Support
 - [ ] Custom File System
+
+### Networking/Internet
+- [ ] Standard networking support
+- [ ] Ability to ping networks/servers
