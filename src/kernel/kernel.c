@@ -50,7 +50,7 @@ void StartUp_Beeps() {
 /* Update the cursor */
 void update_cursor(int x, int y)
 {
-	__UINT16_TYPE__ pos = y * __SIZE_WIDTH__ + x;
+	__UINT16_TYPE__ pos = y * 80 + x;
  
 	port_byte_out(0x3D4, 0x0F);
 	port_byte_out(0x3D5, (__UINT8_TYPE__) (pos & 0xFF));
@@ -61,10 +61,14 @@ void update_cursor(int x, int y)
 /* A Simple kernel written in C */
 void k_main() 
 {
+    /* Placeholder DEFAULT cursor vars*/
+    int prevX = 0;
+    int prevY = 4;
+
     gdt_init();
     idt_init();
 
-    update_cursor(0, 10);   // <-- Default cursor location
+    update_cursor(0, 4);   // <-- Default cursor location
 
     /* Display Info Message */
     k_clear_screen();
@@ -115,6 +119,8 @@ void k_main()
             if (vga_mem > (u16*)0xb8000 + 80 * 4) {
                 *(--vga_mem) = (TC_WHITE << 8) | ' ';   // <-- Replaces the previous character with a blank space.
             }
+            prevX = prevX - 1;
+            update_cursor(prevX, prevY);
             continue;
         }
 
@@ -125,6 +131,10 @@ void k_main()
                                                         // Meaning it can be annoying to edit the line above without arrow support.
 
             /* I assume we can just put many of the terminal stuff here. */
+
+            prevY = prevY + 1;
+            prevX = 0;
+            update_cursor(prevX, prevY);
             continue;
         }
 
@@ -141,6 +151,9 @@ void k_main()
 
         while (*utf8) {
             *vga_mem++ = (TC_WHITE << 8) | *utf8++;
+            prevX = prevX + 1;
+            update_cursor(prevX, prevY);
+
         }
     }
 };
