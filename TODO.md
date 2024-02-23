@@ -5,6 +5,7 @@
 - [x] Compiler (Linux)
 - [ ] Compiler (Windows)
 - [x] Makefile
+- [ ] Cursor Control
 
 ### Kernel
 - [x] String Message
