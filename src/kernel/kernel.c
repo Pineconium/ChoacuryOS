@@ -47,16 +47,29 @@ void StartUp_Beeps() {
     mutebeep();
 }
 
+/* Update the cursor */
+void update_cursor(int x, int y)
+{
+	__UINT16_TYPE__ pos = y * __SIZE_WIDTH__ + x;
+ 
+	port_byte_out(0x3D4, 0x0F);
+	port_byte_out(0x3D5, (__UINT8_TYPE__) (pos & 0xFF));
+	port_byte_out(0x3D4, 0x0E);
+	port_byte_out(0x3D5, (__UINT8_TYPE__) ((pos >> 8) & 0xFF));
+}
+
 /* A Simple kernel written in C */
 void k_main() 
 {
     gdt_init();
     idt_init();
 
+    update_cursor(0, 10);   // <-- Default cursor location
+
     /* Display Info Message */
     k_clear_screen();
     k_printf("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0", 0, 9);
-    k_printf("Version: Build Feb 21st 2024 (Pre-Terminal Shell)\n"                // <-- If the source code gets updated (even if it's not for the kernel), replace the date ;-)      
+    k_printf("Version: Build Feb 23rd 2024 (Pre-Terminal Shell)\n"                // <-- If the source code gets updated (even if it's not for the kernel), replace the date ;-)      
              "(C)opyright: \2 Pineconium 2023, 2024.", 1, 7);
 
     pic_init();     // <-- Enable clock stuff
