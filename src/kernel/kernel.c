@@ -45,9 +45,12 @@ void StartUp_Beeps() {
     startbeep(450);
     pit_sleep_ms(100);
     mutebeep();
+    startbeep(775);
+    pit_sleep_ms(50);
+    mutebeep();
 }
 
-/* Update the cursor */
+/* Text Cursor Updater */
 void update_cursor(int x, int y)
 {
 	__UINT16_TYPE__ pos = y * 80 + x;
@@ -73,7 +76,7 @@ void k_main()
     /* Display Info Message */
     k_clear_screen();
     k_printf("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0", 0, 9);
-    k_printf("Version: Build Feb 23rd 2024 (Pre-Terminal Shell)\n"                // <-- If the source code gets updated (even if it's not for the kernel), replace the date ;-)      
+    k_printf("Version: Build Feb 24th 2024 (Pre-Terminal Shell)\n"                // <-- If the source code gets updated (even if it's not for the kernel), replace the date ;-)      
              "(C)opyright: \2 Pineconium 2023, 2024.", 1, 7);
 
     pic_init();     // <-- Enable clock stuff
@@ -116,12 +119,16 @@ void k_main()
 
         /* Backspace handler */
         if (event.key == KEY_Backspace) {
-            if (vga_mem > (u16*)0xb8000 + 80 * 4) {
+            if (vga_mem > (u16*)0xb8000 + 80 * 4) {      // <-- Check if the cursor isn't at spawn
                 *(--vga_mem) = (TC_WHITE << 8) | ' ';   // <-- Replaces the previous character with a blank space.
+                prevX = prevX - 1;
+                update_cursor(prevX, prevY);
+                continue;
+            }else{
+                startbeep(600);
+                pit_sleep_ms(15);
+                mutebeep();
             }
-            prevX = prevX - 1;
-            update_cursor(prevX, prevY);
-            continue;
         }
 
         /* Enter Key/New Line Character */
