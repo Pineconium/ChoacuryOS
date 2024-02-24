@@ -5,13 +5,17 @@
 - [x] Compiler (Linux)
 - [ ] Compiler (Windows)
 - [x] Makefile
-- [ ] Cursor Control
+- [x] Cursor Control
 
 ### Kernel
 - [x] String Message
 - [x] Keyboard Input (currently it's in the Finnish Input, need to do English UK/US input next)
-- [ ] Terminal/Text Shell
 - [ ] Multi-Tasking
+
+### Command Line Interface
+- [ ] Scrolling
+- [ ] Command Input Detection
+- [ ] Standard "echo" command
 
 ### Graphics
 - [x] 4-bit colour support (16 colours/Standard DOS colours)
