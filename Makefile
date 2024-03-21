@@ -6,7 +6,7 @@ CC  := gcc
 LD  := ld
 ASM := nasm
 
-CFLAGS   := -m32 -O2 -fno-stack-protector -ffreestanding -mgeneral-regs-only -Wall -Wextra
+CFLAGS   := -march=i386 -fno-lto -fno-stack-check -mno-sse -mno-sse2 -mno-avx -mno-mmx -static -fPIC -m32 -O3 -fno-stack-protector -ffreestanding -mno-red-zone -Wall -Wextra
 ASMFLAGS := -f elf32
 LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib
 
@@ -46,7 +46,7 @@ iso: kernel
 	grub-mkrescue -o $(BUILD_DIR)/ChoacuryOS.iso $(ISO_DIR)
 
 run: iso
-	qemu-system-x86_64 -cdrom $(BUILD_DIR)/ChoacuryOS.iso -serial stdio -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0
+	qemu-system-x86_64 -cdrom $(BUILD_DIR)/ChoacuryOS.iso -serial stdio
 
 clean:
 	rm -rf $(BUILD_DIR) $(ISO_DIR)
