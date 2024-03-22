@@ -6,7 +6,7 @@ CC  := gcc
 LD  := ld
 ASM := nasm
 
-CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fno-stack-protector -ffreestanding -Wall -Wextra
+CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra
 ASMFLAGS := -f elf32
 LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
@@ -23,6 +23,7 @@ SRCS :=						\
 	drivers/ps2_keyboard.c	\
 	drivers/ps2_keymap_fi.c	\
 	drivers/ps2.c			\
+	drivers/ssp.c			\
 	drivers/utils.c			\
 	drivers/vga.c			\
 	kernel/kernel.c			\
