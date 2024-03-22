@@ -6,9 +6,9 @@ CC  := gcc
 LD  := ld
 ASM := nasm
 
-CFLAGS   := -march=i386 -fno-lto -fno-stack-check -mno-sse -mno-sse2 -mno-avx -mno-mmx -static -fPIC -m32 -O3 -fno-stack-protector -ffreestanding -mno-red-zone -Wall -Wextra
+CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fno-stack-protector -ffreestanding -Wall -Wextra
 ASMFLAGS := -f elf32
-LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib
+LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
 SRCS :=						\
 	drivers/debug.c			\
