@@ -16,6 +16,7 @@ SRCS :=						\
 	drivers/idt.c			\
 	drivers/interrupt.asm	\
 	drivers/key.c			\
+	drivers/pci.c			\
 	drivers/pic.c			\
 	drivers/pit.c			\
 	drivers/ports.c			\
@@ -24,9 +25,9 @@ SRCS :=						\
 	drivers/ps2.c			\
 	drivers/utils.c			\
 	drivers/vga.c			\
-	drivers/pci.c			\
 	kernel/kernel.c			\
 	kernel/krnentry.asm		\
+	kernel/panic.c			\
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))
 DEPS := $(addprefix $(BUILD_DIR)/,$(addsuffix .d,$(filter-out %.asm,$(SRCS))))
