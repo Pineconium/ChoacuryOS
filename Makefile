@@ -6,9 +6,9 @@ CC  := gcc
 LD  := ld
 ASM := nasm
 
-CFLAGS   := -march=i386 -fno-lto -fno-stack-check -mno-sse -mno-sse2 -mno-avx -mno-mmx -static -fPIC -m32 -O3 -fno-stack-protector -ffreestanding -mno-red-zone -Wall -Wextra
+CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra
 ASMFLAGS := -f elf32
-LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib
+LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
 SRCS :=						\
 	drivers/debug.c			\
@@ -16,17 +16,19 @@ SRCS :=						\
 	drivers/idt.c			\
 	drivers/interrupt.asm	\
 	drivers/key.c			\
+	drivers/pci.c			\
 	drivers/pic.c			\
 	drivers/pit.c			\
 	drivers/ports.c			\
 	drivers/ps2_keyboard.c	\
 	drivers/ps2_keymap_fi.c	\
 	drivers/ps2.c			\
+	drivers/ssp.c			\
 	drivers/utils.c			\
 	drivers/vga.c			\
-	drivers/pci.c			\
 	kernel/kernel.c			\
 	kernel/krnentry.asm		\
+	kernel/panic.c			\
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))
 DEPS := $(addprefix $(BUILD_DIR)/,$(addsuffix .d,$(filter-out %.asm,$(SRCS))))
@@ -46,7 +48,7 @@ iso: kernel
 	grub-mkrescue -o $(BUILD_DIR)/ChoacuryOS.iso $(ISO_DIR)
 
 run: iso
-	qemu-system-x86_64 -cdrom $(BUILD_DIR)/ChoacuryOS.iso -serial stdio
+	qemu-system-x86_64 -cdrom $(BUILD_DIR)/ChoacuryOS.iso -serial stdio -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0
 
 clean:
 	rm -rf $(BUILD_DIR) $(ISO_DIR)
