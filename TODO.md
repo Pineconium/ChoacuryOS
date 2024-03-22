@@ -9,7 +9,7 @@
 
 ### Kernel
 - [x] String Message
-- [x] Keyboard Input (currently it's in the Finnish Input, need to do English UK/US input next)
+- [x] Keyboard Input
 - [ ] Multi-Tasking
 
 ### Command Line Interface

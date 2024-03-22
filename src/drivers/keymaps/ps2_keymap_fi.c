@@ -1,5 +1,5 @@
-#include "ps2_keyboard.h"
-#include "utils.h"
+#include "../ps2_keyboard.h"
+#include "../utils.h"
 
 void ps2_init_keymap_fi() {
 	memory_set((u8*)ps2_keymap_normal, 0x00, sizeof(ps2_keymap_normal));
@@ -64,7 +64,6 @@ void ps2_init_keymap_fi() {
 	ps2_keymap_normal[0x54] = KEY_A_Ring;
 	ps2_keymap_normal[0x55] = KEY_Acute;
 	ps2_keymap_normal[0x58] = KEY_CapsLock;
-	ps2_keymap_normal[0x59] = KEY_RightShift;
 	ps2_keymap_normal[0x59] = KEY_RightShift;
 	ps2_keymap_normal[0x5A] = KEY_Enter;
 	ps2_keymap_normal[0x5B] = KEY_TwoDots;
@@ -135,13 +134,13 @@ void ps2_init_keymap_fi() {
 	ps2_keymap_shift[0x3B] = KEY_J;
 	ps2_keymap_shift[0x3C] = KEY_U;
 	ps2_keymap_shift[0x3D] = KEY_Slash;
-	ps2_keymap_shift[0x3E] = KEY_OpenBracet;
+	ps2_keymap_shift[0x3E] = KEY_OpenParenthesis;
 	ps2_keymap_shift[0x41] = KEY_Semicolon;
 	ps2_keymap_shift[0x42] = KEY_K;
 	ps2_keymap_shift[0x43] = KEY_I;
 	ps2_keymap_shift[0x44] = KEY_O;
 	ps2_keymap_shift[0x45] = KEY_Equals;
-	ps2_keymap_shift[0x46] = KEY_CloseBracet;
+	ps2_keymap_shift[0x46] = KEY_CloseParenthesis;
 	ps2_keymap_shift[0x49] = KEY_Colon;
 	ps2_keymap_shift[0x4A] = KEY_Underscore;
 	ps2_keymap_shift[0x4B] = KEY_L;
