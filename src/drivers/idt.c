@@ -15,7 +15,7 @@ typedef struct {
     u8 always0;
     /* First byte
      * Bit 7: "Interrupt is present"
-     * Bits 6-5: Privilege level of caller (0=kernel..3=user)
+     * Bits 6-5: Privilege level of caller (0=kernel -> 3=user)
      * Bit 4: Set to 0 for interrupt gates
      * Bits 3-0: bits 1110 = decimal 14 = "32 bit interrupt gate" */
     u8 flags; 
@@ -70,8 +70,17 @@ static const char* isr_names[] = {
     "Reserved 31"
 };
 
-void c_isr_handler(u8 isr, u32) {
+void c_isr_handler(u8 isr, u32 unused) {
+    if (isr > 32)
+    {
+        // Kernel defined interrupts, non critical.
+
+        return;
+    }
+
     k_printf(isr_names[isr], 0, TC_LRED);
+
+    asm volatile ("cli");
     for (;;) {
         asm volatile("hlt");
     }
@@ -109,12 +118,12 @@ static void idt_flush() {
     asm volatile("lidt %0" :: "m"(idt_reg));
 }
 
-/* Code gen externs for isr handler (defined in interrupt.asm) */
+/* Code gen extern definitions for isr handler (defined in interrupt.asm) */
 #define X(num) extern void isr ## num();
     ISR_LIST_X
 #undef X
 
-/* Code gen externs for irq handler (defined in interrupt.asm) */
+/* Code gen extern definitions for irq handler (defined in interrupt.asm) */
 #define X(num) extern void irq ## num();
     IRQ_LIST_X
 #undef X
