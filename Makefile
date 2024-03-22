@@ -10,25 +10,26 @@ CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-
 ASMFLAGS := -f elf32
 LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
-SRCS :=						\
-	drivers/debug.c			\
-	drivers/gdt.c			\
-	drivers/idt.c			\
-	drivers/interrupt.asm	\
-	drivers/key.c			\
-	drivers/pci.c			\
-	drivers/pic.c			\
-	drivers/pit.c			\
-	drivers/ports.c			\
-	drivers/ps2_keyboard.c	\
-	drivers/ps2_keymap_fi.c	\
-	drivers/ps2.c			\
-	drivers/ssp.c			\
-	drivers/utils.c			\
-	drivers/vga.c			\
-	kernel/kernel.c			\
-	kernel/krnentry.asm		\
-	kernel/panic.c			\
+SRCS :=								\
+	drivers/debug.c					\
+	drivers/gdt.c					\
+	drivers/idt.c					\
+	drivers/interrupt.asm			\
+	drivers/key.c					\
+	drivers/pci.c					\
+	drivers/pic.c					\
+	drivers/pit.c					\
+	drivers/ports.c					\
+	drivers/ps2_keyboard.c			\
+	drivers/keymaps/ps2_keymap_fi.c	\
+	drivers/keymaps/ps2_keymap_us.c	\
+	drivers/ps2.c					\
+	drivers/ssp.c					\
+	drivers/utils.c					\
+	drivers/vga.c					\
+	kernel/kernel.c					\
+	kernel/krnentry.asm				\
+	kernel/panic.c					\
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))
 DEPS := $(addprefix $(BUILD_DIR)/,$(addsuffix .d,$(filter-out %.asm,$(SRCS))))

@@ -10,7 +10,7 @@
 #include "../drivers/pic.h"
 #include "../drivers/pit.h"
 #include "../drivers/ps2.h"
-#include "../drivers/ps2_keymap_fi.h"   // <-- Finnish Keyboard Layout.
+#include "../drivers/keymaps/ps2_keymap_us.h"   // <-- US Keyboard Layout.
 #include "../drivers/types.h"
 #include "../drivers/vga.h"
 #include "../drivers/pci.h"
@@ -88,7 +88,7 @@ void k_main()
 
     ps2_init();
     /* FIXME: support more keymaps :) */
-    ps2_init_keymap_fi();
+    ps2_init_keymap_us();
 
     StartUp_Beeps();
     
