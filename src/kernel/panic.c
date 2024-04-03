@@ -1,11 +1,13 @@
 #include "panic.h"
 #include "../drivers/vga.h"
+#include "../shell/terminal.h"
 
 __attribute__((noreturn))
 void panic_impl(const char* location_prefix, const char* message)
 {
-	k_printf(location_prefix, 0, TC_LRED);
-	k_printf(message, 1, TC_LRED);
+	term_write(location_prefix, TC_LRED);
+	term_putchar(' ', TC_LRED);
+	term_write(message, TC_LRED);
 
 	asm volatile("cli");
 	for (;;) {

@@ -30,6 +30,7 @@ SRCS :=								\
 	kernel/kernel.c					\
 	kernel/krnentry.asm				\
 	kernel/panic.c					\
+	shell/terminal.c				\
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))
 DEPS := $(addprefix $(BUILD_DIR)/,$(addsuffix .d,$(filter-out %.asm,$(SRCS))))
