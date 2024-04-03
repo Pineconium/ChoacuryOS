@@ -13,7 +13,8 @@
 - [ ] Multi-Tasking
 
 ### Command Line Interface
-- [ ] Scrolling
+- [x] Scrolling
+- [x] Barebones CLI (no commands)
 - [ ] Command Input Detection
 - [ ] Standard "echo" command
 
