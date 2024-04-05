@@ -120,7 +120,7 @@ void k_main()
                 const char* utf8 = key_to_utf8(&event);
                 while (utf8 && *utf8) {
                     term_putchar(*utf8, TC_WHITE);
-                    append(utf8, cmdbuffer);
+                    append(*utf8, cmdbuffer);
                     utf8++;
                 }
                 break;
