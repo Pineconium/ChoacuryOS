@@ -15,6 +15,7 @@
 #include "../drivers/vga.h"
 #include "../drivers/pci.h"
 #include "../shell/terminal.h"
+#include "../shell/string_mang.h"               // <-- Cool little string system...
 
 /* PC Speaker Stuff */
 static void startbeep(__UINT32_TYPE__ nFrequence) {
@@ -51,6 +52,12 @@ void StartUp_Beeps() {
     mutebeep();
 }
 
+void userinput(char* buffer){
+  if(strcmp(buffer,"test")==0){
+    // command working
+  }
+}
+
 /* A Simple kernel written in C */
 void k_main() 
 {
@@ -60,7 +67,7 @@ void k_main()
     /* Display Info Message */
     term_init(VGA_WIDTH, VGA_HEIGHT, vga_set_char, vga_move_cursor);
     term_write("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0\n", TC_LBLUE);
-    term_write("Version: Build " __DATE__ " (Pre-Terminal Shell)\n", TC_WHITE);
+    term_write("Version: Build " __DATE__ " (Terminal Testing)\n", TC_WHITE);
     term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
 
     pic_init();     // <-- Enable clock stuff
@@ -79,6 +86,8 @@ void k_main()
     /* Print PCI devices */
     debug_print_pci();
 
+    char cmdbuffer[32];
+
     for (;;) {
         key_event_t event;
         ps2_get_key_event(&event);
@@ -91,11 +100,16 @@ void k_main()
         }
 
         switch (event.key) {
+
+            /// TOFIX: Figure out why the fuck is it making a bunch of 1/4 symbols?
             case KEY_Backspace:
                 term_write("\b \b", TC_WHITE);
+                backspace(cmdbuffer);    // <-- Removes last char from the buffer.
                 break;
             case KEY_Enter:
                 term_putchar('\n', TC_WHITE);
+                userinput(cmdbuffer);
+                cmdbuffer[0] = '\0';
                 break;
             case KEY_LeftCtrl:
                 startbeep(800);
@@ -106,6 +120,7 @@ void k_main()
                 const char* utf8 = key_to_utf8(&event);
                 while (utf8 && *utf8) {
                     term_putchar(*utf8, TC_WHITE);
+                    append(utf8, cmdbuffer);
                     utf8++;
                 }
                 break;
