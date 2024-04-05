@@ -12,11 +12,17 @@
 - [x] Keyboard Input
 - [ ] Multi-Tasking
 
-### Command Line Interface
+### Command Line Interface (CLI)
 - [x] Scrolling
 - [x] Barebones CLI (no commands)
 - [ ] Command Input Detection
 - [ ] Standard "echo" command
+
+### Filesystem
+- [ ] FAT Support
+- [ ] Custom Filesystem (CFS)
+- [ ] ext4 (Linux) Support
+- [ ] NTFS (Windows) Support
 
 ### Graphics
 - [x] 4-bit colour support (16 colours/Standard DOS colours)
@@ -29,10 +35,6 @@
 - [ ] Sound Blaster 16
 - [ ] Audio Codec '97
 - [ ] Intel High Definition Audio
-
-### File Management
-- [ ] FAT Support
-- [ ] Custom File System
 
 ### Networking/Internet
 - [ ] Standard networking support
