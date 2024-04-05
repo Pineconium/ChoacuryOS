@@ -100,8 +100,6 @@ void k_main()
         }
 
         switch (event.key) {
-
-            /// TOFIX: Figure out why the fuck is it making a bunch of 1/4 symbols?
             case KEY_Backspace:
                 term_write("\b \b", TC_WHITE);
                 backspace(cmdbuffer);    // <-- Removes last char from the buffer.
