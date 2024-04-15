@@ -52,11 +52,15 @@ void StartUp_Beeps() {
     mutebeep();
 }
 
+/* This is how commands work */
 void userinput(char* buffer){
-  if(strcmp(buffer,"test")==0){
-    // command working
+  if(strcmp(buffer, "hello")==0){
+    // TOFIX: Why the hell isn't this working...
+    // if prints, terminal commands work!
+    term_write("Hello from Terminal\n", TC_WHITE);
   }
 }
+
 
 /* A Simple kernel written in C */
 void k_main() 
