@@ -55,12 +55,13 @@ void StartUp_Beeps() {
 /* This is how commands work */
 void userinput(char* buffer){
   if(strcmp(buffer, "hello")==0){
-    // TOFIX: Why the hell isn't this working...
     // if prints, terminal commands work!
     term_write("Hello from Terminal\n", TC_WHITE);
   }
+  if(strcmp(buffer, "cls")==0){
+    term_clear();
+  }
 }
-
 
 /* A Simple kernel written in C */
 void k_main() 
@@ -70,7 +71,7 @@ void k_main()
 
     /* Display Info Message */
     term_init(VGA_WIDTH, VGA_HEIGHT, vga_set_char, vga_move_cursor);
-    term_write("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0\n", TC_LBLUE);
+    term_write("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0\n", TC_LIME);
     term_write("Version: Build " __DATE__ " (Terminal Testing)\n", TC_WHITE);
     term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
 
@@ -122,7 +123,7 @@ void k_main()
                 const char* utf8 = key_to_utf8(&event);
                 while (utf8 && *utf8) {
                     term_putchar(*utf8, TC_WHITE);
-                    append(*utf8, cmdbuffer);
+                    append(cmdbuffer, *utf8);
                     utf8++;
                 }
                 break;
