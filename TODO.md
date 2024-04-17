@@ -14,8 +14,9 @@
 
 ### Command Line Interface (CLI)
 - [x] Scrolling
-- [x] Barebones CLI (no commands)
-- [ ] Command Input Detection
+- [x] Barebones CLI
+- [x] Terminal Commands (w/o Arguements)
+- [x] Command Input Detection
 - [ ] Standard "echo" command
 
 ### Filesystem
@@ -26,7 +27,7 @@
 
 ### Graphics
 - [x] 4-bit colour support (16 colours/Standard DOS colours)
-- [ ] 8-bit colour support (256 colours)
+- [ ] 8-bit colour support (256 colours/ANSI Support)
 - [ ] High-colour/True colour support (>=256 colours)
 - [ ] Graphical Shell (GUI)
 
