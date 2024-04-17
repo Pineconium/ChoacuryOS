@@ -31,6 +31,7 @@ SRCS :=								\
 	kernel/kernel.c					\
 	kernel/krnentry.asm				\
 	kernel/panic.c					\
+	shell/shell.c					\
 	shell/terminal.c				\
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))

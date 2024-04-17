@@ -15,8 +15,8 @@
 #include "../drivers/types.h"
 #include "../drivers/vga.h"
 #include "../drivers/pci.h"
+#include "../shell/shell.h"
 #include "../shell/terminal.h"
-#include "../shell/string_mang.h"               // <-- Cool little string system...
 
 /* Startup Beep*/
 void StartUp_Beeps() {
@@ -26,27 +26,6 @@ void StartUp_Beeps() {
     startbeep(775);
     pit_sleep_ms(50);
     mutebeep();
-}
-
-/* This is how commands work */
-void userinput(char* buffer){
-    // TODO: Add arguments into commands (e.g. "echo [STRING]")
-  if(strcmp(buffer, "hello")==0){
-    // Standard Testing commands
-    term_write("Hello from Terminal\n", TC_WHITE);
-  }
-  if(strcmp(buffer, "help")==0){
-    term_write("LIST OF COMMANDS\n", TC_WHITE);
-    term_write("help            - Hello there! I'm the Help Command!\n", TC_WHITE);
-    term_write("compdate        - Shows the compilation date.\n", TC_WHITE);
-    term_write("cls             - Clears the screen.\n", TC_WHITE);
-  }
-  if(strcmp(buffer, "cls")==0){
-    term_clear();
-  }
-  if(strcmp(buffer, "compdate")==0){
-    term_write(__DATE__ "\n", TC_WHITE);
-  }
 }
 
 /* A Simple kernel written in C */
@@ -77,43 +56,5 @@ void k_main()
     /* Print PCI devices */
     debug_print_pci();
 
-    char cmdbuffer[32];
-
-    for (;;) {
-        key_event_t event;
-        ps2_get_key_event(&event);
-        if (event.key == KEY_NONE) {
-            asm volatile("hlt");
-            continue;
-        }
-        if (event.modifiers & KEY_EVENT_MODIFIERS_RELEASED) {
-            continue;
-        }
-
-        switch (event.key) {
-            case KEY_Backspace:
-                term_write("\b \b", TC_WHITE);
-                backspace(cmdbuffer);    // <-- Removes last char from the buffer.
-                break;
-            case KEY_Enter:
-                term_putchar('\n', TC_WHITE);
-                userinput(cmdbuffer);
-                cmdbuffer[0] = '\0';
-                break;
-            case KEY_LeftCtrl:
-                startbeep(800);
-                pit_sleep_ms(15);
-                mutebeep();
-                break;
-            default: {
-                const char* utf8 = key_to_utf8(&event);
-                while (utf8 && *utf8) {
-                    term_putchar(*utf8, TC_WHITE);
-                    append(cmdbuffer, *utf8);
-                    utf8++;
-                }
-                break;
-            }
-        }
-    }
+    shell_start();
 };
