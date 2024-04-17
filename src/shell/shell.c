@@ -113,10 +113,10 @@ void shell_start() {
             default: {
                 const char* utf8 = key_to_utf8(&event);
                 while (utf8 && *utf8) {
-                    term_putchar(*utf8, TC_WHITE);
                     if (command_length >= sizeof(command_buffer) - 1) {
                         break;
                     }
+                    term_putchar(*utf8, TC_WHITE);
                     command_buffer[command_length] = *utf8;
                     command_length++;
                     utf8++;
