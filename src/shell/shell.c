@@ -1,9 +1,9 @@
 #include "../drivers/pit.h"
 #include "../drivers/ps2_keyboard.h"
 #include "../drivers/sound.h"
+#include "../drivers/utils.h"
 #include "../drivers/vga.h"
 #include "shell.h"
-#include "string_mang.h"
 #include "terminal.h"
 
 #define MAX_COMMAND_LENGTH 256
