@@ -11,36 +11,12 @@
 #include "../drivers/pit.h"
 #include "../drivers/ps2.h"
 #include "../drivers/keymaps/ps2_keymap_us.h"   // <-- US Keyboard Layout.
+#include "../drivers/sound.h"
 #include "../drivers/types.h"
 #include "../drivers/vga.h"
 #include "../drivers/pci.h"
 #include "../shell/terminal.h"
 #include "../shell/string_mang.h"               // <-- Cool little string system...
-
-/* PC Speaker Stuff */
-static void startbeep(__UINT32_TYPE__ nFrequence) {
-    __UINT32_TYPE__ Div;
-    __UINT8_TYPE__ tmp;
-
-    /* Sets the PIT to the desired freq */
-    Div = 1193180 / nFrequence;
-    port_byte_out(0x43, 0xb6);
-    port_byte_out(0x42, (__UINT8_TYPE__) (Div));
-    port_byte_out(0x42, (__UINT8_TYPE__) (Div >> 8));
-
-    /* Now lets actually BEEP */
-    tmp = port_byte_in(0x61);
-    if (tmp != (tmp | 3)) {
-        port_byte_out(0x61, tmp | 3);
-    }
-}
-
-/* Make the beeper shut up */
-static void mutebeep() {
-    __UINT8_TYPE__ tmp = port_byte_in(0x61) & 0xFC;
-
-    port_byte_out(0x61, tmp);
-}
 
 /* Startup Beep*/
 void StartUp_Beeps() {

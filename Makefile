@@ -24,6 +24,7 @@ SRCS :=								\
 	drivers/keymaps/ps2_keymap_fi.c	\
 	drivers/keymaps/ps2_keymap_us.c	\
 	drivers/ps2.c					\
+	drivers/sound.c					\
 	drivers/ssp.c					\
 	drivers/utils.c					\
 	drivers/vga.c					\
