@@ -54,12 +54,22 @@ void StartUp_Beeps() {
 
 /* This is how commands work */
 void userinput(char* buffer){
+    // TODO: Add arguments into commands (e.g. "echo [STRING]")
   if(strcmp(buffer, "hello")==0){
-    // if prints, terminal commands work!
+    // Standard Testing commands
     term_write("Hello from Terminal\n", TC_WHITE);
+  }
+  if(strcmp(buffer, "help")==0){
+    term_write("LIST OF COMMANDS\n", TC_WHITE);
+    term_write("help            - Hello there! I'm the Help Command!\n", TC_WHITE);
+    term_write("compdate        - Shows the compilation date.\n", TC_WHITE);
+    term_write("cls             - Clears the screen.\n", TC_WHITE);
   }
   if(strcmp(buffer, "cls")==0){
     term_clear();
+  }
+  if(strcmp(buffer, "compdate")==0){
+    term_write(__DATE__ "\n", TC_WHITE);
   }
 }
 
