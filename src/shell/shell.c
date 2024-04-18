@@ -21,9 +21,46 @@ static void handle_command(int argc, const char** argv) {
     }
     else if (strcmp(argv[0], "help") == 0) {
         term_write("LIST OF COMMANDS\n", TC_WHITE);
-        term_write("help            - Hello there! I'm the Help Command!\n", TC_WHITE);
-        term_write("compdate        - Shows the compilation date.\n", TC_WHITE);
-        term_write("cls             - Clears the screen.\n", TC_WHITE);
+        term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
+        term_write("beep (FREQ)(timems) - PC Beeper control. \n", TC_WHITE);
+        term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
+        term_write("cls                 - Clears the screen.\n", TC_WHITE);
+        term_write("echo (string)       - Prints string to the console\n", TC_WHITE);   // <-- Work in progress.
+    }
+    else if (strcmp(argv[0], "echo") == 0) {
+        term_write(argv[1], TC_WHITE);  // <-- Prints the first word (will be fixed!)
+        term_write("\n", TC_WHITE);
+    }
+    else if (strcmp(argv[0], "beep") == 0) {
+        if (argc >= 4) {
+            term_write("ERROR 3: Too much arguments.", TC_LRED);
+            term_write("\n", TC_LRED);
+        }
+        else {
+            if (atoi_pos(argv[1]) == -1) {
+                term_write("ERROR 2: Arg1 is not an interger\n", TC_LRED);
+            }
+            else {
+                if (atoi_pos(argv[2]) == -1) {
+                    int beeplength = 500; // <-- Default beep length (500ms)
+                    startbeep(atoi_pos(argv[1]));
+                    pit_sleep_ms(beeplength);
+                    mutebeep();
+                }
+                else if (argc == 2) {
+                    int beeplength = 500; // <-- Default beep length (500ms)
+                    startbeep(atoi_pos(argv[1]));
+                    pit_sleep_ms(beeplength);
+                    mutebeep();
+                }
+                else {
+                    int beeplength = atoi_pos(argv[2]);
+                    startbeep(atoi_pos(argv[1]));
+                    pit_sleep_ms(beeplength);
+                    mutebeep();
+                }
+            }
+        }
     }
     else if (strcmp(argv[0], "cls") == 0) {
         term_clear();
@@ -32,7 +69,7 @@ static void handle_command(int argc, const char** argv) {
         term_write(__DATE__ "\n", TC_WHITE);
     }
     else {
-        term_write("Unknown command: ", TC_YELLO);
+        term_write("ERROR 1: Unknown command: ", TC_YELLO);
         term_write(argv[0], TC_YELLO);
         term_write("\n", TC_YELLO);
     }

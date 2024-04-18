@@ -36,6 +36,23 @@ void iota(int n, char str[]) {
     str[i] = '\0';
 }
 
+// String to interger (for positive numbers)
+int atoi_pos(const char* str) {
+    int result = 0;
+    while (*str) {
+        if (*str < '0' || *str > '9') {
+            return -1;
+        }
+        result = (result * 10) + (*str - '0');
+        str++;
+    }
+    return result;
+}
+
+// String to interger (for negative numbers)
+// TODO: Copy ATOI_POS's code and modifiy it for negative numbers
+
+
 int strlen(const char *str) {
 	int i = 0;
 	while (str[i]) {
