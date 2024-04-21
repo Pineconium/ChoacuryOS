@@ -33,33 +33,29 @@ static void handle_command(int argc, const char** argv) {
     }
     else if (strcmp(argv[0], "beep") == 0) {
         if (argc >= 4) {
-            term_write("ERROR 3: Too much arguments.", TC_LRED);
+            term_write("ERROR 3: Too many arguments.", TC_LRED);
             term_write("\n", TC_LRED);
         }
         else {
-            if (atoi_pos(argv[1]) == -1) {
-                term_write("ERROR 2: Arg1 is not an interger\n", TC_LRED);
-            }
-            else {
-                if (atoi_pos(argv[2]) == -1) {
-                    int beeplength = 500; // <-- Default beep length (500ms)
-                    startbeep(atoi_pos(argv[1]));
-                    pit_sleep_ms(beeplength);
-                    mutebeep();
-                }
-                else if (argc == 2) {
-                    int beeplength = 500; // <-- Default beep length (500ms)
-                    startbeep(atoi_pos(argv[1]));
-                    pit_sleep_ms(beeplength);
-                    mutebeep();
-                }
-                else {
-                    int beeplength = atoi_pos(argv[2]);
-                    startbeep(atoi_pos(argv[1]));
-                    pit_sleep_ms(beeplength);
-                    mutebeep();
-                }
-            }
+			atoi_result_t frequency = atoi(argv[1]);
+			if (!frequency.valid) {
+				term_write("ERROR 2: Arg1 is not an interger\n", TC_LRED);
+				return;
+			}
+
+			// default beep length (500 ms)
+			atoi_result_t duration = { .valid = true, .value = 500 };
+			if (argc >= 3) {
+				duration = atoi(argv[2]);
+			}
+			if (!duration.valid) {
+				term_write("ERROR 2: Arg2 is not an interger\n", TC_LRED);
+				return;
+			}
+
+			startbeep(frequency.value);
+			pit_sleep_ms(duration.value);
+			mutebeep();
         }
     }
     else if (strcmp(argv[0], "cls") == 0) {
