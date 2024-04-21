@@ -1,10 +1,15 @@
 #include "debug.h"
 #include "ports.h"
 
+void dprintchar(char c)
+{
+    port_byte_out(0x3F8, c);
+}
+
 void dprint(const char* message)
 {
     for (int i = 0; message[i]; i++) {
-        port_byte_out(0x3F8, message[i]);
+        dprintchar(message[i]);
     }
 }
 
@@ -15,9 +20,29 @@ void dprintln(const char* message)
 }
 
 void dprintbyte(u8 byte) {
-    char buffer[3];
-    buffer[0] = ((byte >>   4) < 10) ? (byte >>   4) + '0' : (byte >>   4) - 10 + 'a';
-    buffer[1] = ((byte & 0x0F) < 10) ? (byte & 0x0F) + '0' : (byte & 0x0F) - 10 + 'a';
-    buffer[2] = '\0';
-    dprint(buffer);
+    dprintchar(((byte >>   4) < 10) ? (byte >>   4) + '0' : (byte >>   4) - 10 + 'a');
+    dprintchar(((byte & 0x0F) < 10) ? (byte & 0x0F) + '0' : (byte & 0x0F) - 10 + 'a');
+}
+
+void dprintint(s64 value) {
+    if (value < 0) {
+        dprint("-");
+        value = -value;
+    }
+
+    if (value == 0) {
+        dprint("0");
+        return;
+    }
+
+    char buffer[21];
+    int len = 0;
+    while (value > 0) {
+        buffer[len++] = (value % 10) + '0';
+        value /= 10;
+    }
+
+    for (int i = len - 1; i >= 0; i--) {
+        dprintchar(buffer[i]);
+    }
 }
