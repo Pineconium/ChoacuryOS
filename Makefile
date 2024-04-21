@@ -25,6 +25,8 @@ SRCS :=								\
 	drivers/keymaps/ps2_keymap_us.c	\
 	drivers/ps2.c					\
 	drivers/sound.c					\
+	drivers/storage/ata.c			\
+	drivers/storage/device.c		\
 	drivers/ssp.c					\
 	drivers/utils.c					\
 	drivers/vga.c					\
@@ -52,7 +54,7 @@ iso: kernel
 	grub-mkrescue -o $(BUILD_DIR)/ChoacuryOS.iso $(ISO_DIR)
 
 run: iso
-	qemu-system-x86_64 -cdrom $(BUILD_DIR)/ChoacuryOS.iso -serial stdio -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0
+	qemu-system-x86_64 -hda $(BUILD_DIR)/ChoacuryOS.iso -serial stdio -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0
 
 clean:
 	rm -rf $(BUILD_DIR) $(ISO_DIR)
