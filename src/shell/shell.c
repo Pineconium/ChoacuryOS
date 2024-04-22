@@ -28,39 +28,38 @@ static void handle_command(int argc, const char** argv) {
         term_write("echo (string)       - Prints string to the console\n", TC_WHITE);   // <-- Work in progress.
     }
     else if (strcmp(argv[0], "echo") == 0) {
-        term_write(argv[1], TC_WHITE);  // <-- Prints the first word (will be fixed!)
+        for (int i = 1; i < argc; i++) {
+            if (i > 1)
+                term_write(" ", TC_WHITE);
+            term_write(argv[i], TC_WHITE);
+        }
         term_write("\n", TC_WHITE);
     }
     else if (strcmp(argv[0], "beep") == 0) {
-        if (argc >= 4) {
-            term_write("ERROR 3: Too much arguments.", TC_LRED);
-            term_write("\n", TC_LRED);
+        if (argc != 2 && argc != 3) {
+            term_write("ERROR: Usage: beep frequency [duration]\n", TC_LRED);
+            return;
         }
-        else {
-            if (atoi_pos(argv[1]) == -1) {
-                term_write("ERROR 2: Arg1 is not an interger\n", TC_LRED);
-            }
-            else {
-                if (atoi_pos(argv[2]) == -1) {
-                    int beeplength = 500; // <-- Default beep length (500ms)
-                    startbeep(atoi_pos(argv[1]));
-                    pit_sleep_ms(beeplength);
-                    mutebeep();
-                }
-                else if (argc == 2) {
-                    int beeplength = 500; // <-- Default beep length (500ms)
-                    startbeep(atoi_pos(argv[1]));
-                    pit_sleep_ms(beeplength);
-                    mutebeep();
-                }
-                else {
-                    int beeplength = atoi_pos(argv[2]);
-                    startbeep(atoi_pos(argv[1]));
-                    pit_sleep_ms(beeplength);
-                    mutebeep();
-                }
-            }
+
+        atoi_result_t frequency = atoi(argv[1]);
+        if (!frequency.valid) {
+            term_write("ERROR: Frequency is not an interger\n", TC_LRED);
+            return;
         }
+
+        // default beep length (500 ms)
+        atoi_result_t duration = { .valid = true, .value = 500 };
+        if (argc >= 3) {
+            duration = atoi(argv[2]);
+        }
+        if (!duration.valid) {
+            term_write("ERROR: Duration is not an interger\n", TC_LRED);
+            return;
+        }
+
+        startbeep(frequency.value);
+        pit_sleep_ms(duration.value);
+        mutebeep();
     }
     else if (strcmp(argv[0], "cls") == 0) {
         term_clear();
@@ -69,7 +68,7 @@ static void handle_command(int argc, const char** argv) {
         term_write(__DATE__ "\n", TC_WHITE);
     }
     else {
-        term_write("ERROR 1: Unknown command: ", TC_YELLO);
+        term_write("ERROR: Unknown command: ", TC_YELLO);
         term_write(argv[0], TC_YELLO);
         term_write("\n", TC_YELLO);
     }

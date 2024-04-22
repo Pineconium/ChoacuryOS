@@ -12,6 +12,7 @@
 #include "../drivers/ps2.h"
 #include "../drivers/keymaps/ps2_keymap_us.h"   // <-- US Keyboard Layout.
 #include "../drivers/sound.h"
+#include "../drivers/storage/device.h"
 #include "../drivers/types.h"
 #include "../drivers/vga.h"
 #include "../drivers/pci.h"
@@ -52,6 +53,9 @@ void k_main()
     ps2_init_keymap_us();
 
     StartUp_Beeps();
+
+    /* Initialize storage devices */
+    storage_device_init();
 
     /* Print PCI devices */
     debug_print_pci();

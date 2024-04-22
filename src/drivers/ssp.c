@@ -17,3 +17,9 @@ void __stack_chk_fail(void)
 {
 	panic("Stack smashing detected");
 }
+
+__attribute__((noreturn))
+void __stack_chk_fail_local(void)
+{
+	__stack_chk_fail();
+}
