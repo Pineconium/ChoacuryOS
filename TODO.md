@@ -3,23 +3,28 @@
 ### Barebones
 
 - [x] Compiler (Linux).
-- [ ] Compiler (Windows).
+- [x] Compiler (Windows).
 - [x] Makefile.
 - [x] Cursor Control.
 
 ### Kernel
 - [x] String Message.
-- [x] Keyboard Input.
+- [x] Keyboard Input (PS/2 Only)
 - [ ] Multi-Tasking.
+
+### Extra Drivers
+- [ ] USB Keyboard Support
 
 ### Command Line Interface (CLI)
 - [x] Scrolling.
 - [x] Barebones CLI.
 - [x] Terminal Commands.
 - [x] Command Input Detection.
-- [ ] Standard "echo" command. (W.I.P)
+- [x] Standard "echo" command.
 
 ### Filesystem
+- [x] Barebones.
+- [ ] Control from CLI.
 - [ ] FAT Support.
 - [ ] Custom Filesystem (CFS).
 - [ ] ext4 (Linux) Support.
@@ -28,7 +33,7 @@
 ### Graphics
 - [x] 4-bit colour support (16/Standard DOS colours).
 - [ ] 8-bit colour support (256 colours/ANSI Support).
-- [ ] High-colour/True colour support (>=256 colours).
+- [ ] High-colour/True colour support (beyond 8-bit/>=256 colours).
 - [ ] Graphical Shell (GUI).
 
 ### Audio
