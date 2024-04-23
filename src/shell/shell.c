@@ -14,9 +14,8 @@ static void handle_command(int argc, const char** argv) {
         return;
     }
 
-    // TODO: Add arguments into commands (e.g. "echo [STRING]")
     if (strcmp(argv[0], "hello") == 0) {
-        // Standard Testing commands
+        // Standard Testing command
         term_write("Hello from Terminal\n", TC_WHITE);
     }
     else if (strcmp(argv[0], "help") == 0) {
@@ -25,7 +24,8 @@ static void handle_command(int argc, const char** argv) {
         term_write("beep (FREQ)(timems) - PC Beeper control. \n", TC_WHITE);
         term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
         term_write("cls                 - Clears the screen.\n", TC_WHITE);
-        term_write("echo (string)       - Prints string to the console\n", TC_WHITE);   // <-- Work in progress.
+        term_write("echo (string)       - Prints string to the console\n", TC_WHITE);
+        // term_write("pchar (HEX)(COLOUR) - Prints a CP437 char. to the console\n", TC_WHITE); <-- Planned addition
     }
     else if (strcmp(argv[0], "echo") == 0) {
         for (int i = 1; i < argc; i++) {
@@ -37,7 +37,7 @@ static void handle_command(int argc, const char** argv) {
     }
     else if (strcmp(argv[0], "beep") == 0) {
         if (argc != 2 && argc != 3) {
-            term_write("ERROR: Usage: beep frequency [duration]\n", TC_LRED);
+            term_write("ERROR: Usage: beep [freq.] [duration]\n", TC_LRED);
             return;
         }
 
