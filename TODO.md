@@ -24,6 +24,7 @@
 
 ### Filesystem
 - [x] Barebones.
+- [ ] Detection from CLI (W.I.P)
 - [ ] Control from CLI.
 - [ ] FAT Support.
 - [ ] Custom Filesystem (CFS).
