@@ -3,6 +3,8 @@
 #include "../drivers/sound.h"
 #include "../drivers/utils.h"
 #include "../drivers/vga.h"
+#include "../drivers/storage/device.h"
+#include "../drivers/storage/ata.h"
 #include "shell.h"
 #include "terminal.h"
 
@@ -25,6 +27,7 @@ static void handle_command(int argc, const char** argv) {
         term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
         term_write("cls                 - Clears the screen.\n", TC_WHITE);
         term_write("echo (string)       - Prints string to the console\n", TC_WHITE);
+        term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
         // term_write("pchar (HEX)(COLOUR) - Prints a CP437 char. to the console\n", TC_WHITE); <-- Planned addition
     }
     else if (strcmp(argv[0], "echo") == 0) {
@@ -63,6 +66,20 @@ static void handle_command(int argc, const char** argv) {
     }
     else if (strcmp(argv[0], "cls") == 0) {
         term_clear();
+    }
+
+    /* Placeholder File system access func. */
+    else if (strcmp(argv[0], "pl") == 0) {
+        atoi_result_t DriveCounter = atoi(g_storage_device_count);
+
+        if (!DriveCounter.valid) {
+            term_write("No known storage devices are detected.\n", TC_WHITE);
+        }
+        else {
+            term_write("Found ", TC_WHITE);
+            term_write("REPLACE ME!", TC_WHITE);     // <-- Replace with proper driver counter
+            term_write(" storage device(s).\n", TC_WHITE);
+        }
     }
     else if (strcmp(argv[0], "compdate") == 0) {
         term_write(__DATE__ "\n", TC_WHITE);
@@ -104,7 +121,7 @@ static void parse_command(char* command, unsigned length) {
     handle_command(argument_count, arguments);
 }
 
-// main shell loop
+/* Main CLI shell stuff. */
 void shell_start() {
     char command_buffer[MAX_COMMAND_LENGTH];
     unsigned command_length = 0;
@@ -115,13 +132,13 @@ void shell_start() {
         key_event_t event;
         ps2_get_key_event(&event);
 
-        // If no key is pressed, halt the CPU until interrupt
+        /* Halt the CPU until an interrupt if theres no input */
         if (event.key == KEY_NONE) {
             asm volatile("hlt");
             continue;
         }
 
-        // Discard key release events
+        /* Discard key release events */
         if (event.modifiers & KEY_EVENT_MODIFIERS_RELEASED) {
             continue;
         }
@@ -141,7 +158,7 @@ void shell_start() {
                 }
                 term_write("> ", TC_WHITE);
                 break;
-            case KEY_LeftCtrl:
+            case KEY_LeftCtrl:      // <-- Replace with Ctrl+G (Bell command on most other systems)
                 startbeep(800);
                 pit_sleep_ms(15);
                 mutebeep();
