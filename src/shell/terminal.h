@@ -10,3 +10,4 @@ void term_clear();
 void term_putchar(char ch, u8 color);
 void term_set_cursor(u32 x, u32 y);
 void term_write(const char* message, u8 color);
+void term_write_u32(u32 value, u8 base, u8 color);

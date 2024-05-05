@@ -15,3 +15,4 @@ atoi_result_t atoi(const char*);
 
 int strlen(const char *str);
 int strcmp(const char *str1, const char *str2);
+int strcpy(char *dest, const char *src);

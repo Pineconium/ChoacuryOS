@@ -77,3 +77,13 @@ int strcmp(const char *str1, const char *str2) {
 	}
 	return *str1 - *str2;
 }
+
+int strcpy(char *dest, const char *src) {
+	int i = 0;
+	while (src[i]) {
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return i;
+}

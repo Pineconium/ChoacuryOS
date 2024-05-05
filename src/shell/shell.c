@@ -4,7 +4,6 @@
 #include "../drivers/utils.h"
 #include "../drivers/vga.h"
 #include "../drivers/storage/device.h"
-#include "../drivers/storage/ata.h"
 #include "shell.h"
 #include "terminal.h"
 
@@ -70,15 +69,18 @@ static void handle_command(int argc, const char** argv) {
 
     /* Placeholder File system access func. */
     else if (strcmp(argv[0], "pl") == 0) {
-        atoi_result_t DriveCounter = atoi(g_storage_device_count);
+        term_write("Storage Devices: ", TC_WHITE);
+        term_write_u32(g_storage_device_count, 10, TC_WHITE);
+        term_write("\n", TC_WHITE);
+        for (int i = 0; i < g_storage_device_count; i++) {
+            storage_device_t* device = g_storage_devices[i];
+            u64 device_size = device->sector_count * device->sector_size;
 
-        if (!DriveCounter.valid) {
-            term_write("No known storage devices are detected.\n", TC_WHITE);
-        }
-        else {
-            term_write("Found ", TC_WHITE);
-            term_write("REPLACE ME!", TC_WHITE);     // <-- Replace with proper driver counter
-            term_write(" storage device(s).\n", TC_WHITE);
+            term_write("  ", TC_WHITE);
+            term_write(device->model, TC_WHITE);
+            term_write(" (", TC_WHITE);
+            term_write_u32(device_size / 1024 / 1024, 10, TC_WHITE);
+            term_write(" MiB)\n", TC_WHITE);
         }
     }
     else if (strcmp(argv[0], "compdate") == 0) {
