@@ -1,5 +1,6 @@
 #include "ata.h"
 #include "device.h"
+#include "partition.h"
 #include <stddef.h>
 
 int g_storage_device_count ;
@@ -12,6 +13,10 @@ int storage_device_init() {
     }
 
     ata_controller_init();
+
+	for (int i = 0; i < g_storage_device_count; i++) {
+		partition_probe(g_storage_devices[i]);
+	}
 
     return g_storage_device_count;
 }
