@@ -158,3 +158,31 @@ void term_write(const char* message, u8 color) {
 	/* update shown cursor position */
 	s_term_info.move_cursor(s_term_info.col, s_term_info.row);
 }
+
+static char get_digit_char(int digit) {
+	if (digit < 10) {
+		return '0' + digit;
+	}
+	return 'A' + (digit - 10);
+}
+
+void term_write_u32(u32 value, u8 base, u8 color) {
+	if (value == 0) {
+		term_putchar('0', color);
+		return;
+	}
+
+	char buffer[33];
+	buffer[sizeof(buffer) - 1] = 0;
+
+	// Build the integer string in reverse order
+	char* ptr = buffer + sizeof(buffer) - 1;
+	while (value != 0) {
+		int digit = value % base;
+		*--ptr = get_digit_char(digit);
+		value /= base;
+	}
+
+	// Write the integer to the terminal
+	term_write(ptr, color);
+}
