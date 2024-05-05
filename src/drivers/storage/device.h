@@ -10,6 +10,7 @@ typedef struct {
     bool (*write_sectors)(void* self, const void* buffer, u64 sector, u64 count);
     u64 sector_count;
     u32 sector_size;
+    const char* model;
 } storage_device_t;
 
 // Initialize all storage devices

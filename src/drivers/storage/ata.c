@@ -1,5 +1,6 @@
 #include "../debug.h"
 #include "../ports.h"
+#include "../utils.h"
 #include "ata.h"
 #include "device.h"
 
@@ -32,6 +33,7 @@ typedef struct {
     u16 io_base;
     u16 control_base;
     u8 index;
+    char model[41];
 } ata_device_t;
 
 // FIXME: this should be dynamic
@@ -203,9 +205,11 @@ static void ata_bus_init(u16 io_base, u16 control_base) {
         g_ata_devices[g_ata_device_count].device.write_sectors = ata_write_sectors;
         g_ata_devices[g_ata_device_count].device.sector_count = sector_count;
         g_ata_devices[g_ata_device_count].device.sector_size = sector_size;
+        g_ata_devices[g_ata_device_count].device.model = g_ata_devices[g_ata_device_count].model;
         g_ata_devices[g_ata_device_count].io_base = io_base;
         g_ata_devices[g_ata_device_count].control_base = control_base;
         g_ata_devices[g_ata_device_count].index = i;
+        strcpy(g_ata_devices[g_ata_device_count].model, model);
         g_ata_device_count++;
     }
 }
