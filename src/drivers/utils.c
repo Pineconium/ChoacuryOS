@@ -24,6 +24,17 @@ void memory_set(u8 *dest, u8 val, u32 len) {
     }
 }
 
+int memcmp(const void *a, const void *b, u32 len) {
+	const u8* a_u8 = (const u8*)a;
+	const u8* b_u8 = (const u8*)b;
+	for (u32 i = 0; i < len; i++) {
+		if (a_u8[i] != b_u8[i]) {
+			return (int)a_u8[i] - (int)b_u8[i];
+		}
+	}
+	return 0;
+}
+
 void iota(int n, char str[]) {
     int i, sign;
     if ((sign = n) < 0) n = -n;
