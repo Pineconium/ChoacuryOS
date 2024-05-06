@@ -1,5 +1,3 @@
 #!/bin/bash
-# Just run all of the makefile commands
-make all
-make iso
+# Just the Makefile run target
 make run
