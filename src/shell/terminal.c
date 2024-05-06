@@ -6,6 +6,9 @@
 //        for VGA and no "general" ones.
 #include "../drivers/vga.h"
 
+#include <kernel/panic.h>
+#include <memory/kmalloc.h>
+
 typedef struct {
 	u8 ch;
 	u8 color;
@@ -20,10 +23,7 @@ typedef struct {
 	u32 row;
 	u32 col;
 
-	// FIXME: This should be dynamically allocated
-	//        according to terminal size when memory
-	//        allocator is written.
-	term_cell_t buffer[80 * 25];
+	term_cell_t* buffer;
 } term_info_t;
 
 static term_info_t s_term_info;
@@ -33,6 +33,10 @@ void term_init(u32 width, u32 height, set_char_t set_char, move_cursor_t move_cu
 	s_term_info.height = height;
 	s_term_info.set_char = set_char;
 	s_term_info.move_cursor = move_cursor;
+	s_term_info.buffer = kmalloc(width * height * sizeof(term_cell_t));
+	if (s_term_info.buffer == NULL) {
+		panic("Failed to allocate memory for terminal buffer");
+	}
 	term_clear();
 }
 
