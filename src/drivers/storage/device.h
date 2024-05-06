@@ -3,8 +3,6 @@
 #include "../types.h"
 #include <stdbool.h>
 
-#define MAX_STORAGE_DEVICES 16
-
 typedef struct {
     bool (*read_sectors)(void* self, void* buffer, u64 sector, u64 count);
     bool (*write_sectors)(void* self, const void* buffer, u64 sector, u64 count);
@@ -17,5 +15,8 @@ typedef struct {
 // Returns the number of storage devices found
 int storage_device_init();
 
+// Add a storage device to the list of storage devices
+void storage_device_add(storage_device_t* device);
+
 extern int g_storage_device_count;
-extern storage_device_t* g_storage_devices[MAX_STORAGE_DEVICES];
+extern storage_device_t** g_storage_devices;

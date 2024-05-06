@@ -3,6 +3,7 @@
 #include "../utils.h"
 #include "ata.h"
 #include "device.h"
+#include <memory/kmalloc.h>
 
 #define ATA_IO_REG_DATA 0
 #define ATA_IO_REG_ERROR 1
@@ -35,10 +36,6 @@ typedef struct {
     u8 index;
     char model[41];
 } ata_device_t;
-
-// FIXME: this should be dynamic
-static ata_device_t g_ata_devices[4];
-static int g_ata_device_count = 0;
 
 // 400 ns delay
 static void ata_select_delay(u16 control_base) {
@@ -201,16 +198,22 @@ static void ata_bus_init(u16 io_base, u16 control_base) {
         dprintint(sector_count * sector_size / 1024 / 1024);
         dprintln(" MB)");
 
-        g_ata_devices[g_ata_device_count].device.read_sectors = ata_read_sectors;
-        g_ata_devices[g_ata_device_count].device.write_sectors = ata_write_sectors;
-        g_ata_devices[g_ata_device_count].device.sector_count = sector_count;
-        g_ata_devices[g_ata_device_count].device.sector_size = sector_size;
-        g_ata_devices[g_ata_device_count].device.model = g_ata_devices[g_ata_device_count].model;
-        g_ata_devices[g_ata_device_count].io_base = io_base;
-        g_ata_devices[g_ata_device_count].control_base = control_base;
-        g_ata_devices[g_ata_device_count].index = i;
-        strcpy(g_ata_devices[g_ata_device_count].model, model);
-        g_ata_device_count++;
+		ata_device_t* device = (ata_device_t*)kmalloc(sizeof(ata_device_t));
+		if (device == NULL) {
+			dprintln("ATA device: failed to allocate memory");
+			continue;
+		}
+
+        device->device.read_sectors = ata_read_sectors;
+        device->device.write_sectors = ata_write_sectors;
+        device->device.sector_count = sector_count;
+        device->device.sector_size = sector_size;
+        device->device.model = device->model;
+        device->io_base = io_base;
+        device->control_base = control_base;
+        device->index = i;
+        strcpy(device->model, model);
+		storage_device_add((storage_device_t*)device);
     }
 }
 
@@ -218,9 +221,4 @@ void ata_controller_init() {
     // FIXME: this should be done through PCI
     ata_bus_init(0x1F0, 0x3F6);
     ata_bus_init(0x170, 0x376);
-
-    // add all found devices to the list of storage devices
-    for (int i = 0; i < g_ata_device_count; i++) {
-        g_storage_devices[g_storage_device_count++] = (storage_device_t*)&g_ata_devices[i];
-    }
 }
