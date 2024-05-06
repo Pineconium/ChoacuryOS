@@ -9,17 +9,17 @@
 
 /* FIXME: This should be randomized by the bootloader.
           As the the kernel is WIP and there are no attackers
-		  this will find bugs and is much better than nothing. */
+          this will find bugs and is much better than nothing. */
 uptr __stack_chk_guard = STACK_CHK_GUARD;
 
 __attribute__((noreturn))
 void __stack_chk_fail(void)
 {
-	panic("Stack smashing detected");
+    panic("Stack smashing detected");
 }
 
 __attribute__((noreturn))
 void __stack_chk_fail_local(void)
 {
-	__stack_chk_fail();
+    __stack_chk_fail();
 }

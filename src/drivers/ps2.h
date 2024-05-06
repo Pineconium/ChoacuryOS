@@ -12,17 +12,17 @@
 typedef struct ps2_device_t {
     u8 type;
 
-	u8 byte_buffer_len;
-	u8 byte_buffer[PS2_BYTE_BUFFER_SIZE];
+    u8 byte_buffer_len;
+    u8 byte_buffer[PS2_BYTE_BUFFER_SIZE];
 
-	/* TODO: Add other types of events to this union */
-	u8 event_queue_len;
-	union {
-		struct {
-			ps2_key_event_t keyboard_event_queue[PS2_EVENT_QUEUE_SIZE];
-			ps2_keyboard_info keyboard_info;
-		};
-	};
+    /* TODO: Add other types of events to this union */
+    u8 event_queue_len;
+    union {
+        struct {
+            ps2_key_event_t keyboard_event_queue[PS2_EVENT_QUEUE_SIZE];
+            ps2_keyboard_info keyboard_info;
+        };
+    };
 } ps2_device_t;
 
 void ps2_init();

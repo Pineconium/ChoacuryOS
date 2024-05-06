@@ -18,6 +18,7 @@
 #include "../drivers/pci.h"
 #include "../shell/shell.h"
 #include "../shell/terminal.h"
+#include <memory/kmalloc.h>
 
 /* Startup Beep*/
 void StartUp_Beeps() {
@@ -30,10 +31,11 @@ void StartUp_Beeps() {
 }
 
 /* A Simple kernel written in C */
-void k_main() 
+void k_main()
 {
     gdt_init();
     idt_init();
+    kmalloc_init();
 
     /* Display Info Message */
     term_init(VGA_WIDTH, VGA_HEIGHT, vga_set_char, vga_move_cursor);

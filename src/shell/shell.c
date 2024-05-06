@@ -81,6 +81,17 @@ static void handle_command(int argc, const char** argv) {
             term_write(" (", TC_WHITE);
             term_write_u32(device_size / 1024 / 1024, 10, TC_WHITE);
             term_write(" MiB)\n", TC_WHITE);
+
+            for (u32 j = 0; j < device->partition_count; j++) {
+                storage_device_t* partition = device->partitions[j];
+                u64 partition_size = partition->sector_count * partition->sector_size;
+
+                term_write("    ", TC_WHITE);
+                term_write(partition->model, TC_WHITE);
+                term_write(" (", TC_WHITE);
+                term_write_u32(partition_size / 1024 / 1024, 10, TC_WHITE);
+                term_write(" MiB)\n", TC_WHITE);
+            }
         }
     }
     else if (strcmp(argv[0], "compdate") == 0) {

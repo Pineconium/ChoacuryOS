@@ -20,7 +20,7 @@ typedef struct {
      * Bits 6-5: Privilege level of caller (0=kernel -> 3=user)
      * Bit 4: Set to 0 for interrupt gates
      * Bits 3-0: bits 1110 = decimal 14 = "32 bit interrupt gate" */
-    u8 flags; 
+    u8 flags;
     u16 high_offset; // <-- Higher 16 bits of handler function address
 } __attribute__((packed)) idt_gate_t ;
 
@@ -108,7 +108,7 @@ static void set_idt_gate(int n, void (*handler)()) {
     idt[n].low_offset = ((uptr)handler >> 0) & 0xFFFF;
     idt[n].sel = KERNEL_CS;
     idt[n].always0 = 0;
-    idt[n].flags = 0x8E; 
+    idt[n].flags = 0x8E;
     idt[n].high_offset = ((uptr)handler >> 16) & 0xFFFF;
 }
 
@@ -131,8 +131,8 @@ static void idt_flush() {
 #undef X
 
 void idt_init() {
-    memory_set((u8*)idt, 0, sizeof(idt));
-    memory_set((u8*)irq_handlers, 0, sizeof(irq_handlers));
+    memset(idt, 0, sizeof(idt));
+    memset(irq_handlers, 0, sizeof(irq_handlers));
 
     idt_reg.base = idt;
     idt_reg.limit = sizeof(idt) - 1;

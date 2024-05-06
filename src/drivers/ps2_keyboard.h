@@ -5,11 +5,11 @@
 #include <stdbool.h>
 
 typedef struct {
-	key_event_t key_event;
+   key_event_t key_event;
 } ps2_key_event_t;
 
 typedef struct {
-	u8 modifiers;
+    u8 modifiers;
 } ps2_keyboard_info;
 
 typedef struct ps2_device_t ps2_device_t;
