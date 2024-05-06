@@ -24,6 +24,7 @@
 
 ### Filesystem
 - [x] Barebones.
+- [x] GPT Partitioning Support
 - [ ] Detection from CLI (W.I.P)
 - [ ] Control from CLI.
 - [ ] FAT Support.
