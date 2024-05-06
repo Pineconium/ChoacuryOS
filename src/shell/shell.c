@@ -1,3 +1,5 @@
+/* The Choacury CLI Shell */
+
 #include "../drivers/pit.h"
 #include "../drivers/ps2_keyboard.h"
 #include "../drivers/sound.h"
@@ -16,10 +18,12 @@ static void handle_command(int argc, const char** argv) {
     }
 
     if (strcmp(argv[0], "hello") == 0) {
-        // Standard Testing command
+        /* Basic testing command */
         term_write("Hello from Terminal\n", TC_WHITE);
     }
     else if (strcmp(argv[0], "help") == 0) {
+        // TOADD:
+        // - Proper file and directory creation and deletion commands, like DIR, MKDIR, MKFILE, etc.
         term_write("LIST OF COMMANDS\n", TC_WHITE);
         term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
         term_write("beep (FREQ)(timems) - PC Beeper control. \n", TC_WHITE);
@@ -49,8 +53,8 @@ static void handle_command(int argc, const char** argv) {
             return;
         }
 
-        // default beep length (500 ms)
-        atoi_result_t duration = { .valid = true, .value = 500 };
+        /* Use the default beep length if no value has been set by the user */
+        atoi_result_t duration = { .valid = true, .value = 500 };    // <-- 500 ms
         if (argc >= 3) {
             duration = atoi(argv[2]);
         }
@@ -104,9 +108,9 @@ static void handle_command(int argc, const char** argv) {
     }
 }
 
-// parse command buffer to null-terminated list of arguments
+/* Parse command buffer to a null-terminated list of arguments */
 static void parse_command(char* command, unsigned length) {
-    // make sure command buffer is null-terminated
+    /* Make sure that the command buffer is null-terminated */
     command[length] = 0;
 
     const char* arguments[MAX_ARGUMENTS];
@@ -145,7 +149,7 @@ void shell_start() {
         key_event_t event;
         ps2_get_key_event(&event);
 
-        /* Halt the CPU until an interrupt if theres no input */
+        /* Halt the CPU until an interrupt if there is no input */
         if (event.key == KEY_NONE) {
             asm volatile("hlt");
             continue;
@@ -171,7 +175,7 @@ void shell_start() {
                 }
                 term_write("> ", TC_WHITE);
                 break;
-            case KEY_LeftCtrl:      // <-- Replace with Ctrl+G (Bell command on most other systems)
+            case KEY_LeftCtrl:      // TODO: <-- Replace with Ctrl+G (Bell command on most other systems)
                 startbeep(800);
                 pit_sleep_ms(15);
                 mutebeep();
