@@ -196,7 +196,7 @@ static void ata_bus_init(u16 io_base, u16 control_base) {
         dprint(model);
         dprint("' (");
         dprintint(sector_count * sector_size / 1024 / 1024);
-        dprintln(" MB)");
+        dprintln(" MiB)");
 
         ata_device_t* device = (ata_device_t*)kmalloc(sizeof(ata_device_t));
         if (device == NULL) {
@@ -213,6 +213,7 @@ static void ata_bus_init(u16 io_base, u16 control_base) {
         device->control_base = control_base;
         device->index = i;
         strcpy(device->model, model);
+
         storage_device_add((storage_device_t*)device);
     }
 }

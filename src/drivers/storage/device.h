@@ -3,12 +3,14 @@
 #include "../types.h"
 #include <stdbool.h>
 
-typedef struct {
+typedef struct storage_device_t {
     bool (*read_sectors)(void* self, void* buffer, u64 sector, u64 count);
     bool (*write_sectors)(void* self, const void* buffer, u64 sector, u64 count);
     u64 sector_count;
     u32 sector_size;
     const char* model;
+    struct storage_device_t** partitions;
+    u32 partition_count;
 } storage_device_t;
 
 // Initialize all storage devices
