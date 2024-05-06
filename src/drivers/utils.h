@@ -8,8 +8,8 @@ void* memset(void *dest, int val, size_t len);
 int memcmp(const void *a, const void *b, size_t len);
 
 typedef struct {
-	bool valid;
-	int value;
+    bool valid;
+    int value;
 } atoi_result_t;
 atoi_result_t atoi(const char*);
 

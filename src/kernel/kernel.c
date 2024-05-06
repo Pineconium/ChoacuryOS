@@ -31,7 +31,7 @@ void StartUp_Beeps() {
 }
 
 /* A Simple kernel written in C */
-void k_main() 
+void k_main()
 {
     gdt_init();
     idt_init();

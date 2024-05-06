@@ -22,7 +22,7 @@ struct kmalloc_node* next_node(struct kmalloc_node* node) {
 void kmalloc_init() {
     struct kmalloc_node* node = (struct kmalloc_node*)s_kmalloc_static;
     node->free = 1;
-    node->data_size = (s_kmalloc_static + sizeof(s_kmalloc_static)) - node->data;	
+    node->data_size = (s_kmalloc_static + sizeof(s_kmalloc_static)) - node->data;
 }
 
 void* kmalloc(size_t size) {

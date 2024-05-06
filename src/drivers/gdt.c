@@ -13,7 +13,7 @@ typedef struct {
     u8 access;
     u8 limit1 : 4;
     u8 flags : 4;
-    u8 base2;	
+    u8 base2;
 } __attribute__((packed)) segment_descriptor_t;
 
 static GDTR s_gdtr;

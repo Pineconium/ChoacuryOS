@@ -20,29 +20,29 @@
 static volatile u64 s_system_time = 0;
 
 static void pit_irq_handler() {
-	s_system_time++;
+    s_system_time++;
 }
 
 void pit_init() {
-	port_byte_out(PIT_CTL, SELECT_CHANNEL0 | ACCESS_LO | ACCESS_HI | MODE_SQUARE_WAVE);
+    port_byte_out(PIT_CTL, SELECT_CHANNEL0 | ACCESS_LO | ACCESS_HI | MODE_SQUARE_WAVE);
 
-	// tick every ms
-	const u16 timer_reload = BASE_FREQUENCY / 1000;
-	port_byte_out(TIMER0_CTL, (timer_reload >> 0) & 0xff);
-	port_byte_out(TIMER0_CTL, (timer_reload >> 8) & 0xff);
+    // tick every ms
+    const u16 timer_reload = BASE_FREQUENCY / 1000;
+    port_byte_out(TIMER0_CTL, (timer_reload >> 0) & 0xff);
+    port_byte_out(TIMER0_CTL, (timer_reload >> 8) & 0xff);
 
-	s_system_time = 0;
+    s_system_time = 0;
 
-	idt_register_irq_handler(PIT_IRQ, pit_irq_handler);
-	pic_unmask(PIT_IRQ);
+    idt_register_irq_handler(PIT_IRQ, pit_irq_handler);
+    pic_unmask(PIT_IRQ);
 }
 
 void pit_sleep_ms(u64 ms) {
-	u64 wake_time = s_system_time + ms;
-	while (s_system_time < wake_time)
-		continue;
+    u64 wake_time = s_system_time + ms;
+    while (s_system_time < wake_time)
+        continue;
 }
 
 u64 pit_current_time_ms() {
-	return s_system_time;
+    return s_system_time;
 }

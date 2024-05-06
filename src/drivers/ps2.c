@@ -120,7 +120,7 @@ static int ps2_device_send_byte_and_wait_ack(ps2_device_t* device, u8 byte) {
         if (resp == -1) {
             return -1;
         }
-    
+
         resp = ps2_read_byte();
         if (resp == -1)
             return -1;
@@ -219,7 +219,7 @@ static void ps2_irq_handler(ps2_device_t* device) {
                     s_command_queue_read++;
                 }
             } else if (byte == PS2_DEVICE_RESEND) {
-				command->state = PS2_STATE_NORMAL;
+                command->state = PS2_STATE_NORMAL;
             }
         } else if (command->state == PS2_STATE_WAIT_RESP) {
             if (--command->resp_size <= 0) {
@@ -374,7 +374,7 @@ void ps2_init() {
         pic_unmask(PS2_INTERRUPT_SECOND);
         config |= PS2_CONFIG_INTERRUPT_SECOND;
     }
-    
+
     TRY(ps2_controller_send_command_with_data(PS2_COMMAND_WRITE_CONFIG, config));
     ps2_update_command_queue();
 }
