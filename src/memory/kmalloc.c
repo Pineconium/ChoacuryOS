@@ -26,17 +26,17 @@ void kmalloc_init() {
 }
 
 void* kmalloc(size_t size) {
-    // Validate allocation size
+    /* Validate allocation size */
     if (size == 0 || size >= sizeof(s_kmalloc_static)) {
         return NULL;
     }
 
-    // Align size to 16 bytes
+    /* Aligns to 16 bytes */
     if (size % 16 != 0) {
         size += 16 - (size % 16);
     }
 
-    // Find a free node
+    /* Find any free node... */
     struct kmalloc_node* node = (struct kmalloc_node*)s_kmalloc_static;
     while (node->data_size < size || !node->free) {
         struct kmalloc_node* next = next_node(node);
@@ -50,7 +50,7 @@ void* kmalloc(size_t size) {
         }
     }
 
-    // Split node if it's too big
+    /* ..and split it if its too big */
     if (node->data_size > size + sizeof(struct kmalloc_node)) {
         struct kmalloc_node* new_node = (struct kmalloc_node*)(node->data + size);
         new_node->data_size = node->data_size - size - sizeof(struct kmalloc_node);
@@ -58,7 +58,7 @@ void* kmalloc(size_t size) {
         node->data_size = size;
     }
 
-    // Mark node as used
+    /* Mark it as used */
     node->free = false;
 
     return node->data;
@@ -69,18 +69,18 @@ void kfree(void* ptr) {
         return;
     }
 
-    // Validate that the pointer is within the static memory
+    /* Check if the pointer is inside the vaild memory range */
     if ((u8*)ptr < s_kmalloc_static || (u8*)ptr >= s_kmalloc_static + sizeof(s_kmalloc_static)) {
-        panic("kfree called with pointer outside of kmalloc memory");
+        panic("kfree called with pointer outside of the kmalloc memory");
     }
 
     struct kmalloc_node* node = (struct kmalloc_node*)((u8*)ptr - sizeof(struct kmalloc_node));
 
-    // Confirm that the node is used
+    /* Check if its used */
     if (node->free) {
-        panic("kfree called with pointer that is already free");
+        panic("kfree called with an already free pointer");
     }
 
-    // Mark node as free
+    /* And mark it as free */
     node->free = true;
 }
