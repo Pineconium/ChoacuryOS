@@ -6,7 +6,7 @@ CC  := gcc
 LD  := ld
 ASM := nasm
 
-CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra
+CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra -Werror -I$(SRC_DIR)
 ASMFLAGS := -f elf32
 LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
@@ -35,6 +35,7 @@ SRCS :=								\
 	kernel/kernel.c					\
 	kernel/krnentry.asm				\
 	kernel/panic.c					\
+	memory/kmalloc.c				\
 	shell/shell.c					\
 	shell/terminal.c				\
 
