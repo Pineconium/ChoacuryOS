@@ -131,8 +131,8 @@ static void idt_flush() {
 #undef X
 
 void idt_init() {
-    memory_set((u8*)idt, 0, sizeof(idt));
-    memory_set((u8*)irq_handlers, 0, sizeof(irq_handlers));
+    memset(idt, 0, sizeof(idt));
+    memset(irq_handlers, 0, sizeof(irq_handlers));
 
     idt_reg.base = idt;
     idt_reg.limit = sizeof(idt) - 1;

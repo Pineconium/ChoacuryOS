@@ -76,7 +76,7 @@ static void term_scroll() {
 	for (u32 y = 1; y < s_term_info.height; y++) {
 		term_cell_t* row1 = &s_term_info.buffer[(y - 1) * s_term_info.width];
 		term_cell_t* row2 = &s_term_info.buffer[(y - 0) * s_term_info.width];
-		memory_move((u8*)row1, (u8*)row2, s_term_info.width * sizeof(term_cell_t));
+		memmove(row1, row2, s_term_info.width * sizeof(term_cell_t));
 	}
 
 	/* clear last line */

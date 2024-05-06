@@ -2,7 +2,7 @@
 #include "../utils.h"
 
 void ps2_init_keymap_us() {
-	memory_set((u8*)ps2_keymap_normal, 0x00, sizeof(ps2_keymap_normal));
+	memset(ps2_keymap_normal, 0x00, sizeof(ps2_keymap_normal));
 	ps2_keymap_normal[0x01] = KEY_F9;
 	ps2_keymap_normal[0x03] = KEY_F5;
 	ps2_keymap_normal[0x04] = KEY_F3;
@@ -90,7 +90,7 @@ void ps2_init_keymap_us() {
 	ps2_keymap_normal[0x7D] = KEY_Numpad9;
 	ps2_keymap_normal[0x83] = KEY_F7;
 
-	memory_set((u8*)ps2_keymap_shift, 0x00, sizeof(ps2_keymap_shift));
+	memset(ps2_keymap_shift, 0x00, sizeof(ps2_keymap_shift));
 	ps2_keymap_shift[0x01] = KEY_F9;
 	ps2_keymap_shift[0x03] = KEY_F5;
 	ps2_keymap_shift[0x04] = KEY_F3;
@@ -178,7 +178,7 @@ void ps2_init_keymap_us() {
 	ps2_keymap_shift[0x7D] = KEY_Numpad9;
 	ps2_keymap_shift[0x83] = KEY_F7;
 
-	memory_set((u8*)ps2_keymap_extended, 0x00, sizeof(ps2_keymap_extended));
+	memset(ps2_keymap_extended, 0x00, sizeof(ps2_keymap_extended));
 	ps2_keymap_extended[0x11] = KEY_AltGr;
 	ps2_keymap_extended[0x14] = KEY_RightCtrl;
 	ps2_keymap_extended[0x15] = KEY_MediaPrevious;

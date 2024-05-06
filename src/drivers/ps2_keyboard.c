@@ -140,7 +140,7 @@ void ps2_get_key_event(key_event_t* out) {
 
 		/* Shift other events */
 		device->event_queue_len--;
-		memory_move(
+		memmove(
 			(u8*)&device->keyboard_event_queue[0],
 			(u8*)&device->keyboard_event_queue[1],
 			device->event_queue_len * sizeof(key_event_t)

@@ -1,27 +1,35 @@
 #include "utils.h"
 
-void memory_copy(u8 *dest, const u8 *source, u32 nbytes) {
-    for (u32 i = 0; i < nbytes; i++) {
-        dest[i] = source[i];
+void* memcpy(void* dst, const void* src, size_t len) {
+	u8* dst_u8 = (u8*)dst;
+	const u8* src_u8 = (const u8*)src;
+    for (size_t i = 0; i < len; i++) {
+        dst_u8[i] = src_u8[i];
     }
+	return dst;
 }
 
-void memory_move(u8 *dest, const u8 *source, u32 nbytes) {
-    if (dest < source) {
-		for (u32 i = 0; i < nbytes; i++) {
-			dest[i] = source[i];
+void* memmove(void* dst, const void* src, size_t len) {
+	u8* dst_u8 = (u8*)dst;
+	const u8* src_u8 = (const u8*)src;
+    if (dst_u8 < src_u8) {
+		for (size_t i = 0; i < len; i++) {
+			dst_u8[i] = src_u8[i];
         }
 	} else {
-		for (u32 i = 1; i <= nbytes; i++) {
-			dest[nbytes - i] = source[nbytes - i];
+		for (u32 i = 1; i <= len; i++) {
+			dst_u8[len - i] = src_u8[len - i];
         }
 	}
+	return dst;
 }
 
-void memory_set(u8 *dest, u8 val, u32 len) {
-    for (; len != 0; len--) {
-        *dest++ = val;
-    }
+void* memset(void* dst, int val, size_t len) {
+	u8* dst_u8 = (u8*)dst;
+	for (size_t i = 0; i < len; i++) {
+		dst_u8[i] = val;
+	}
+	return dst;
 }
 
 int memcmp(const void *a, const void *b, u32 len) {
@@ -89,12 +97,23 @@ int strcmp(const char *str1, const char *str2) {
 	return *str1 - *str2;
 }
 
-int strcpy(char *dest, const char *src) {
+char* strcpy(char* dest, const char* src) {
 	int i = 0;
 	while (src[i]) {
 		dest[i] = src[i];
 		i++;
 	}
 	dest[i] = '\0';
-	return i;
+	return dest;
+}
+
+char* strcat(char* dest, const char* src) {
+	int len = strlen(dest);
+	int i = 0;
+	while (src[i]) {
+		dest[len + i] = src[i];
+		i++;
+	}
+	dest[len + i] = '\0';
+	return dest;
 }
