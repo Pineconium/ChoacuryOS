@@ -6,6 +6,7 @@
 void memory_copy(u8 *dest, const u8 *source, u32 nbytes);
 void memory_move(u8 *dest, const u8 *source, u32 nbytes);
 void memory_set(u8 *dest, u8 val, u32 len);
+int memcmp(const void *a, const void *b, u32 len);
 
 typedef struct {
 	bool valid;

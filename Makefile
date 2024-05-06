@@ -27,6 +27,8 @@ SRCS :=								\
 	drivers/sound.c					\
 	drivers/storage/ata.c			\
 	drivers/storage/device.c		\
+	drivers/storage/gpt.c			\
+	drivers/storage/partition.c		\
 	drivers/ssp.c					\
 	drivers/utils.c					\
 	drivers/vga.c					\
