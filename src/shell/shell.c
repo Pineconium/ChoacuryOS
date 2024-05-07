@@ -43,13 +43,13 @@ static void handle_command(int argc, const char** argv) {
     }
     else if (strcmp(argv[0], "beep") == 0) {
         if (argc != 2 && argc != 3) {
-            term_write("ERROR: Usage: beep [freq.] [duration]\n", TC_LRED);
+            term_write("ERROR: Usage -> beep [freq.] [duration]\n", TC_LRED);
             return;
         }
 
         atoi_result_t frequency = atoi(argv[1]);
         if (!frequency.valid) {
-            term_write("ERROR: Frequency is not an interger\n", TC_LRED);
+            term_write("ERROR: Frequency provided is not an interger\n", TC_LRED);
             return;
         }
 
@@ -59,7 +59,7 @@ static void handle_command(int argc, const char** argv) {
             duration = atoi(argv[2]);
         }
         if (!duration.valid) {
-            term_write("ERROR: Duration is not an interger\n", TC_LRED);
+            term_write("ERROR: Duration provided is not an interger\n", TC_LRED);
             return;
         }
 
@@ -71,9 +71,9 @@ static void handle_command(int argc, const char** argv) {
         term_clear();
     }
 
-    /* Placeholder File system access func. */
+    /* Show every detected storage device and their partitions */
     else if (strcmp(argv[0], "pl") == 0) {
-        term_write("Storage Devices: ", TC_WHITE);
+        term_write("Detected Devices: ", TC_WHITE);
         term_write_u32(g_storage_device_count, 10, TC_WHITE);
         term_write("\n", TC_WHITE);
         for (int i = 0; i < g_storage_device_count; i++) {
@@ -90,7 +90,9 @@ static void handle_command(int argc, const char** argv) {
                 storage_device_t* partition = device->partitions[j];
                 u64 partition_size = partition->sector_count * partition->sector_size;
 
-                term_write("    ", TC_WHITE);
+                term_write("  \xC0 ", TC_WHITE);        // <- Stylistic choice.
+                                                        // TOFIX: Use Hex C4 (├) for any other partition
+                                                        // and save Hex C0 (└) for that last partition in each list
                 term_write(partition->model, TC_WHITE);
                 term_write(" (", TC_WHITE);
                 term_write_u32(partition_size / 1024 / 1024, 10, TC_WHITE);
@@ -102,9 +104,8 @@ static void handle_command(int argc, const char** argv) {
         term_write(__DATE__ "\n", TC_WHITE);
     }
     else {
-        term_write("ERROR: Unknown command: ", TC_YELLO);
         term_write(argv[0], TC_YELLO);
-        term_write("\n", TC_YELLO);
+        term_write(" is not a valid command, file, or program.\n", TC_YELLO);
     }
 }
 
@@ -140,6 +141,7 @@ static void parse_command(char* command, unsigned length) {
 
 /* Main CLI shell stuff. */
 void shell_start() {
+    // TOADD: Ctrl Command Codes (i.e. Ctrl+C to close a program, etc.)
     char command_buffer[MAX_COMMAND_LENGTH];
     unsigned command_length = 0;
 
@@ -149,13 +151,13 @@ void shell_start() {
         key_event_t event;
         ps2_get_key_event(&event);
 
-        /* Halt the CPU until an interrupt if there is no input */
+        /* Halt the CPU until an interrupt if there is no input/ */
         if (event.key == KEY_NONE) {
             asm volatile("hlt");
             continue;
         }
 
-        /* Discard key release events */
+        /* Discard key release events. */
         if (event.modifiers & KEY_EVENT_MODIFIERS_RELEASED) {
             continue;
         }
