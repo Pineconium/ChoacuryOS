@@ -13,7 +13,7 @@
 - [ ] Multi-Tasking.
 
 ### Extra Drivers
-- [ ] USB Keyboard Support
+- [ ] USB Keyboard Support.
 
 ### Command Line Interface (CLI)
 - [x] Scrolling.
@@ -24,8 +24,8 @@
 
 ### Filesystem
 - [x] Barebones.
-- [x] GPT Partitioning Support
-- [ ] Detection from CLI (W.I.P)
+- [x] GPT Partitioning Support.
+- [x] Detection from CLI.
 - [ ] Control from CLI.
 - [ ] FAT Support.
 - [ ] Custom Filesystem (CFS).
@@ -47,3 +47,4 @@
 ### Networking/Internet
 - [ ] Standard networking support.
 - [ ] Ability to ping networks/servers.
+- [ ] Working Graphical Web Browser
