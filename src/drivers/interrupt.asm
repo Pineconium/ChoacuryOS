@@ -5,16 +5,16 @@ extern c_isr_handler
 extern c_irq_handler
 
 isr_stub:
-    ; save all registers
+    ; Save all registers
     pushad
 
-    ; push c arguments to stack
-    mov eax, [esp + 8*4] ; isr number
-    mov ebx, [esp + 9*4] ; error code
+    ; Push C arguments to stack
+    mov eax, [esp + 8*4] ; <- ISR number
+    mov ebx, [esp + 9*4] ; <- Error code
     push ebx
     push eax
 
-    ; call isr handler in c
+    ; Calls the C ISR Handler, I mean its pretty obvious by that name
     call c_isr_handler
 
     ; skip pushed arguments from stack and restore registers
@@ -25,14 +25,14 @@ isr_stub:
     iret
 
 irq_stub:
-    ; save all registers
+    ; Save all registers
     pushad
 
-    ; push irq number (c argument) to stack
+    ; Push IRQ number (a.k.a. A C argument) to stack
     mov eax, [esp + 8*4]
     push eax
 
-    ; call irq handler in c
+    ; Calls the C IRQ Handler
     call c_irq_handler
 
     ; skip pushed argument from stack and restore registers
