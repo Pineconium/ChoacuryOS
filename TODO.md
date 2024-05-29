@@ -26,7 +26,7 @@
 - [x] Barebones.
 - [x] GPT Partitioning Support.
 - [x] Detection from CLI.
-- [ ] Control from CLI.
+- [ ] Control from CLI. (as in stuff like `mkdir` and `format`)
 - [ ] FAT Support.
 - [ ] Custom Filesystem (CFS).
 - [ ] ext4 (Linux) Support.
