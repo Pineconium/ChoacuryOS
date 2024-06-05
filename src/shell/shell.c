@@ -1,5 +1,6 @@
 /* The Choacury CLI Shell */
 
+// TODO: Add filesystem control stuff when we get that added
 #include "../drivers/pit.h"
 #include "../drivers/ps2_keyboard.h"
 #include "../drivers/sound.h"
@@ -21,6 +22,7 @@ static void handle_command(int argc, const char** argv) {
         /* Basic testing command */
         term_write("Hello from Terminal\n", TC_WHITE);
     }
+
     else if (strcmp(argv[0], "help") == 0) {
         // TOADD:
         // - Proper file and directory creation and deletion commands, like DIR, MKDIR, MKFILE, etc.
@@ -29,10 +31,13 @@ static void handle_command(int argc, const char** argv) {
         term_write("beep (FREQ)(timems) - PC Beeper control. \n", TC_WHITE);
         term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
         term_write("cls                 - Clears the screen.\n", TC_WHITE);
-        term_write("echo (string)       - Prints string to the console\n", TC_WHITE);
+        term_write("echo (string)       - Prints string to the console.\n", TC_WHITE);
+        term_write("hang (timems)       - Hangs the terminal temporarily.\n", TC_WHITE);
+        term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE); // <-- I could merge them with the HANG command...
         term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
         // term_write("pchar (HEX)(COLOUR) - Prints a CP437 char. to the console\n", TC_WHITE); <-- Planned addition
     }
+
     else if (strcmp(argv[0], "echo") == 0) {
         for (int i = 1; i < argc; i++) {
             if (i > 1)
@@ -41,6 +46,7 @@ static void handle_command(int argc, const char** argv) {
         }
         term_write("\n", TC_WHITE);
     }
+
     else if (strcmp(argv[0], "beep") == 0) {
         if (argc != 2 && argc != 3) {
             term_write("ERROR: Usage -> beep [freq.] [duration]\n", TC_LRED);
@@ -67,8 +73,26 @@ static void handle_command(int argc, const char** argv) {
         pit_sleep_ms(duration.value);
         mutebeep();
     }
+
     else if (strcmp(argv[0], "cls") == 0) {
         term_clear();
+    }
+
+    else if (strcmp(argv[0], "hang") == 0) {
+        atoi_result_t duration = { .valid = true, .value = 500 };    // <-- 500 ms (DEFAULT VALUE)
+        if (argc >= 2) {
+            duration = atoi(argv[1]);
+        }
+        if (!duration.valid) {
+            term_write("ERROR: Duration provided is not an interger\n", TC_LRED);
+            return;
+        }
+
+        pit_sleep_ms(duration.value);
+    }
+
+    else if (strcmp(argv[0], "pause") == 0) {
+        pit_sleep_ms(250); // <-- Temp. code.
     }
 
     /* Show every detected storage device and their partitions */
@@ -100,9 +124,11 @@ static void handle_command(int argc, const char** argv) {
             }
         }
     }
+
     else if (strcmp(argv[0], "compdate") == 0) {
         term_write(__DATE__ "\n", TC_WHITE);
     }
+
     else {
         term_write(argv[0], TC_YELLO);
         term_write(" is not a valid command, file, or program.\n", TC_YELLO);
