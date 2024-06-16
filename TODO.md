@@ -27,6 +27,7 @@
 - [x] GPT Partitioning Support.
 - [x] Detection from CLI.
 - [ ] Control from CLI. (as in stuff like `mkdir` and `format`)
+- [ ] Virtual File System Driver
 - [ ] FAT Support.
 - [ ] Custom Filesystem (CFS).
 - [ ] ext4 (Linux) Support.
@@ -47,4 +48,5 @@
 ### Networking/Internet
 - [ ] Standard networking support.
 - [ ] Ability to ping networks/servers.
+- [ ] Ability to host a server
 - [ ] Working Graphical Web Browser
