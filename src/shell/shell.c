@@ -1,6 +1,5 @@
 /* The Choacury CLI Shell */
 
-// TODO: Add filesystem control stuff when we get that added
 #include "../drivers/pit.h"
 #include "../drivers/ps2_keyboard.h"
 #include "../drivers/sound.h"
