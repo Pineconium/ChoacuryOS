@@ -102,6 +102,12 @@ void term_putchar_no_cursor_update(char ch, u8 color) {
             s_term_info.col = 0;
             s_term_info.row++;
             break;
+		case '\t':
+			term_putchar_no_cursor_update(' ', color);
+			term_putchar_no_cursor_update(' ', color);
+			term_putchar_no_cursor_update(' ', color);
+			term_putchar_no_cursor_update(' ', color);
+			break;
         default: {
             // put character into buffer
             u32 offset = s_term_info.row * s_term_info.width + s_term_info.col;

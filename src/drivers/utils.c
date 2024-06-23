@@ -117,3 +117,17 @@ char* strcat(char* dest, const char* src) {
     dest[len + i] = '\0';
     return dest;
 }
+
+int tolower(int ch) {
+	if (ch < 'A' || ch > 'Z') {
+		return ch;
+	}
+	return ch - 'A' + 'a';
+}
+
+int toupper(int ch) {
+	if (ch < 'a' || ch > 'z') {
+		return ch;
+	}
+	return ch - 'a' + 'A';
+}

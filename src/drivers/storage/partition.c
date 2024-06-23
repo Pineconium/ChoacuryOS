@@ -18,7 +18,7 @@ static bool partition_read_sectors(void* self, void* buffer, u64 sector, u64 cou
         dprintln("Partition read: sector out of range");
         return false;
     }
-    return device->disk->read_sectors(device, buffer, device->first_sector + sector, count);
+    return device->disk->read_sectors(device->disk, buffer, device->first_sector + sector, count);
 }
 
 static bool partition_write_sectors(void* self, const void* buffer, u64 sector, u64 count) {
