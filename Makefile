@@ -1,6 +1,5 @@
 BUILD_DIR := build
 SRC_DIR   := src
-ISO_DIR   := isodir
 
 CC  := gcc
 LD  := ld
@@ -50,17 +49,14 @@ kernel: $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $(BUILD_DIR)/ChoacuryOS.bin
 	grub-file --is-x86-multiboot $(BUILD_DIR)/ChoacuryOS.bin	
 
-iso: kernel
-	@mkdir -p $(ISO_DIR)/boot/grub
-	cp $(BUILD_DIR)/ChoacuryOS.bin $(ISO_DIR)/boot/ChoacuryOS.bin
-	cp $(SRC_DIR)/boot/grub.cfg $(ISO_DIR)/boot/grub/grub.cfg
-	grub-mkrescue -o $(BUILD_DIR)/ChoacuryOS.iso $(ISO_DIR)
+img: kernel
+	./create-disk.sh
 
-run: iso
-	qemu-system-x86_64 -hda $(BUILD_DIR)/ChoacuryOS.iso -serial stdio -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0
+run: img
+	qemu-system-x86_64 -hda $(BUILD_DIR)/ChoacuryOS.img -serial stdio -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0
 
 clean:
-	rm -rf $(BUILD_DIR) $(ISO_DIR)
+	rm -rf $(BUILD_DIR)
 
 -include $(DEPS)
 
