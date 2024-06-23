@@ -1,16 +1,20 @@
 /* The Choacury CLI Shell */
 
+#include "../drivers/filesystem/fat.h"
 #include "../drivers/pit.h"
 #include "../drivers/ps2_keyboard.h"
 #include "../drivers/sound.h"
+#include "../drivers/storage/device.h"
 #include "../drivers/utils.h"
 #include "../drivers/vga.h"
-#include "../drivers/storage/device.h"
+#include "../memory/kmalloc.h"
 #include "shell.h"
 #include "terminal.h"
 
 #define MAX_COMMAND_LENGTH 256
 #define MAX_ARGUMENTS 128
+
+static FAT_filesystem_t* s_fat_fs = NULL;
 
 static void handle_command(int argc, const char** argv) {
     if (argc == 0) {
@@ -34,6 +38,8 @@ static void handle_command(int argc, const char** argv) {
         term_write("hang (timems)       - Hangs the terminal temporarily.\n", TC_WHITE);
         term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE); // <-- I could merge them with the HANG command...
         term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
+        term_write("cat                 - Print file contents.\n", TC_WHITE);
+        term_write("ls                  - List files in a directory.\n", TC_WHITE);
         // term_write("pchar (HEX)(COLOUR) - Prints a CP437 char. to the console\n", TC_WHITE); <-- Planned addition
     }
 
@@ -124,6 +130,80 @@ static void handle_command(int argc, const char** argv) {
         }
     }
 
+    else if (strcmp(argv[0], "cat") == 0) {
+        if (argc != 2) {
+            term_write("ERROR: Usage -> cat PATH\n", TC_LRED);
+            return;
+        }
+        if (s_fat_fs == NULL) {
+            term_write("ERROR: Not FAT filesystem initialized\n", TC_LRED);
+            return;
+        }
+
+        FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, argv[1]);
+		if (file == NULL) {
+			term_write("ERROR: Not found: '", TC_LRED);
+			term_write(argv[1], TC_LRED);
+			term_write("'\n", TC_LRED);
+			FAT_Close(file);
+			return;
+		}
+
+		char buffer[513];
+        size_t total_read = 0;
+        while (true) {
+            size_t nread = FAT_Read(file, total_read, buffer, sizeof(buffer) - 1);
+            if (nread == 0) {
+                break;
+            }
+
+            buffer[nread] = '\0';
+            term_write(buffer, TC_WHITE);
+
+            total_read += nread;
+        }
+
+        FAT_Close(file);
+    }
+
+	else if (strcmp(argv[0], "ls") == 0) {
+        if (argc > 2) {
+            term_write("ERROR: Usage -> ls [PATH]\n", TC_LRED);
+            return;
+        }
+        if (s_fat_fs == NULL) {
+            term_write("ERROR: Not FAT filesystem initialized\n", TC_LRED);
+            return;
+        }
+
+		const char* path = (argc == 2) ? argv[1] : "";
+
+        FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, path);
+		if (file == NULL) {
+			term_write("ERROR: Not found: '", TC_LRED);
+			term_write(argv[1], TC_LRED);
+			term_write("'\n", TC_LRED);
+			FAT_Close(file);
+			return;
+		}
+
+		char** names = NULL;
+		size_t count = FAT_ListFiles(file, &names);
+		if (names == NULL) {
+			term_write("EHH??", TC_YELLO);
+			return;
+		}
+		for (size_t i = 0; i < count; i++) {
+			term_write(names[i], TC_WHITE);
+			term_putchar(' ', TC_WHITE);
+			kfree(names[i]);
+		}
+		term_putchar('\n', TC_WHITE);
+		kfree(names);
+
+		FAT_Close(file);
+	}
+
     else if (strcmp(argv[0], "compdate") == 0) {
         term_write(__DATE__ "\n", TC_WHITE);
     }
@@ -166,6 +246,16 @@ static void parse_command(char* command, unsigned length) {
 
 /* Main CLI shell stuff. */
 void shell_start() {
+
+    // FIXME: This should be done in vfs
+    s_fat_fs = FAT_Init(g_storage_devices[0]->partitions[1]);
+    if (s_fat_fs == NULL) {
+        term_write("Could not initialize FAT from storage_device[0], partition[1]\n", TC_YELLO);
+    }
+    else {
+        term_write("Initialized FAT!\n", TC_WHITE);
+    }
+
     // TOADD: Ctrl Command Codes (i.e. Ctrl+C to close a program, etc.)
     char command_buffer[MAX_COMMAND_LENGTH];
     unsigned command_length = 0;
