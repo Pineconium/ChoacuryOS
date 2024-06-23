@@ -11,6 +11,7 @@ LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
 SRCS :=								\
 	drivers/debug.c					\
+	drivers/filesystem/fat.c		\
 	drivers/gdt.c					\
 	drivers/idt.c					\
 	drivers/interrupt.asm			\
