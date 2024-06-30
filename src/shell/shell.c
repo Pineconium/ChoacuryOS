@@ -15,6 +15,7 @@
 #define MAX_ARGUMENTS 128
 
 static FAT_filesystem_t* s_fat_fs = NULL;
+char currentDir[] = "root";                 // <-- The current directory for stuff like 'CD' (WIP)
 
 static void handle_command(int argc, const char** argv) {
     if (argc == 0) {
@@ -31,15 +32,17 @@ static void handle_command(int argc, const char** argv) {
         // - Proper file and directory creation and deletion commands, like DIR, MKDIR, MKFILE, etc.
         term_write("LIST OF COMMANDS\n", TC_WHITE);
         term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
-        term_write("beep (FREQ)(timems) - PC Beeper control. \n", TC_WHITE);
+        term_write("beep (FREQ)(timems) - PC Beeper control. \n", TC_WHITE);        
+        term_write("cat                 - Print file contents.\n", TC_WHITE);
+        term_write("cd                  - Changes the current directory", TC_WHITE);
         term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
         term_write("cls                 - Clears the screen.\n", TC_WHITE);
         term_write("echo (string)       - Prints string to the console.\n", TC_WHITE);
         term_write("hang (timems)       - Hangs the terminal temporarily.\n", TC_WHITE);
+        term_write("ls                  - List files in a directory.\n", TC_WHITE);
         term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE); // <-- I could merge them with the HANG command...
         term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
-        term_write("cat                 - Print file contents.\n", TC_WHITE);
-        term_write("ls                  - List files in a directory.\n", TC_WHITE);
+        
         // term_write("pchar (HEX)(COLOUR) - Prints a CP437 char. to the console\n", TC_WHITE); <-- Planned addition
     }
 
@@ -130,6 +133,19 @@ static void handle_command(int argc, const char** argv) {
         }
     }
 
+    else if (strcmp(argv[0], "cd") == 0) {
+        if(argc != 2){
+            term_write("ERROR: Usage -> cd PATH\n", TC_LRED);
+            return;
+        }
+        if (s_fat_fs == NULL) {
+            term_write("ERROR: Not FAT filesystem initialized\n", TC_LRED);
+            return;
+        }
+
+        // TOADD: The actuall CD stuff
+    }
+
     else if (strcmp(argv[0], "cat") == 0) {
         if (argc != 2) {
             term_write("ERROR: Usage -> cat PATH\n", TC_LRED);
@@ -206,6 +222,10 @@ static void handle_command(int argc, const char** argv) {
 
     else if (strcmp(argv[0], "compdate") == 0) {
         term_write(__DATE__ "\n", TC_WHITE);
+    }
+    else if (strcmp(argv[0], "whereami") == 0) {
+        term_write(currentDir, TC_WHITE);
+        term_write("\n", TC_WHITE);
     }
 
     else {
@@ -290,6 +310,7 @@ void shell_start() {
                     parse_command(command_buffer, command_length);
                     command_length = 0;
                 }
+                term_write(currentDir, TC_LIME);
                 term_write("> ", TC_WHITE);
                 break;
             case KEY_LeftCtrl:      // TODO: <-- Replace with Ctrl+G (Bell command on most other systems)
