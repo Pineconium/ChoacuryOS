@@ -84,20 +84,7 @@ static void handle_command(int argc, const char** argv) {
     else if (strcmp(argv[0], "cls") == 0) {
         term_clear();
     }
-
-    else if (strcmp(argv[0], "hang") == 0) {
-        atoi_result_t duration = { .valid = true, .value = 500 };    // <-- 500 ms (DEFAULT VALUE)
-        if (argc >= 2) {
-            duration = atoi(argv[1]);
-        }
-        if (!duration.valid) {
-            term_write("ERROR: Duration provided is not an interger\n", TC_LRED);
-            return;
-        }
-
-        pit_sleep_ms(duration.value);
-    }
-
+    
     else if (strcmp(argv[0], "pause") == 0) {
         if(strcmp(argv[1], "-t") == 0) {
             atoi_result_t duration = { .valid = true, .value = 500 };    // <-- 500 ms
@@ -293,7 +280,7 @@ static void parse_command(char* command, unsigned length) {
 /* Main CLI shell stuff. */
 void shell_start() {
 
-    // FIXME: This should be done in vfs
+    // FIXME: This should be done in vfs.
     s_fat_fs = FAT_Init(g_storage_devices[0]->partitions[1]);
     if (s_fat_fs == NULL) {
         term_write("Could not initialize FAT from storage_device[0], partition[1]\n", TC_YELLO);
@@ -306,6 +293,7 @@ void shell_start() {
     char command_buffer[MAX_COMMAND_LENGTH];
     unsigned command_length = 0;
 
+    term_write(currentDir, TC_LIME);
     term_write("> ", TC_WHITE);
 
     for (;;) {
@@ -339,8 +327,8 @@ void shell_start() {
                 term_write(currentDir, TC_LIME);
                 term_write("> ", TC_WHITE);
                 break;
-            case KEY_LeftCtrl:      // TODO: <-- Replace with Ctrl+G (Bell command on most other systems)
-                startbeep(800);
+            case KEY_LeftCtrl:      // TODO: <-- Replace with Ctrl+G (a.k.a the bell command on most other OSs)
+                startbeep(600);
                 pit_sleep_ms(15);
                 mutebeep();
                 break;
