@@ -34,13 +34,12 @@ static void handle_command(int argc, const char** argv) {
         term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
         term_write("beep (FREQ)(timems) - PC Beeper control. \n", TC_WHITE);        
         term_write("cat                 - Print file contents.\n", TC_WHITE);
-        term_write("cd                  - Changes the current directory", TC_WHITE);
+        term_write("cd                  - Changes the current directory\n", TC_WHITE);
         term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
         term_write("cls                 - Clears the screen.\n", TC_WHITE);
         term_write("echo (string)       - Prints string to the console.\n", TC_WHITE);
-        term_write("hang (timems)       - Hangs the terminal temporarily.\n", TC_WHITE);
         term_write("ls                  - List files in a directory.\n", TC_WHITE);
-        term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE); // <-- I could merge them with the HANG command...
+        term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
         term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
         
         // term_write("pchar (HEX)(COLOUR) - Prints a CP437 char. to the console\n", TC_WHITE); <-- Planned addition
@@ -100,7 +99,24 @@ static void handle_command(int argc, const char** argv) {
     }
 
     else if (strcmp(argv[0], "pause") == 0) {
-        pit_sleep_ms(250); // <-- Temp. code.
+        if(strcmp(argv[1], "-t") == 0) {
+            atoi_result_t duration = { .valid = true, .value = 500 };    // <-- 500 ms
+            if (argc >= 3) {
+                duration = atoi(argv[2]);
+            }
+            if (!duration.valid) {
+                term_write("ERROR: Duration provided is not an interger\n", TC_LRED);
+                return;
+            }
+            pit_sleep_ms(duration.value);
+        }
+        else if(strcmp(argv[1], "-k") == 0) {
+            term_write("Press any key to continue.\n", TC_WHITE);
+            asm("hlt");
+        }
+        else{
+            term_write("ERROR: Invaild option/choice.\n", TC_LRED);
+        }
     }
 
     /* Show every detected storage device and their partitions */
@@ -133,6 +149,16 @@ static void handle_command(int argc, const char** argv) {
         }
     }
 
+    else if (strcmp(argv[0], "chstat") == 0) {
+        /* this is basically a stupid neofetch clone */
+        term_write("BUILD: ", TC_LBLUE);
+        term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
+        term_write("RAM: ", TC_LBLUE);
+        term_write("RAM Counter goes here" "\n", TC_WHITE); // <-- Obviously a placeholder
+        term_write("CPU: ", TC_LBLUE);
+        term_write("CPU Info code goes here" "\n", TC_WHITE);
+    }
+
     else if (strcmp(argv[0], "cd") == 0) {
         if(argc != 2){
             term_write("ERROR: Usage -> cd PATH\n", TC_LRED);
@@ -143,7 +169,7 @@ static void handle_command(int argc, const char** argv) {
             return;
         }
 
-        // TOADD: The actuall CD stuff
+        // TOADD: The actual CD stuff
     }
 
     else if (strcmp(argv[0], "cat") == 0) {

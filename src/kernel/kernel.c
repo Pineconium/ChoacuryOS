@@ -40,7 +40,7 @@ void k_main()
     /* Display Info Message */
     term_init(VGA_WIDTH, VGA_HEIGHT, vga_set_char, vga_move_cursor);
     term_write("\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0\n", TC_LIME);
-    term_write("Version: Build " __DATE__ " (Terminal Testing)\n", TC_WHITE);
+    term_write("Version: Build " __DATE__ " (FS Testing)\n", TC_WHITE);
     term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
 
     pic_init();     // <-- Enable clock stuff
