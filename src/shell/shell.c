@@ -28,21 +28,45 @@ static void handle_command(int argc, const char** argv) {
     }
 
     else if (strcmp(argv[0], "help") == 0) {
-        // TOADD:
-        // - Proper file and directory creation and deletion commands, like DIR, MKDIR, MKFILE, etc.
-        term_write("LIST OF COMMANDS\n", TC_WHITE);
-        term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
-        term_write("beep (FREQ)(timems) - PC Beeper control. \n", TC_WHITE);        
-        term_write("cat                 - Print file contents.\n", TC_WHITE);
-        term_write("cd                  - Changes the current directory\n", TC_WHITE);
-        term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
-        term_write("cls                 - Clears the screen.\n", TC_WHITE);
-        term_write("echo (string)       - Prints string to the console.\n", TC_WHITE);
-        term_write("ls                  - List files in a directory.\n", TC_WHITE);
-        term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
-        term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
-        
-        // term_write("pchar (HEX)(COLOUR) - Prints a CP437 char. to the console\n", TC_WHITE); <-- Planned addition
+        /* actual help information, might need to be rewriten in the future */
+        if (strcmp(argv[1], "calc") == 0) {
+            term_write("CALC\n\n", TC_WHITE);
+            term_write("Calculate math. Syntax: ", TC_WHITE);
+            term_write("calc NUMBER1 FUNCT NUMBER2\n\n", TC_BRIGHT);
+            term_write("+ or -a             - Add two numbers together\n", TC_WHITE);
+            term_write("- or -s             - Subtract two numbers together\n", TC_WHITE);
+            term_write("* or -m             - Multiply two numbers together\n", TC_WHITE);
+            term_write("/ or -d             - Divide two numbers together\n", TC_WHITE);
+            // term_write("-t                  - NUMBER1^2\n", TC_WHITE);
+        }
+        else if (strcmp(argv[1], "cat") == 0) {
+            term_write("CAT\n\n", TC_WHITE);
+            term_write("Shows files contants. Syntax: ", TC_WHITE);
+            term_write("cat PATH/TO/FILE\n\n", TC_BRIGHT);
+        }
+        else if (strcmp(argv[1], "beep") == 0) {
+            term_write("BEEP\n\n", TC_WHITE);
+            term_write("Beeps. Syntax: ", TC_WHITE);
+            term_write("beep FREQ. DUR.\n\n", TC_BRIGHT);
+            term_write("NOTE! This requires PC Speaker/Beeper support on your computer\n", TC_WHITE);
+        }
+        /* if no command is present in arg 1 */
+        else {
+            // TOADD:
+            // - Proper file and directory creation and deletion commands, like MKDIR, MKFILE, etc.
+            term_write("LIST OF COMMANDS\n", TC_WHITE);
+            term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
+            term_write("beep                - PC Beeper control. \n", TC_WHITE);      
+            // term_write("calc                - Literally a Calculator\n", TC_WHITE); 
+            term_write("cat                 - Print file contents.\n", TC_WHITE);
+            term_write("cd                  - Changes the current directory\n", TC_WHITE);
+            term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
+            term_write("cls                 - Clears the screen.\n", TC_WHITE);
+            term_write("echo                - Prints string to the console.\n", TC_WHITE);
+            term_write("ls                  - List files in a directory.\n", TC_WHITE);
+            term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
+            term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
+        }
     }
 
     else if (strcmp(argv[0], "echo") == 0) {
@@ -80,6 +104,83 @@ static void handle_command(int argc, const char** argv) {
         pit_sleep_ms(duration.value);
         mutebeep();
     }
+
+    /* TEMPORAILY UNUSABLE DUE TO ISSUES */
+    /*else if (strcmp(argv[0], "calc") == 0) {
+        int MathFunction = 0;
+
+        if (argc != 3) {
+            term_write("ERROR: Usage -> calc [number1] [func] [number2]\n", TC_LRED);
+            term_write("Confused? Use ", TC_WHITE);
+            term_write("HELP CALC", TC_BRIGHT);
+            term_write(" for command information", TC_WHITE);
+            return;
+        }
+
+        atoi_result_t number1 = atoi(argv[1]);
+        if (!number1.valid) {
+            term_write("ERROR: First number provided is not an interger\n", TC_LRED);
+            return;
+        }
+
+        atoi_result_t number2 = atoi(argv[3]);
+        if (!number2.valid) {
+            term_write("ERROR: First number provided is not an interger\n", TC_LRED);
+            return;
+        }
+
+        // a shitty way of making a barebones calculator but it works //
+        if (strcmp(argv[2], "+") == 0) {
+            int MathFunction = 1;
+        }
+        else if (strcmp(argv[2], "-") == 0) {
+            int MathFunction = 2;
+        }
+        else if (strcmp(argv[2], "/") == 0) {
+            int MathFunction = 3;
+        }
+        else if (strcmp(argv[2], "*") == 0) {
+            int MathFunction = 4;
+        }
+        else if (strcmp(argv[2], "-a") == 0) {
+            int MathFunction = 1;
+        }
+        else if (strcmp(argv[2], "-s") == 0) {
+            int MathFunction = 2;
+        }
+        else if (strcmp(argv[2], "-d") == 0) {
+            int MathFunction = 3;
+        }
+        else if (strcmp(argv[2], "-m") == 0) {
+            int MathFunction = 4;
+        }
+        else {
+            term_write("ERROR: Not a vaild function: ", TC_LRED);
+            term_write(argv[2], TC_BRIGHT);
+            term_write("Confused? Use ", TC_WHITE);
+            term_write("HELP CALC", TC_BRIGHT);
+            term_write(" for command information", TC_WHITE);
+            return;
+        }
+
+        //
+        fix bug here
+
+        if (MathFunction == 1){
+            term_write(number1 + number2, TC_WHITE);
+        }
+        else if (MathFunction == 2){
+            term_write(number1 - number2, TC_WHITE);
+        }
+        else if (MathFunction == 3){
+            term_write(number1 / number2, TC_WHITE);
+        }
+        else if (MathFunction == 4){
+            term_write(number1 * number2, TC_WHITE);
+        }
+        //
+    }
+    */
 
     else if (strcmp(argv[0], "cls") == 0) {
         term_clear();
@@ -140,6 +241,10 @@ static void handle_command(int argc, const char** argv) {
         /* this is basically a stupid neofetch clone */
         term_write("BUILD: ", TC_LBLUE);
         term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
+        term_write("KERNEL: ", TC_LBLUE);
+        term_write("Choacury Standard (FS Testing)\n", TC_WHITE);
+        term_write("SHELL: ", TC_LBLUE);
+        term_write("chsh-0.0.0.0039a-dev\n", TC_WHITE);       // <-- Could be improved on
         term_write("RAM: ", TC_LBLUE);
         term_write("RAM Counter goes here" "\n", TC_WHITE); // <-- Obviously a placeholder
         term_write("CPU: ", TC_LBLUE);
@@ -157,6 +262,12 @@ static void handle_command(int argc, const char** argv) {
         }
 
         // TOADD: The actual CD stuff
+        /* PLACEHOLDER DECECTION*/
+        term_write("WARNING: CD command is still being developed, so that ", TC_YELLO);
+        term_write(argv[1], TC_BRIGHT);
+        term_write(" may not be a vaild directory and may cause issues\n", TC_YELLO);
+        // char currentDir[] = argv[1]; // <-- Sets the current directory to Arg1, making it a proper change DIR command
+
     }
 
     else if (strcmp(argv[0], "cat") == 0) {
@@ -236,6 +347,7 @@ static void handle_command(int argc, const char** argv) {
     else if (strcmp(argv[0], "compdate") == 0) {
         term_write(__DATE__ "\n", TC_WHITE);
     }
+    
     else if (strcmp(argv[0], "whereami") == 0) {
         term_write(currentDir, TC_WHITE);
         term_write("\n", TC_WHITE);
@@ -327,8 +439,8 @@ void shell_start() {
                 term_write(currentDir, TC_LIME);
                 term_write("> ", TC_WHITE);
                 break;
-            case KEY_LeftCtrl:      // TODO: <-- Replace with Ctrl+G (a.k.a the bell command on most other OSs)
-                startbeep(600);
+            case KEY_LeftCtrl:      // TODO: <-- Replace with Ctrl+G (Bell command on most other systems)
+                startbeep(800);
                 pit_sleep_ms(15);
                 mutebeep();
                 break;
