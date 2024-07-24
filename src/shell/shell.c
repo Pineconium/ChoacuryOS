@@ -105,15 +105,14 @@ static void handle_command(int argc, const char** argv) {
         mutebeep();
     }
 
-    /* TEMPORAILY UNUSABLE DUE TO ISSUES */
-    /*else if (strcmp(argv[0], "calc") == 0) {
+    else if (strcmp(argv[0], "calc") == 0) {
         int MathFunction = 0;
 
-        if (argc != 3) {
+        if (argc != 4) {
             term_write("ERROR: Usage -> calc [number1] [func] [number2]\n", TC_LRED);
             term_write("Confused? Use ", TC_WHITE);
             term_write("HELP CALC", TC_BRIGHT);
-            term_write(" for command information", TC_WHITE);
+            term_write(" for command information\n", TC_WHITE);
             return;
         }
 
@@ -130,57 +129,49 @@ static void handle_command(int argc, const char** argv) {
         }
 
         // a shitty way of making a barebones calculator but it works //
-        if (strcmp(argv[2], "+") == 0) {
-            int MathFunction = 1;
+        if (strcmp(argv[2], "+") == 0 || strcmp(argv[2], "-a")  == 0) {
+            MathFunction = 1;
         }
-        else if (strcmp(argv[2], "-") == 0) {
-            int MathFunction = 2;
+        else if (strcmp(argv[2], "-") == 0 || strcmp(argv[2], "-s") == 0) {
+            MathFunction = 2;
         }
-        else if (strcmp(argv[2], "/") == 0) {
-            int MathFunction = 3;
+        else if (strcmp(argv[2], "/") == 0 || strcmp(argv[2], "-d") == 0) {
+            MathFunction = 3;
         }
-        else if (strcmp(argv[2], "*") == 0) {
-            int MathFunction = 4;
-        }
-        else if (strcmp(argv[2], "-a") == 0) {
-            int MathFunction = 1;
-        }
-        else if (strcmp(argv[2], "-s") == 0) {
-            int MathFunction = 2;
-        }
-        else if (strcmp(argv[2], "-d") == 0) {
-            int MathFunction = 3;
-        }
-        else if (strcmp(argv[2], "-m") == 0) {
-            int MathFunction = 4;
+        else if (strcmp(argv[2], "*") == 0 || strcmp(argv[2], "-m")) {
+            MathFunction = 4;
         }
         else {
             term_write("ERROR: Not a vaild function: ", TC_LRED);
             term_write(argv[2], TC_BRIGHT);
             term_write("Confused? Use ", TC_WHITE);
             term_write("HELP CALC", TC_BRIGHT);
-            term_write(" for command information", TC_WHITE);
+            term_write(" for command information\n", TC_WHITE);
             return;
         }
 
-        //
-        fix bug here
-
+        /* Basic mathimatical functions*/
         if (MathFunction == 1){
-            term_write(number1 + number2, TC_WHITE);
+            term_write_u32(number1.value + number2.value, 10, TC_WHITE);
         }
         else if (MathFunction == 2){
-            term_write(number1 - number2, TC_WHITE);
+            term_write_u32(number1.value - number2.value, 10, TC_WHITE);
         }
         else if (MathFunction == 3){
-            term_write(number1 / number2, TC_WHITE);
+            /* prevent dividing by 0 */
+            if (number1.value == 0 || number2.value == 0) {
+                term_write("Can not divide by 0!\n", TC_LRED);
+                return;
+            }
+            else {term_write_u32(number1.value / number2.value, 10, TC_WHITE);}
         }
         else if (MathFunction == 4){
-            term_write(number1 * number2, TC_WHITE);
+            // term_write(number1.value * number2.value, TC_WHITE);     // <-- uncomment when mutlip. support gets added
+            term_write("TEMP! Cannot multiply", TC_YELLO);
         }
-        //
+        term_write("\n", TC_WHITE);
     }
-    */
+
 
     else if (strcmp(argv[0], "cls") == 0) {
         term_clear();
