@@ -1,7 +1,9 @@
 ![ChoacuryLogo](https://pineconiumsoftware.neocities.org/choacury/assets/ChoacuryLogo.png)
-Choacury, (pronounced as coch-curry or /kʰɔx-ˈkʌr.i/), is a custom-built OS written in C/C++ and Assembly. Choacury is currently in a very very **Pre-Alpha** stage, meaning some stuff isn't complete yet...
+Choacury, (pronounced as coch-curry or /kʰɔx-ˈkʌr.i/), is a custom-built OS written in C and Assembly. Choacury is currently in a very **Pre-Alpha** stage, meaning some stuff isn't complete yet...
 
-If you want to help or make your version of Choacury, don't worry, you are free to modify it to your liking. You are also free to help contribute to the project! (see TODO.MD for what is needed doing).
+If you want to help out on the project, feel free to contribute to the project! (see TODO.MD for what is needed doing). You can also modify Choacury to your liking if you want to make your own OS!
+
+![ChoacuryScreenshot](https://pineconiumsoftware.neocities.org/choacury/assets/ChoacuryScreenshot_2024.png)
 
 # System Requirements
 Currently, Choacury only works best with virtual machines. However, you *can* use real hardware if you want, just there might be some issues that will be fixed down the line.
