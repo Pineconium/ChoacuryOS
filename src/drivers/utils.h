@@ -13,6 +13,7 @@ typedef struct {
 } atoi_result_t;
 atoi_result_t atoi(const char*);
 
+
 int strlen(const char *str);
 int strcmp(const char *str1, const char *str2);
 char* strcpy(char *dest, const char *src);
@@ -20,3 +21,5 @@ char* strcat(char *dest, const char *src);
 
 int tolower(int);
 int toupper(int);
+
+

@@ -21,6 +21,10 @@ static void handle_command(int argc, const char** argv) {
     if (argc == 0) {
         return;
     }
+	
+	if(strcmp(argv[0], "guiload") == 0){
+		vga_init(1);    // <- Starts the GUI (VGA Mode 13)
+	}
 
     if (strcmp(argv[0], "hello") == 0) {
         /* Basic testing command */
@@ -49,6 +53,10 @@ static void handle_command(int argc, const char** argv) {
             term_write("beep FREQ. DUR.\n\n", TC_BRIGHT);
             term_write("NOTE! This requires PC Speaker/Beeper support on your computer\n", TC_WHITE);
         }
+		else if (strcmp(argv[1], "vgainit") == 0) {
+            term_write("VGAINIT\n\n", TC_WHITE);
+            term_write("Initializes the VGA 0x13 mode. Supports drawing simple shapes.", TC_WHITE);
+        }
         /* if no command is present in arg 1 */
         else {
             // TOADD:
@@ -62,6 +70,7 @@ static void handle_command(int argc, const char** argv) {
             term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
             term_write("cls OR clear        - Clears the screen.\n", TC_WHITE);
             term_write("echo                - Prints string to the console.\n", TC_WHITE);
+			term_write("guiload             - Loads up the GUI (WIP!)\n", TC_WHITE);
             term_write("ls                  - List files in a directory.\n", TC_WHITE);
             term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
             term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
