@@ -37,7 +37,6 @@ static void handle_command(int argc, const char** argv) {
             term_write("- or -s             - Subtract two numbers together\n", TC_WHITE);
             term_write("* or -m             - Multiply two numbers together\n", TC_WHITE);
             term_write("/ or -d             - Divide two numbers together\n", TC_WHITE);
-            // term_write("-t                  - NUMBER1^2\n", TC_WHITE);
         }
         else if (strcmp(argv[1], "cat") == 0) {
             term_write("CAT\n\n", TC_WHITE);
@@ -53,15 +52,15 @@ static void handle_command(int argc, const char** argv) {
         /* if no command is present in arg 1 */
         else {
             // TOADD:
-            // - Proper file and directory creation and deletion commands, like MKDIR, MKFILE, etc.
+            // - Proper file and directory creation and deletion commands, like MKDIR, MF, etc.
             term_write("LIST OF COMMANDS\n", TC_WHITE);
             term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
             term_write("beep                - PC Beeper control. \n", TC_WHITE);      
-            // term_write("calc                - Literally a Calculator\n", TC_WHITE); 
+            term_write("calc                - Literally a Calculator\n", TC_WHITE); 
             term_write("cat                 - Print file contents.\n", TC_WHITE);
             term_write("cd                  - Changes the current directory\n", TC_WHITE);
             term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
-            term_write("cls                 - Clears the screen.\n", TC_WHITE);
+            term_write("cls OR clear        - Clears the screen.\n", TC_WHITE);
             term_write("echo                - Prints string to the console.\n", TC_WHITE);
             term_write("ls                  - List files in a directory.\n", TC_WHITE);
             term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
@@ -172,7 +171,7 @@ static void handle_command(int argc, const char** argv) {
     }
 
 
-    else if (strcmp(argv[0], "cls") == 0) {
+    else if (strcmp(argv[0], "cls") == 0 || strcmp(argv[0], "clear") == 0) {
         term_clear();
     }
     
