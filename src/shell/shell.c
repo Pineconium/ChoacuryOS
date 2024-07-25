@@ -165,9 +165,8 @@ static void handle_command(int argc, const char** argv) {
             }
             else {term_write_u32(number1.value / number2.value, 10, TC_WHITE);}
         }
-        else if (MathFunction == 4){
-            // term_write(number1.value * number2.value, TC_WHITE);     // <-- uncomment when mutlip. support gets added
-            term_write("TEMP! Cannot multiply", TC_YELLO);
+        else if (MathFunction == 4) {
+            term_write_u32(number1.value * number2.value, 10, TC_WHITE);
         }
         term_write("\n", TC_WHITE);
     }
