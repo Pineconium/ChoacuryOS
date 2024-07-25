@@ -49,3 +49,9 @@
 - [ ] Ability to ping networks/servers.
 - [ ] Ability to host a server
 - [ ] Working Graphical Web Browser
+
+### CPU Architectures
+- [x] x86 (Common Intel/AMD)
+- [ ] ARM and ARM-based (e.g. Apple Silicon)
+- [ ] PowerPC
+- [ ] MIPS
