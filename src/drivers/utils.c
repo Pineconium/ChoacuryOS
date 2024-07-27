@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <stdint.h>
 
 void* memcpy(void* dst, const void* src, size_t len) {
     u8* dst_u8 = (u8*)dst;
@@ -130,4 +131,24 @@ int toupper(int ch) {
 		return ch;
 	}
 	return ch - 'a' + 'A';
+}
+
+/* This isn't an actual utility, it's just for uint64_to_string(). */
+int get_num_length(uint64_t num) {
+    int length = 0;
+    do {
+        length++;
+        num /= 10;
+    } while (num > 0);
+    return length;
+}
+
+void uint64_to_string(uint64_t number, char* buffer) {
+    int length = get_num_length(number);
+    buffer[length] = '\0';
+    int index = length - 1;
+    do {
+        buffer[index--] = '0' + (number % 10);
+        number /= 10;
+    } while (number > 0);
 }
