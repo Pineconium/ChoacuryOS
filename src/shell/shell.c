@@ -22,14 +22,18 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
     if (argc == 0) {
         return;
     }
+	
+	if(strcmp(argv[0], "guiload") == 0){
+		vga_init(1);    // <- Starts the GUI (VGA Mode 13)
+	}
 
     if (strcmp(argv[0], "hello") == 0) {
         /* Basic testing command */
         term_write("Hello from Terminal\n", TC_WHITE);
     }
 
+    /* actual help information, might need to be rewriten in the future */
     else if (strcmp(argv[0], "help") == 0) {
-        /* actual help information, might need to be rewriten in the future */
         if (strcmp(argv[1], "calc") == 0) {
             term_write("CALC\n\n", TC_WHITE);
             term_write("Calculate math. Syntax: ", TC_WHITE);
@@ -38,12 +42,17 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
             term_write("- or -s             - Subtract two numbers together\n", TC_WHITE);
             term_write("* or -m             - Multiply two numbers together\n", TC_WHITE);
             term_write("/ or -d             - Divide two numbers together\n", TC_WHITE);
-            // term_write("-t                  - NUMBER1^2\n", TC_WHITE);
         }
         else if (strcmp(argv[1], "cat") == 0) {
             term_write("CAT\n\n", TC_WHITE);
             term_write("Shows files contants. Syntax: ", TC_WHITE);
             term_write("cat PATH/TO/FILE\n\n", TC_BRIGHT);
+        }
+        else if (strcmp(argv[1], "ls") == 0) {
+            term_write("LS\n\n", TC_WHITE);
+            term_write("Displays files and folder in a directory. Syntax: ", TC_WHITE);
+            term_write("ls DIRECTORY\n\n", TC_BRIGHT);
+            term_write("NOTE! This requires FAT to be init properly.\n", TC_WHITE);
         }
         else if (strcmp(argv[1], "beep") == 0) {
             term_write("BEEP\n\n", TC_WHITE);
@@ -51,23 +60,37 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
             term_write("beep FREQ. DUR.\n\n", TC_BRIGHT);
             term_write("NOTE! This requires PC Speaker/Beeper support on your computer\n", TC_WHITE);
         }
+        else if (strcmp(argv[1], "guiload") == 0) {
+            term_write("GUILOAD\n\n", TC_WHITE);
+            term_write("Initializes the VGA 0x13 mode. Supports drawing simple shapes.\n", TC_WHITE);
+            term_write("In short it boots up a GUI, which supports 256 colours.\n", TC_WHITE);
+        }
+        else if (strcmp(argv[1], "chstat") == 0) {
+            term_write("CHSTAT\n\n", TC_WHITE);
+            term_write("Displays system info. Such as RAM, CPU, OS Information, etc.\n", TC_WHITE);
+        }
         /* if no command is present in arg 1 */
-        else {
+        else if (argc == 1) {
             // TOADD:
-            // - Proper file and directory creation and deletion commands, like MKDIR, MKFILE, etc.
+            // - Proper file and directory creation and deletion commands, like MKDIR, MF, etc.
             term_write("LIST OF COMMANDS\n", TC_WHITE);
             term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
             term_write("beep                - PC Beeper control. \n", TC_WHITE);      
-            // term_write("calc                - Literally a Calculator\n", TC_WHITE); 
+            term_write("calc                - Literally a Calculator\n", TC_WHITE); 
             term_write("cat                 - Print file contents.\n", TC_WHITE);
             term_write("cd                  - Changes the current directory\n", TC_WHITE);
             term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
-            term_write("cls                 - Clears the screen.\n", TC_WHITE);
+            term_write("cls OR clear        - Clears the screen.\n", TC_WHITE);
             term_write("echo                - Prints string to the console.\n", TC_WHITE);
+			term_write("guiload             - Loads up the GUI (WIP!)\n", TC_WHITE);
             term_write("ls                  - List files in a directory.\n", TC_WHITE);
             term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
             term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
             term_write("chstat              - Display system information.\n", TC_WHITE);
+        }
+        else {
+            term_write(argv[1], TC_BRIGHT);
+            term_write(" is not a valid command, so no help information will be displayed\n", TC_WHITE);
         }
     }
 
@@ -174,7 +197,7 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
     }
 
 
-    else if (strcmp(argv[0], "cls") == 0) {
+    else if (strcmp(argv[0], "cls") == 0 || strcmp(argv[0], "clear") == 0) {
         term_clear();
     }
     
@@ -239,7 +262,7 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
         term_write("KERNEL: ", TC_LBLUE);
         term_write("Choacury Standard (FS Testing)\n", TC_WHITE);
         term_write("SHELL: ", TC_LBLUE);
-        term_write("chsh-0.0.0.0039a-dev\n", TC_WHITE);       // <-- Could be improved on
+        term_write("chsh-0.0.0.0041a-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_buffer, TC_WHITE);
         term_write(" MB\n", TC_WHITE);

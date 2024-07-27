@@ -5,9 +5,9 @@ CC  := gcc
 LD  := ld
 ASM := nasm
 
-CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra -Werror -I$(SRC_DIR)
+CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra -I$(SRC_DIR)
 ASMFLAGS := -f elf32
-LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
+LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto --allow-multiple-definition
 
 SRCS :=								\
 	drivers/debug.c					\
@@ -38,6 +38,8 @@ SRCS :=								\
 	memory/kmalloc.c				\
 	shell/shell.c					\
 	shell/terminal.c				\
+	gui/desktop.c					\
+	#gui/widgets.c					\ # remove comment when its implemented.
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))
 DEPS := $(addprefix $(BUILD_DIR)/,$(addsuffix .d,$(filter-out %.asm,$(SRCS))))

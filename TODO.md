@@ -34,9 +34,12 @@
 
 ### Graphics
 - [x] 4-bit colour support (16/Standard DOS colours).
-- [ ] 8-bit colour support (256 colours/ANSI Support).
+- [x] 8-bit colour support (256 colours/ANSI Support).
 - [ ] High-colour/True colour support (beyond 8-bit/>=256 colours).
-- [ ] Graphical Shell (GUI).
+- [x] Graphical Shell (GUI).
+- [ ] Mouse Drivers
+- [ ] Virtual Terminal/Command Prompt
+- [ ] Basic GUI Apps. (e.g. File Manager, Program Launcher)
 
 ### Audio
 - [x] PC Speaker/DOS Beeps.
@@ -49,3 +52,9 @@
 - [ ] Ability to ping networks/servers.
 - [ ] Ability to host a server
 - [ ] Working Graphical Web Browser
+
+### CPU Architectures
+- [x] x86 (Common Intel/AMD)
+- [ ] ARM and ARM-based (e.g. Apple Silicon)
+- [ ] PowerPC
+- [ ] MIPS
