@@ -265,7 +265,7 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
         term_write("chsh-0.0.0.0041a-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_buffer, TC_WHITE);
-        term_write(" MB\n", TC_WHITE);
+        term_write(" KB\n", TC_WHITE);
         term_write("CPU: ", TC_LBLUE);
         term_write("CPU Info code goes here" "\n", TC_WHITE);
     }
