@@ -28,23 +28,40 @@ void mouse_init(){
     mouse_read();
 }
 
-void mouse_write(){
-    return; // <-- Replace
+void mouse_write(uint8_t value){
+    mouse_wait();
+    port_byte_out(0x64, 0xD4);
+    mouse_wait();
+    port_byte_out(0x60, value);
 }
 
-void mouse_read(){
-    return; // <-- Replace
+uint8_t mouse_read(){
+    mouse_wait_input();
+    return port_byte_in(0x60);
 }
 
 void mouse_wait(){
-    return; // <-- Replace
+    uint64_t timeout = 100000;
+    while (timeout--){
+        if ((port_byte_in(0x64) & 0b10) == 0){
+            return;
+        }
+    }
 }
 
 void mouse_wait_input(){
-    return; // <-- Replace
+    uint64_t timeout = 100000;
+    while (timeout--){
+        if (port_byte_in(0x64) & 0b1){
+            return;
+        }
+    }
 }
 
-/* grab the cursors position, meant for a cursor */
-void mouse_pos(){
-    return; // <-- Replace
+/* the mouse cursor */
+uint8_t Cursor[] = {
+    // 16x2 
+   // 0b00000000, 0b00000000
+   // 1 = pixel, 0 = nothing
+   
 }
