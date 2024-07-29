@@ -141,4 +141,5 @@ void draw_line(int x1, int y1, int x2, int y2, unsigned char color);
 void putpixel(unsigned int x, unsigned int y, unsigned char color);
 void write_registers(unsigned char *regs);
 void draw_pointer(uint8_t* Cursor, Point position, unsigned char colour);
+void clear_pointer(uint8_t* Cursor, Point position);
 

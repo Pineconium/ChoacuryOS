@@ -260,9 +260,9 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
         term_write("BUILD: ", TC_LBLUE);
         term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
         term_write("KERNEL: ", TC_LBLUE);
-        term_write("Choacury Standard (FS Testing)\n", TC_WHITE);
+        term_write("Choacury Standard (Skye)\n", TC_WHITE);
         term_write("SHELL: ", TC_LBLUE);
-        term_write("chsh-0.0.0.0041a-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
+        term_write("chsh-0.0.0.0043b-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_buffer, TC_WHITE);
         term_write(" KB\n", TC_WHITE);

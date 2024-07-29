@@ -194,6 +194,7 @@ void vga_text_init(unsigned char clr)
 	
 }
 
+/* mouse pointer stuff */
 
 void draw_pointer(uint8_t* Cursor, Point position, unsigned char colour){
 
@@ -220,4 +221,29 @@ void draw_pointer(uint8_t* Cursor, Point position, unsigned char colour){
     }
 
     MouseDrawn = true;
+}
+
+void clear_pointer(uint8_t* Cursor, Point position){
+    if (MouseDrawn == 0) return;
+
+    int xMax = 16;
+    int yMax = 16;
+    int differenceX = 320 - position.X;
+    int differenceY = 200 - position.Y;
+
+    if (differenceX < 16) xMax = differenceX;
+    if (differenceY < 16) yMax = differenceY;
+
+    for (int y = 0; y < yMax; y++){
+        for (int x = 0; x < xMax; x++){
+            int bit = y * 16 + x;
+            int byte = bit / 8;
+            if ((Cursor[byte] & (0b10000000 >> (x % 8))))
+            {
+                if (getpixel(position.X + x, position.Y + y) == MouseCursorBufferAfter[x + y *16]){
+                    putpixel(position.X + x, position.Y + y, MouseCursorBuffer[x + y * 16]);
+                }
+            }
+        }
+    }
 }

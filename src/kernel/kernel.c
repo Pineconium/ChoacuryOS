@@ -76,7 +76,7 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
     term_write("Version: Build " __DATE__ " (GUI Testing)\n", TC_WHITE);
     term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
      
-    uint64_t memory = detect_memory(mbd, magic);    // <-- Used in the chstat command
+    uint64_t memory = detect_memory(mbd, magic);    // <-- Used for the chstat command
     
     pic_init();     // <-- Enable clock stuff
 
