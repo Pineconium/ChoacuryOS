@@ -2,9 +2,10 @@
 
 #include "types.h"
 #include "utils.h"
+#include "pointerctrl.h"
 
 
-/* Colour Stuff */
+/* 4-Bit (max. 16) Colour Stuff */
 /* All of them are rendered on a black background (0x0~) */
 #define TC_BLUE 0x01
 #define TC_GREEN 0x02
@@ -88,6 +89,7 @@ unsigned char mode_80x25_text[] =
 	0x0C, 0x00, 0x0F, 0x08, 0x00
 };
 
+
 // VGA ports, source: http://files.osdev.org/mirrors/geezer/osd/graphics/modes.c
 #define VGA_AC_INDEX 0x3C0
 #define VGA_AC_WRITE 0x3C0
@@ -138,4 +140,5 @@ void drawchar(unsigned char c, int x, int y, int fgcolor, int bgcolor);
 void draw_line(int x1, int y1, int x2, int y2, unsigned char color);
 void putpixel(unsigned int x, unsigned int y, unsigned char color);
 void write_registers(unsigned char *regs);
+void draw_pointer(uint8_t* Cursor, Point position, unsigned char colour);
 

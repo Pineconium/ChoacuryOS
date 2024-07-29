@@ -1,5 +1,6 @@
 #include "vga.h"
 #include "ports.h"
+#include "pointerctrl.h"
 #include "../gui/desktop.h"
 /*
 VGA Stuff, aka. (Extremely Limited) Graphics.
@@ -15,8 +16,9 @@ unsigned int   VGA_bpp;
 unsigned char *VGA_address;
 
 
-
-
+uint32_t MouseCursorBuffer[16 * 16];
+uint32_t MouseCursorBufferAfter[16 * 16];
+int MouseDrawn = false;
 
 
 void vga_set_char(u32 x, u32 y, u8 ch, u8 color) {
@@ -157,16 +159,16 @@ void vga_init(unsigned char clr){
 	int width  = 320;
 	int height = 200;
 	int bpp    = 256;
-	//setup the vga struct
+	/* setup vga struct. */
 	VGA_width   = (unsigned int)width;
 	VGA_height  = (unsigned int)height;
 	VGA_bpp     = bpp;
 	VGA_address = (void *)0xA0000;
 
-	//enables the mode 13 state
+	/* actually switch to mode 13 */
 	write_registers(mode_320_200_256);
 
-	//clears the screen
+	/* clear the screen */
 	VGA_clear_screen(clr);
 	
 	Desktop();
@@ -183,11 +185,39 @@ void vga_text_init(unsigned char clr)
 	VGA_bpp     = bpp;
 	VGA_address = (void *)0xB8000;
 
-	//enables the mode 13 state
+	/* actually switch to mode 13 */
 	write_registers(mode_80x25_text);
 
 	//clears the screen
 	VGA_clear_screen(clr);
 	// return to shell?
 	
+}
+
+
+void draw_pointer(uint8_t* Cursor, Point position, unsigned char colour){
+
+    int xMax = 16;
+    int yMax = 16;
+    int differenceX = 320 - position.X;
+    int differenceY = 200 - position.Y;
+
+    if (differenceX < 16) xMax = differenceX;
+    if (differenceY < 16) yMax = differenceY;
+
+    for (int y = 0; y < yMax; y++){
+        for (int x = 0; x < xMax; x++){
+            int bit = y * 16 + x;
+            int byte = bit / 8;
+            if ((Cursor[byte] & (0b10000000 >> (x % 8))))
+            {
+                MouseCursorBuffer[x + y * 16] = getpixel(position.X + x, position.Y + y);
+                putpixel(position.X + x, position.Y + y, colour);
+                MouseCursorBufferAfter[x + y * 16] = getpixel(position.X + x, position.Y + y);
+
+            }
+        }
+    }
+
+    MouseDrawn = true;
 }

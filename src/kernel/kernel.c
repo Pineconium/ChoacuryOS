@@ -20,6 +20,7 @@
 #include "../drivers/types.h"
 #include "../drivers/vga.h"
 #include "../drivers/pci.h"
+#include "../drivers/mouse.h"
 #include "../shell/shell.h"
 #include "../shell/terminal.h"
 #include <memory/kmalloc.h>
@@ -66,10 +67,13 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
     gdt_init();
     idt_init();
     kmalloc_init();
+
+
+
     /* Display Info Message */
     term_init(VGA_WIDTH, VGA_HEIGHT, vga_set_char, vga_move_cursor); 
     term_write("\n\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0\n", TC_LIME);
-    term_write("Version: Build " __DATE__ " (FS Testing)\n", TC_WHITE);
+    term_write("Version: Build " __DATE__ " (GUI Testing)\n", TC_WHITE);
     term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
      
     uint64_t memory = detect_memory(mbd, magic);    // <-- Used in the chstat command
@@ -78,6 +82,11 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
 
     pit_init();     // <-- Enable Timer
 
+    /* init mouse */
+    mouse_init();
+    port_byte_out(0x21, 0b11111000);
+    port_byte_out(0xA1, 0b11101111);
+    
     /* Enable interrupts to make keyboard work */
     asm volatile("sti");
 
