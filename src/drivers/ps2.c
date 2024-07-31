@@ -21,11 +21,6 @@
 #define PS2_COMMAND_ENABLE_FIRST    0xAE
 #define PS2_COMMAND_WRITE_TO_SECOND 0xD4
 
-#define PS2_DEVICE_COMMAND_IDENTIFY         0xF2
-#define PS2_DEVICE_COMMAND_ENABLE_SCANNING  0xF4
-#define PS2_DEVICE_COMMAND_DISABLE_SCANNING 0xF5
-#define PS2_DEVICE_COMMAND_RESET            0xFF
-
 #define PS2_DEVICE_TEST_PASS    0x00
 #define PS2_DEVICE_ACK          0xFA
 #define PS2_DEVICE_RESEND       0xFE
@@ -231,13 +226,10 @@ static void ps2_irq_handler(ps2_device_t* device) {
 
     if (send_to_device) {
         device->byte_buffer[device->byte_buffer_len++] = byte;
-        switch (device->type) {
-            case PS2_TYPE_KEYBOARD:
-                ps2_keyboard_new_byte(device);
-                break;
-            default:
-                dprintln("PS/2 Controller: interrupt from uninitialized device");
-                break;
+        if (device->callback) {
+            device->callback(device);
+        } else {
+            dprintln("PS/2 Controller: interrupt from uninitialized device");
         }
     }
 
@@ -254,8 +246,11 @@ static void ps2_irq2_handler() {
 
 static void ps2_zero_device(ps2_device_t* device) {
     device->type = PS2_TYPE_NONE;
+    device->callback = NULL;
     device->byte_buffer_len = 0;
     device->event_queue_len = 0;
+    device->event_queue_head = 0;
+    device->event_queue_tail = 0;
 }
 
 ps2_device_t* ps2_get_device(u8 index) {
@@ -355,7 +350,10 @@ void ps2_init() {
             dprint(" ");
         }
 
-        if (response_size == 2 && response[0] == 0xAB && response[1] == 0x83) {
+        if (response_size == 1 && response[0] == 0x00) {
+            ps2_init_mouse(&s_devices[i]);
+            dprintln("=> mouse");
+        } else if (response_size == 2 && response[0] == 0xAB && response[1] == 0x83) {
             ps2_init_keyboard(&s_devices[i]);
             dprintln("=> keyboard");
         } else {

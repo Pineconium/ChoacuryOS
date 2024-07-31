@@ -21,6 +21,7 @@ SRCS :=								\
 	drivers/pit.c					\
 	drivers/ports.c					\
 	drivers/ps2_keyboard.c			\
+	drivers/ps2_mouse.c				\
 	drivers/keymaps/ps2_keymap_fi.c	\
 	drivers/keymaps/ps2_keymap_us.c	\
 	drivers/ps2.c					\

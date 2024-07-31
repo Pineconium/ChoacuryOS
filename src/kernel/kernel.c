@@ -54,24 +54,6 @@ size_t detect_memory(const multiboot_info_t* mbd, uint32_t magic) {
 	}
 
 	return bytes;
-size_t detect_memory(const multiboot_info_t* mbd, uint32_t magic) {
-    if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-        panic("Invalid memory map (Invalid magic number)\n");
-	}
-    if (!(mbd->flags >> 6 & 0x1)) {
-        panic("Invalid memory map (Wrong flags)\n");
-	}
-
-	size_t bytes = 0;
-	for (uint32_t offset = 0; offset < mbd->mmap_length;) {
-		const multiboot_memory_map_t* entry = (const multiboot_memory_map_t*)mbd->mmap_addr;
-		if (entry->type == MULTIBOOT_MEMORY_AVAILABLE) {
-			bytes += entry->len;
-		}
-		offset += entry->size;
-	}
-
-	return bytes;
 } 
 
 /* A Simple kernel written in C 
@@ -90,17 +72,12 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
     term_write("Version: Build " __DATE__ " (GUI Testing)\n", TC_WHITE);
     term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
      
-    uint64_t memory = detect_memory(mbd, magic);    // <-- Used for the chstat command
+    size_t memory = detect_memory(mbd, magic);    // <-- Used in the chstat command
     
     pic_init();     // <-- Enable clock stuff
 
     pit_init();     // <-- Enable Timer
 
-    /* init mouse */
-    mouse_init();
-    port_byte_out(0x21, 0b11111000);
-    port_byte_out(0xA1, 0b11101111);
-    
     /* Enable interrupts to make keyboard work */
     asm volatile("sti");
 

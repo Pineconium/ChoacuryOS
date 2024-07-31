@@ -1,12 +1,15 @@
 /* The Choacury CLI Shell */
 
+#include "../drivers/debug.h"
 #include "../drivers/filesystem/fat.h"
 #include "../drivers/pit.h"
 #include "../drivers/ps2_keyboard.h"
+#include "../drivers/ps2_mouse.h"
 #include "../drivers/sound.h"
 #include "../drivers/storage/device.h"
 #include "../drivers/utils.h"
 #include "../drivers/vga.h"
+#include "../kernel/panic.h"
 #include "../memory/kmalloc.h"
 #include "shell.h"
 #include "terminal.h"
@@ -14,6 +17,8 @@
 
 #define MAX_COMMAND_LENGTH 256
 #define MAX_ARGUMENTS 128
+
+static bool s_print_mouse_events = false;
 
 static FAT_filesystem_t* s_fat_fs = NULL;
 char currentDir[] = "root";                 // <-- The current directory for stuff like 'CD' (WIP)
@@ -373,6 +378,13 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
         term_write("\n", TC_WHITE);
     }
 
+    else if (strcmp(argv[0], "dumpmouse") == 0) {
+        s_print_mouse_events = !s_print_mouse_events;
+        term_write("Mouse event printing: ", TC_WHITE);
+        term_write(s_print_mouse_events ? "enabled" : "disabled", TC_WHITE);
+        term_write("\n", TC_WHITE);
+    }
+
     else {
         term_write(argv[0], TC_YELLO);
         term_write(" is not a valid command, file, or program.\n", TC_YELLO);
@@ -429,6 +441,37 @@ void shell_start(uint64_t memory_size) {
     term_write("> ", TC_WHITE);
 
     for (;;) {
+        {
+            mouse_event_t event;
+            ps2_get_mouse_event(&event);
+            if (s_print_mouse_events) {
+                switch (event.type) {
+                    case MOUSE_EVENT_NONE:
+                        break;
+                    case MOUSE_BUTTON_EVENT:
+                        dprint("mouse button ");
+                        dprintint(event.button_event.button);
+                        dprint(" ");
+                        dprintln(event.button_event.pressed ? "pressed" : "released");
+                        break;
+                    case MOUSE_MOVE_EVENT:
+                        dprint("mouse move ");
+                        dprintint(event.move_event.rel_x);
+                        dprint(", ");
+                        dprintint(event.move_event.rel_y);
+                        dprintln("");
+                        break;
+                    case MOUSE_SCROLL_EVENT:
+                        dprint("mouse scroll ");
+                        dprintint(event.scroll_event.value);
+                        dprintln("");
+                        break;
+                    default:
+                        panic("invalid mouse event");
+                }
+            }
+        }
+
         key_event_t event;
         ps2_get_key_event(&event);
 
