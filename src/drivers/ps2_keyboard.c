@@ -13,8 +13,11 @@ key_t ps2_keymap_normal[0xFF];
 key_t ps2_keymap_shift[0xFF];
 key_t ps2_keymap_extended[0xFF];
 
+static void ps2_keyboard_new_byte(ps2_device_t*);
+
 void ps2_init_keyboard(ps2_device_t* keyboard) {
     keyboard->type = PS2_TYPE_KEYBOARD;
+    keyboard->callback = ps2_keyboard_new_byte;
     keyboard->keyboard_info.modifiers = 0;
 
     /* Turn off all keyboard leds (caps lock, num lock, ...)*/
@@ -27,7 +30,7 @@ void ps2_init_keyboard(ps2_device_t* keyboard) {
     ps2_device_append_command_queue(keyboard, PS2_KEYBOARD_COMMAND_ENABLE_SCANNING, 0);
 }
 
-void ps2_keyboard_new_byte(ps2_device_t* keyboard) {
+static void ps2_keyboard_new_byte(ps2_device_t* keyboard) {
     /* If last byte is 0xE0 or 0xF0, key event is not yet ready */
     u8 last_byte = keyboard->byte_buffer[keyboard->byte_buffer_len - 1];
     if (last_byte == 0xE0 || last_byte == 0xF0) {
@@ -72,11 +75,14 @@ void ps2_keyboard_new_byte(ps2_device_t* keyboard) {
     u8 scancode = keyboard->byte_buffer[index];
 
     if (keyboard->event_queue_len >= PS2_EVENT_QUEUE_SIZE) {
-        dprintln("PS/2 Keyboard: event queue full");
-        keyboard->event_queue_len %= PS2_EVENT_QUEUE_SIZE;
+#if PS2_DUMP_FULL_EVENT_QUEUE
+        dprintln("PS/2 Keyboard: event queue full, dropping oldest event");
+#endif
+        keyboard->event_queue_tail = (keyboard->event_queue_tail + 1) % PS2_EVENT_QUEUE_SIZE;
+        keyboard->event_queue_len--;
     }
 
-    key_event_t* event = &keyboard->keyboard_event_queue[keyboard->event_queue_len].key_event;
+    key_event_t* event = &keyboard->keyboard_event_queue[keyboard->event_queue_head];
 
     event->modifiers = keyboard->keyboard_info.modifiers;
     if (released) {
@@ -118,6 +124,7 @@ void ps2_keyboard_new_byte(ps2_device_t* keyboard) {
             break;
     }
 
+    keyboard->event_queue_head = (keyboard->event_queue_head + 1) % PS2_EVENT_QUEUE_SIZE;
     keyboard->event_queue_len++;
 }
 
@@ -134,17 +141,9 @@ void ps2_get_key_event(key_event_t* out) {
             continue;
         }
 
-        key_event_t* event = &device->keyboard_event_queue[0].key_event;
-        out->key		= event->key;
-        out->modifiers	= event->modifiers;
-
-        /* Shift other events */
+        memcpy(out, &device->keyboard_event_queue[device->event_queue_tail], sizeof(key_event_t));
+        device->event_queue_tail = (device->event_queue_tail + 1) % PS2_EVENT_QUEUE_SIZE;
         device->event_queue_len--;
-        memmove(
-            (u8*)&device->keyboard_event_queue[0],
-            (u8*)&device->keyboard_event_queue[1],
-            device->event_queue_len * sizeof(key_event_t)
-        );
         LEAVE_CRITICAL();
 
         return;

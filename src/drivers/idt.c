@@ -80,12 +80,7 @@ void c_isr_handler(u8 isr, u32 error) {
         panic("isr handler called with isr >= 32");
     }
 
-    term_write(isr_names[isr], TC_LRED);
-
-    asm volatile ("cli");
-    for (;;) {
-        asm volatile("hlt");
-    }
+	panic(isr_names[isr]);
 }
 
 void c_irq_handler(u8 irq) {

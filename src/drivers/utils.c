@@ -82,6 +82,10 @@ atoi_result_t atoi(const char* str) {
     return result;
 }
 
+int abs(int x) {
+	return x < 0 ? -x : x;
+}
+
 int strlen(const char *str) {
     int i = 0;
     while (str[i]) {

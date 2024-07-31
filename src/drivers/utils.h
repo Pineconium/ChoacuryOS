@@ -13,6 +13,7 @@ typedef struct {
 } atoi_result_t;
 atoi_result_t atoi(const char*);
 
+int abs(int x);
 
 void uint64_to_string(uint64_t number, char* buffer);
 int strlen(const char *str);
@@ -22,5 +23,3 @@ char* strcat(char *dest, const char *src);
 
 int tolower(int);
 int toupper(int);
-
-

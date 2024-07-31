@@ -7,7 +7,7 @@ ASM := nasm
 
 CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra -I$(SRC_DIR)
 ASMFLAGS := -f elf32
-LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto --allow-multiple-definition
+LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
 SRCS :=								\
 	drivers/debug.c					\
@@ -21,6 +21,7 @@ SRCS :=								\
 	drivers/pit.c					\
 	drivers/ports.c					\
 	drivers/ps2_keyboard.c			\
+	drivers/ps2_mouse.c				\
 	drivers/keymaps/ps2_keymap_fi.c	\
 	drivers/keymaps/ps2_keymap_us.c	\
 	drivers/ps2.c					\
@@ -36,6 +37,7 @@ SRCS :=								\
 	kernel/krnentry.asm				\
 	kernel/panic.c					\
 	memory/kmalloc.c				\
+	memory/pmm.c					\
 	shell/shell.c					\
 	shell/terminal.c				\
 	gui/desktop.c					\
