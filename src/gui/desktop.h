@@ -3,3 +3,4 @@
 #include "../drivers/types.h"
 
 void start_desktop();
+void LMB();

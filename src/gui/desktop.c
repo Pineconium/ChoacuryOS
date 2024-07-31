@@ -63,10 +63,20 @@ void clear_pointer(uint8_t* Cursor, Point position) {
     }
 }
 
+void LMB(){
+	if(MousePosition.X > 0 && MousePosition.X <= 50){
+		if(MousePosition.Y > 0 && MousePosition.Y < 50){
+			/* does something if the boxed is clicked on */
+			vga_fillrect(75,75,120,90,6);
+		}
+	}
+}
+
 void start_desktop(){
 	MousePosition.X = 0;
 	MousePosition.Y = 0;
 	draw_pointer(Cursor, MousePosition, TC_BLACK);
+	vga_fillrect(0,0,20,20,4);
 
 	for (;;) {
 		/* If ESC is pressed, exit the desktop */
@@ -89,6 +99,11 @@ void start_desktop(){
 		clear_pointer(Cursor, MousePosition);
 		MousePosition.X += mouse_event.move_event.rel_x;
 		MousePosition.Y -= mouse_event.move_event.rel_y;
+		
+		vga_fillrect(0,0,20,20,4);
+		
+		
 		draw_pointer(Cursor, MousePosition, TC_BLACK);
+
 	}
 }

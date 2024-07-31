@@ -127,6 +127,11 @@ static void ps2_mouse_new_byte(ps2_device_t* mouse) {
             event->type = MOUSE_BUTTON_EVENT;
             event->button_event.pressed = !!(button_mask & (1 << i));
             event->button_event.button = i;
+			
+			if (i == 0 && event->button_event.pressed) {
+                // Call a click function?
+				LMB();
+            }
         }
 
         mouse->mouse_info.button_mask = button_mask;
