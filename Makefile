@@ -7,7 +7,7 @@ ASM := nasm
 
 CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra -I$(SRC_DIR)
 ASMFLAGS := -f elf32
-LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto --allow-multiple-definition
+LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
 SRCS :=								\
 	drivers/debug.c					\
