@@ -40,7 +40,7 @@ void term_init(u32 width, u32 height, set_char_t set_char, move_cursor_t move_cu
     term_clear();
 }
 
-static void term_rerender_buffer() {
+void term_rerender_buffer() {
     /* loop over all cells in terminal buffer and write them to screen */
     u32 offset = 0;
     for (u32 y = 0; y < s_term_info.height; y++) {

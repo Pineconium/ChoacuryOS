@@ -2,6 +2,4 @@
 
 #include "../drivers/types.h"
 
-extern uint8_t Cursor[];
-
-void Desktop();
+void start_desktop();

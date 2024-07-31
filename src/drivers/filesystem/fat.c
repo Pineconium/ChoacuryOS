@@ -27,7 +27,7 @@ typedef struct FAT_ext32 {
 	u8			volume_label[11];
 	u8			fat_type_label[8];
 }__attribute__((packed)) FAT_ext32_t;
- 
+
 // Extended fat12 and fat16 stuff
 typedef struct FAT_ext16 {
 	u8			bios_drive_num;
@@ -37,7 +37,7 @@ typedef struct FAT_ext16 {
 	u8			volume_label[11];
 	u8			fat_type_label[8];
 }__attribute__((packed)) FAT_ext16_t;
- 
+
 typedef struct FAT_bs {
 	u8 			bootjmp[3];
 	u8 			oem_name[8];
@@ -53,7 +53,7 @@ typedef struct FAT_bs {
 	u16			head_side_count;
 	u32 		hidden_sector_count;
 	u32 		total_sectors_32;
- 
+
 	union
 	{
 		FAT_ext16_t ext_bs_16;
@@ -91,7 +91,7 @@ typedef struct FAT_dir_entry {
 static bool is_power_of_two(uint32_t value) {
 	if (value == 0)
 		return false;
-	return (value & (value - 1)) == 0;	
+	return (value & (value - 1)) == 0;
 }
 
 static int min(int a, int b) {
@@ -137,7 +137,7 @@ FAT_filesystem_t* FAT_Init(storage_device_t* storage_device) {
 	// Jump code must be of form 0xEB??90 or 0xE9????
 	if (!((bs->bootjmp[0] == 0xEB && bs->bootjmp[2] == 0x90) || (bs->bootjmp[0] == 0xE9)))
 		goto error_label;
-	
+
 	if (!is_power_of_two(bs->bytes_per_sector) || bs->bytes_per_sector < 512 || bs->bytes_per_sector > 4096)
 		goto error_label;
 

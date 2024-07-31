@@ -28,8 +28,8 @@ extern k_main    ;  <-- The k_main function is defined in kernel.c
 
 start:
     mov esp, boot_stack_top
-    push eax ; <-|----pushes memory map from grub onto 
-    push ebx ; <-|    the stack so the kernel can access it. 
+    push eax ; <-|----pushes memory map from grub onto
+    push ebx ; <-|    the stack so the kernel can access it.
     lgdt [boot_gdtr]
     mov ax, 0x10
     mov ds, ax
@@ -38,7 +38,7 @@ start:
     mov gs, ax
     mov ss, ax
     jmp 0x08:flush_cs
-flush_cs: 
+flush_cs:
     call k_main  ; <-- Jumps to the kernel
 
     hlt ; <-- Halt the CPU

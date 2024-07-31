@@ -54,9 +54,9 @@ size_t detect_memory(const multiboot_info_t* mbd, uint32_t magic) {
 	}
 
 	return bytes;
-} 
+}
 
-/* A Simple kernel written in C 
+/* A Simple kernel written in C
  * These parameters are pushed onto the stack by the assembly kernel entry file.
  */
 void k_main(multiboot_info_t* mbd, uint32_t magic) {
@@ -64,16 +64,15 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
     idt_init();
     kmalloc_init();
 
-
-
     /* Display Info Message */
-    term_init(VGA_WIDTH, VGA_HEIGHT, vga_set_char, vga_move_cursor); 
+	vga_text_init(TC_BLACK);
+    term_init(VGA_width, VGA_width, vga_set_char, vga_move_cursor);
     term_write("\n\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0\n", TC_LIME);
     term_write("Version: Build " __DATE__ " (GUI Testing)\n", TC_WHITE);
     term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
-     
+
     size_t memory = detect_memory(mbd, magic);    // <-- Used in the chstat command
-    
+
     pic_init();     // <-- Enable clock stuff
 
     pit_init();     // <-- Enable Timer

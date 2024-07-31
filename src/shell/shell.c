@@ -4,11 +4,11 @@
 #include "../drivers/filesystem/fat.h"
 #include "../drivers/pit.h"
 #include "../drivers/ps2_keyboard.h"
-#include "../drivers/ps2_mouse.h"
 #include "../drivers/sound.h"
 #include "../drivers/storage/device.h"
 #include "../drivers/utils.h"
 #include "../drivers/vga.h"
+#include "../gui/desktop.h"
 #include "../kernel/panic.h"
 #include "../memory/kmalloc.h"
 #include "shell.h"
@@ -18,8 +18,6 @@
 #define MAX_COMMAND_LENGTH 256
 #define MAX_ARGUMENTS 128
 
-static bool s_print_mouse_events = false;
-
 static FAT_filesystem_t* s_fat_fs = NULL;
 char currentDir[] = "root";                 // <-- The current directory for stuff like 'CD' (WIP)
 
@@ -27,12 +25,18 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
     if (argc == 0) {
         return;
     }
-    
+
     if(strcmp(argv[0], "guiload") == 0){
-        vga_init(1);    // <- Starts the GUI (VGA Mode 13)
+        /* Initialize graphics mode and start desktop */
+	    vga_graphics_init(TC_BLUE);
+        start_desktop();
+
+        /* If desktop exists, reinitialize text mode and render terminal */
+	    vga_text_init(TC_BLACK);
+        term_rerender_buffer();
     }
 
-    if (strcmp(argv[0], "hello") == 0) {
+    else if (strcmp(argv[0], "hello") == 0) {
         /* Basic testing command */
         term_write("Hello from Terminal\n", TC_WHITE);
     }
@@ -45,8 +49,8 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
             // - Proper file and directory creation and deletion commands, like MKDIR, MF, etc.
             term_write("LIST OF COMMANDS\n", TC_WHITE);
             term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
-            term_write("beep                - PC Beeper control. \n", TC_WHITE);      
-            term_write("calc                - Literally a Calculator\n", TC_WHITE); 
+            term_write("beep                - PC Beeper control. \n", TC_WHITE);
+            term_write("calc                - Literally a Calculator\n", TC_WHITE);
             term_write("cat                 - Print file contents.\n", TC_WHITE);
             term_write("cd                  - Changes the current directory\n", TC_WHITE);
             term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
@@ -57,7 +61,6 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
             term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
             term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
             term_write("chstat              - Display system information.\n", TC_WHITE);
-            term_write("dumpmouse           - Toggle mouse event dumping.\n", TC_WHITE);
         }
         else if (strcmp(argv[1], "calc") == 0) {
             term_write("CALC\n\n", TC_WHITE);
@@ -206,7 +209,7 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
     else if (strcmp(argv[0], "cls") == 0 || strcmp(argv[0], "clear") == 0) {
         term_clear();
     }
-    
+
     else if (strcmp(argv[0], "pause") == 0) {
         if(strcmp(argv[1], "-t") == 0) {
             atoi_result_t duration = { .valid = true, .value = 500 };    // <-- 500 ms
@@ -266,12 +269,12 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
         term_write("BUILD: ", TC_LBLUE);
         term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
         term_write("KERNEL: ", TC_LBLUE);
-        term_write("Choacury Standard (Skye)\n", TC_WHITE);
+        term_write("Choacury Standard (FS Testing)\n", TC_WHITE);
         term_write("SHELL: ", TC_LBLUE);
-        term_write("chsh-0.0.0.0043b-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
+        term_write("chsh-0.0.0.0041a-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_buffer, TC_WHITE);
-        term_write(" KB\n", TC_WHITE);
+        term_write(" MB\n", TC_WHITE);
         term_write("CPU: ", TC_LBLUE);
         term_write("CPU Info code goes here" "\n", TC_WHITE);
     }
@@ -372,16 +375,9 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
     else if (strcmp(argv[0], "compdate") == 0) {
         term_write(__DATE__ "\n", TC_WHITE);
     }
-    
+
     else if (strcmp(argv[0], "whereami") == 0) {
         term_write(currentDir, TC_WHITE);
-        term_write("\n", TC_WHITE);
-    }
-
-    else if (strcmp(argv[0], "dumpmouse") == 0) {
-        s_print_mouse_events = !s_print_mouse_events;
-        term_write("Mouse event printing: ", TC_WHITE);
-        term_write(s_print_mouse_events ? "enabled" : "disabled", TC_WHITE);
         term_write("\n", TC_WHITE);
     }
 
@@ -441,37 +437,6 @@ void shell_start(uint64_t memory_size) {
     term_write("> ", TC_WHITE);
 
     for (;;) {
-        {
-            mouse_event_t event;
-            ps2_get_mouse_event(&event);
-            if (s_print_mouse_events) {
-                switch (event.type) {
-                    case MOUSE_EVENT_NONE:
-                        break;
-                    case MOUSE_BUTTON_EVENT:
-                        dprint("mouse button ");
-                        dprintint(event.button_event.button);
-                        dprint(" ");
-                        dprintln(event.button_event.pressed ? "pressed" : "released");
-                        break;
-                    case MOUSE_MOVE_EVENT:
-                        dprint("mouse move ");
-                        dprintint(event.move_event.rel_x);
-                        dprint(", ");
-                        dprintint(event.move_event.rel_y);
-                        dprintln("");
-                        break;
-                    case MOUSE_SCROLL_EVENT:
-                        dprint("mouse scroll ");
-                        dprintint(event.scroll_event.value);
-                        dprintln("");
-                        break;
-                    default:
-                        panic("invalid mouse event");
-                }
-            }
-        }
-
         key_event_t event;
         ps2_get_key_event(&event);
 
