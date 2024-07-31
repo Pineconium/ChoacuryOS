@@ -37,7 +37,8 @@
 - [x] 8-bit colour support (256 colours/ANSI Support).
 - [ ] High-colour/True colour support (beyond 8-bit/>=256 colours).
 - [x] Graphical Shell (GUI).
-- [ ] Mouse Drivers
+- [ ] Window Management System
+- [x] Mouse Drivers
 - [ ] Virtual Terminal/Command Prompt
 - [ ] Basic GUI Apps. (e.g. File Manager, Program Launcher)
 
