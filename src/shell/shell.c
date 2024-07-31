@@ -11,6 +11,7 @@
 #include "../gui/desktop.h"
 #include "../kernel/panic.h"
 #include "../memory/kmalloc.h"
+#include "../memory/pmm.h"
 #include "shell.h"
 #include "terminal.h"
 #include <stdint.h>
@@ -21,7 +22,7 @@
 static FAT_filesystem_t* s_fat_fs = NULL;
 char currentDir[] = "root";                 // <-- The current directory for stuff like 'CD' (WIP)
 
-static void handle_command(int argc, const char** argv, uint64_t memory_size) {
+static void handle_command(int argc, const char** argv) {
     if (argc == 0) {
         return;
     }
@@ -263,18 +264,19 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
 
     else if (strcmp(argv[0], "chstat") == 0) {
         /* this is basically a stupid neofetch clone */
-        char mem_buffer[9];
-        uint64_to_string(memory_size, mem_buffer);
-        mem_buffer[8] = 0; // <-- to prevent undefined behaviour
+        char mem_mib_buffer[20];
+        uint64_to_string(g_total_pmm_bytes / 1024 / 1024, mem_mib_buffer);
+        mem_mib_buffer[19] = 0; // <-- to prevent undefined behaviour
+
         term_write("BUILD: ", TC_LBLUE);
         term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
         term_write("KERNEL: ", TC_LBLUE);
         term_write("Choacury Standard (FS Testing)\n", TC_WHITE);
         term_write("SHELL: ", TC_LBLUE);
-        term_write("chsh-0.0.0.0041a-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
+        term_write("chsh-0.0.0.0041b-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
         term_write("RAM: ", TC_LBLUE);
-        term_write(mem_buffer, TC_WHITE);
-        term_write(" MB\n", TC_WHITE);
+        term_write(mem_mib_buffer, TC_WHITE);
+        term_write(" MiB\n", TC_WHITE);
         term_write("CPU: ", TC_LBLUE);
         term_write("CPU Info code goes here" "\n", TC_WHITE);
     }
@@ -388,7 +390,7 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
 }
 
 /* Parse command buffer to a null-terminated list of arguments */
-static void parse_command(char* command, unsigned length, uint64_t memory_size) {
+static void parse_command(char* command, unsigned length) {
     /* Make sure that the command buffer is null-terminated */
     command[length] = 0;
 
@@ -414,11 +416,11 @@ static void parse_command(char* command, unsigned length, uint64_t memory_size) 
         argument_count++;
     }
 
-    handle_command(argument_count, arguments, memory_size);
+    handle_command(argument_count, arguments);
 }
 
 /* Main CLI shell stuff. */
-void shell_start(uint64_t memory_size) {
+void shell_start() {
 
     // FIXME: This should be done in vfs.
     s_fat_fs = FAT_Init(g_storage_devices[0]->partitions[1]);
@@ -461,7 +463,7 @@ void shell_start(uint64_t memory_size) {
             case KEY_Enter:
                 term_putchar('\n', TC_WHITE);
                 if (command_length > 0) {
-                    parse_command(command_buffer, command_length, memory_size);
+                    parse_command(command_buffer, command_length);
                     command_length = 0;
                 }
                 term_write(currentDir, TC_LIME);

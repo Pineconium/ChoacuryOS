@@ -4,26 +4,26 @@
 */
 
 /* Includes needed for the kernel to actually work.*/
-#include <stdint.h>
-#include "../drivers/ports.h"
-#include "panic.h"
 #include "../drivers/gdt.h"
-#include "multiboot.h"
 #include "../drivers/idt.h"
-#include "../drivers/pic.h"
-#include "../drivers/utils.h"
-#include "../drivers/pit.h"
-#include "../drivers/ps2.h"
 #include "../drivers/keymaps/ps2_keymap_us.h"   // <-- US Keyboard Layout.
+#include "../drivers/mouse.h"
+#include "../drivers/pci.h"
+#include "../drivers/pic.h"
+#include "../drivers/pit.h"
+#include "../drivers/ports.h"
+#include "../drivers/ps2.h"
 #include "../drivers/sound.h"
 #include "../drivers/storage/device.h"
 #include "../drivers/types.h"
+#include "../drivers/utils.h"
 #include "../drivers/vga.h"
-#include "../drivers/pci.h"
-#include "../drivers/mouse.h"
+#include "../memory/kmalloc.h"
+#include "../memory/pmm.h"
 #include "../shell/shell.h"
 #include "../shell/terminal.h"
-#include <memory/kmalloc.h>
+#include "multiboot.h"
+#include "panic.h"
 
 /* Startup Beep*/
 void StartUp_Beeps() {
@@ -35,27 +35,6 @@ void StartUp_Beeps() {
     mutebeep();
 }
 
-/* Gets the complete size of the memory */
-size_t detect_memory(const multiboot_info_t* mbd, uint32_t magic) {
-    if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-        panic("Invalid memory map (Invalid magic number)\n");
-	}
-    if (!(mbd->flags >> 6 & 0x1)) {
-        panic("Invalid memory map (Wrong flags)\n");
-	}
-
-	size_t bytes = 0;
-	for (uint32_t offset = 0; offset < mbd->mmap_length;) {
-		const multiboot_memory_map_t* entry = (const multiboot_memory_map_t*)mbd->mmap_addr;
-		if (entry->type == MULTIBOOT_MEMORY_AVAILABLE) {
-			bytes += entry->len;
-		}
-		offset += entry->size;
-	}
-
-	return bytes;
-}
-
 /* A Simple kernel written in C
  * These parameters are pushed onto the stack by the assembly kernel entry file.
  */
@@ -65,13 +44,17 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
     kmalloc_init();
 
     /* Display Info Message */
-	vga_text_init(TC_BLACK);
+    vga_text_init(TC_BLACK);
     term_init(VGA_width, VGA_width, vga_set_char, vga_move_cursor);
     term_write("\n\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0\n", TC_LIME);
     term_write("Version: Build " __DATE__ " (GUI Testing)\n", TC_WHITE);
     term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
 
-    size_t memory = detect_memory(mbd, magic);    // <-- Used in the chstat command
+    if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+        panic("Bootloader did not provide multiboot information\n");
+    }
+
+    pmm_init(mbd);
 
     pic_init();     // <-- Enable clock stuff
 
@@ -92,5 +75,5 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
     /* Print PCI devices */
     debug_print_pci();
 
-    shell_start(memory);
+    shell_start();
 };

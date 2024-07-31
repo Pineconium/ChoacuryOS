@@ -37,6 +37,7 @@ SRCS :=								\
 	kernel/krnentry.asm				\
 	kernel/panic.c					\
 	memory/kmalloc.c				\
+	memory/pmm.c					\
 	shell/shell.c					\
 	shell/terminal.c				\
 	gui/desktop.c					\
