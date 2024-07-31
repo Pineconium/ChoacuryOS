@@ -36,28 +36,42 @@ void StartUp_Beeps() {
 }
 
 /* Gets the complete size of the memory */
-uint64_t detect_memory(multiboot_info_t* mbd, uint32_t magic) {
-    if (magic != MULTIBOOT_BOOTLOADER_MAGIC)
-        panic_impl("KERNEL:", "Invalid memory map (Invalid magic number)\n");
-    if (!(mbd->flags >> 6 & 0x1))
-        panic_impl("KERNEL:", "Invalid memory map (Wrong flags)\n");
-    int num_memory_blocks = mbd->mmap_length - 1;
-    multiboot_memory_map_t* largest_block = 
-            (multiboot_memory_map_t*) (mbd->mmap_addr + num_memory_blocks - sizeof(multiboot_memory_map_t));
-    uint64_t memory_size_bytes = largest_block->addr + largest_block->len;
-    /* Convert it to megabytes
-     * Seems like a simple division? Think again.
-     * In this freestanding environment, there's no access to division of unsigned integers.
-     * Therefore, I wrote a simple divider just for this.
-     * Idk if it's the best implementation, but it should work.
-     * It simply uses repeated subtraction.
-     */
-    int memory_size_mb = 0;
-    while (memory_size_bytes >= 1000000) {
-        memory_size_bytes -= 1000000;
-        memory_size_mb++;
-    }
-    return memory_size_mb;
+size_t detect_memory(const multiboot_info_t* mbd, uint32_t magic) {
+    if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+        panic("Invalid memory map (Invalid magic number)\n");
+	}
+    if (!(mbd->flags >> 6 & 0x1)) {
+        panic("Invalid memory map (Wrong flags)\n");
+	}
+
+	size_t bytes = 0;
+	for (uint32_t offset = 0; offset < mbd->mmap_length;) {
+		const multiboot_memory_map_t* entry = (const multiboot_memory_map_t*)mbd->mmap_addr;
+		if (entry->type == MULTIBOOT_MEMORY_AVAILABLE) {
+			bytes += entry->len;
+		}
+		offset += entry->size;
+	}
+
+	return bytes;
+size_t detect_memory(const multiboot_info_t* mbd, uint32_t magic) {
+    if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+        panic("Invalid memory map (Invalid magic number)\n");
+	}
+    if (!(mbd->flags >> 6 & 0x1)) {
+        panic("Invalid memory map (Wrong flags)\n");
+	}
+
+	size_t bytes = 0;
+	for (uint32_t offset = 0; offset < mbd->mmap_length;) {
+		const multiboot_memory_map_t* entry = (const multiboot_memory_map_t*)mbd->mmap_addr;
+		if (entry->type == MULTIBOOT_MEMORY_AVAILABLE) {
+			bytes += entry->len;
+		}
+		offset += entry->size;
+	}
+
+	return bytes;
 } 
 
 /* A Simple kernel written in C 

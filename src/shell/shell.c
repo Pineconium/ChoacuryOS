@@ -22,10 +22,10 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
     if (argc == 0) {
         return;
     }
-	
-	if(strcmp(argv[0], "guiload") == 0){
-		vga_init(1);    // <- Starts the GUI (VGA Mode 13)
-	}
+    
+    if(strcmp(argv[0], "guiload") == 0){
+        vga_init(1);    // <- Starts the GUI (VGA Mode 13)
+    }
 
     if (strcmp(argv[0], "hello") == 0) {
         /* Basic testing command */
@@ -34,7 +34,27 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
 
     /* actual help information, might need to be rewriten in the future */
     else if (strcmp(argv[0], "help") == 0) {
-        if (strcmp(argv[1], "calc") == 0) {
+        /* if no command is present in arg 1 */
+        if (argc == 1) {
+            // TOADD:
+            // - Proper file and directory creation and deletion commands, like MKDIR, MF, etc.
+            term_write("LIST OF COMMANDS\n", TC_WHITE);
+            term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
+            term_write("beep                - PC Beeper control. \n", TC_WHITE);      
+            term_write("calc                - Literally a Calculator\n", TC_WHITE); 
+            term_write("cat                 - Print file contents.\n", TC_WHITE);
+            term_write("cd                  - Changes the current directory\n", TC_WHITE);
+            term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
+            term_write("cls OR clear        - Clears the screen.\n", TC_WHITE);
+            term_write("echo                - Prints string to the console.\n", TC_WHITE);
+            term_write("guiload             - Loads up the GUI (WIP!)\n", TC_WHITE);
+            term_write("ls                  - List files in a directory.\n", TC_WHITE);
+            term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
+            term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
+            term_write("chstat              - Display system information.\n", TC_WHITE);
+            term_write("dumpmouse           - Toggle mouse event dumping.\n", TC_WHITE);
+        }
+        else if (strcmp(argv[1], "calc") == 0) {
             term_write("CALC\n\n", TC_WHITE);
             term_write("Calculate math. Syntax: ", TC_WHITE);
             term_write("calc NUMBER1 FUNCT NUMBER2\n\n", TC_BRIGHT);
@@ -68,25 +88,6 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
         else if (strcmp(argv[1], "chstat") == 0) {
             term_write("CHSTAT\n\n", TC_WHITE);
             term_write("Displays system info. Such as RAM, CPU, OS Information, etc.\n", TC_WHITE);
-        }
-        /* if no command is present in arg 1 */
-        else if (argc == 1) {
-            // TOADD:
-            // - Proper file and directory creation and deletion commands, like MKDIR, MF, etc.
-            term_write("LIST OF COMMANDS\n", TC_WHITE);
-            term_write("help                - Hello there! I'm the Help Command!\n", TC_WHITE);
-            term_write("beep                - PC Beeper control. \n", TC_WHITE);      
-            term_write("calc                - Literally a Calculator\n", TC_WHITE); 
-            term_write("cat                 - Print file contents.\n", TC_WHITE);
-            term_write("cd                  - Changes the current directory\n", TC_WHITE);
-            term_write("compdate            - Shows the compilation date.\n", TC_WHITE);
-            term_write("cls OR clear        - Clears the screen.\n", TC_WHITE);
-            term_write("echo                - Prints string to the console.\n", TC_WHITE);
-			term_write("guiload             - Loads up the GUI (WIP!)\n", TC_WHITE);
-            term_write("ls                  - List files in a directory.\n", TC_WHITE);
-            term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
-            term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
-            term_write("chstat              - Display system information.\n", TC_WHITE);
         }
         else {
             term_write(argv[1], TC_BRIGHT);
@@ -300,15 +301,15 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
         }
 
         FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, argv[1]);
-		if (file == NULL) {
-			term_write("ERROR: Not found: '", TC_LRED);
-			term_write(argv[1], TC_LRED);
-			term_write("'\n", TC_LRED);
-			FAT_Close(file);
-			return;
-		}
+        if (file == NULL) {
+            term_write("ERROR: Not found: '", TC_LRED);
+            term_write(argv[1], TC_LRED);
+            term_write("'\n", TC_LRED);
+            FAT_Close(file);
+            return;
+        }
 
-		char buffer[513];
+        char buffer[513];
         size_t total_read = 0;
         while (true) {
             size_t nread = FAT_Read(file, total_read, buffer, sizeof(buffer) - 1);
@@ -325,7 +326,7 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
         FAT_Close(file);
     }
 
-	else if (strcmp(argv[0], "ls") == 0) {
+    else if (strcmp(argv[0], "ls") == 0) {
         if (argc > 2) {
             term_write("ERROR: Usage -> ls [PATH]\n", TC_LRED);
             return;
@@ -335,33 +336,33 @@ static void handle_command(int argc, const char** argv, uint64_t memory_size) {
             return;
         }
 
-		const char* path = (argc == 2) ? argv[1] : "";
+        const char* path = (argc == 2) ? argv[1] : "";
 
         FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, path);
-		if (file == NULL) {
-			term_write("ERROR: Not found: '", TC_LRED);
-			term_write(argv[1], TC_LRED);
-			term_write("'\n", TC_LRED);
-			FAT_Close(file);
-			return;
-		}
+        if (file == NULL) {
+            term_write("ERROR: Not found: '", TC_LRED);
+            term_write(argv[1], TC_LRED);
+            term_write("'\n", TC_LRED);
+            FAT_Close(file);
+            return;
+        }
 
-		char** names = NULL;
-		size_t count = FAT_ListFiles(file, &names);
-		if (names == NULL) {
-			term_write("EHH??", TC_YELLO);
-			return;
-		}
-		for (size_t i = 0; i < count; i++) {
-			term_write(names[i], TC_WHITE);
-			term_putchar(' ', TC_WHITE);
-			kfree(names[i]);
-		}
-		term_putchar('\n', TC_WHITE);
-		kfree(names);
+        char** names = NULL;
+        size_t count = FAT_ListFiles(file, &names);
+        if (names == NULL) {
+            term_write("EHH??", TC_YELLO);
+            return;
+        }
+        for (size_t i = 0; i < count; i++) {
+            term_write(names[i], TC_WHITE);
+            term_putchar(' ', TC_WHITE);
+            kfree(names[i]);
+        }
+        term_putchar('\n', TC_WHITE);
+        kfree(names);
 
-		FAT_Close(file);
-	}
+        FAT_Close(file);
+    }
 
     else if (strcmp(argv[0], "compdate") == 0) {
         term_write(__DATE__ "\n", TC_WHITE);
