@@ -1,29 +1,32 @@
 /* choacury gui */
 #include "desktop.h"
 #include "Point.h"
+#include "bindraw.h"    // <- so I can draw in binary without melting my brain.
 #include "../drivers/ps2_keyboard.h"
 #include "../drivers/ps2_mouse.h"
 #include "../drivers/vga.h"
 
 /* the mouse cursor */
 static uint8_t Cursor[] = {
-    // 16x2
-    0b00100000, 0b00000000,
-    0b00110000, 0b00000000,
-    0b00101000, 0b00000000,
-    0b00100100, 0b00000000,
-    0b00100010, 0b00000000,
-    0b00100001, 0b00000000,
-    0b00100000, 0b10000000,
-    0b00100000, 0b01000000,
-    0b00100000, 0b00100000,
-    0b00100000, 0b00010000,
-    0b00100000, 0b01111000,
-    0b00100110, 0b01000000,
-    0b00101001, 0b00100000,
-    0b00010000, 0b10010000,
-    0b00000000, 0b01001000,
-    0b00000000, 0b00110000
+    /* this needs to be some 8 bit binary stuff */
+    /* if you're too lazy just chatgpt it */
+    
+    __X_____,________,
+    __XX____,________,
+    __X_X___,________,
+    __X__X__,________,
+    __X___X_,________,
+    __X____X,________,
+    __X_____,X_______,
+    __X_____,_X______,
+    __X_____,__X_____,
+    __X_____,___X____,
+    __X_____,_XXXX___,
+    __X__XX_,_X______,
+    __X_X__X,__X_____,
+    ___X____,X__X____,
+    ________,_X__X___,
+    ________,__XX____
 };
 
 static uint32_t MouseCursorBuffer[16 * 16];
