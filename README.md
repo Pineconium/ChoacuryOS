@@ -1,9 +1,10 @@
 ![ChoacuryLogo](https://pineconiumsoftware.neocities.org/choacury/assets/ChoacuryLogo.png)
+
 Choacury, (pronounced as coch-curry or /kʰɔx-ˈkʌr.i/), is a custom-built OS written in C and Assembly. Choacury is currently in a very **Pre-Alpha** stage, meaning some stuff isn't complete yet...
 
-If you want to help out on the project, feel free to contribute to the project! (see TODO.MD for what is needed doing). You can also modify Choacury to your liking if you want to make your own OS!
+![ChoacuryScreenshot](https://raw.githubusercontent.com/Pineconium/ChoacuryOS/main/choacuryscreenshot.png)
 
-![ChoacuryScreenshot](https://pineconiumsoftware.neocities.org/choacury/assets/ChoacuryScreenshot_2024.png)
+If you want to help out on the project, feel free to contribute to the project! (see TODO.MD for what is needed doing). You can also modify Choacury to your liking if you want to make your own OS!
 
 # System Requirements
 Currently, Choacury only works best with virtual machines. However, you *can* use real hardware if you want, just there might be some issues that will be fixed down the line.
@@ -15,6 +16,6 @@ For VirtualBox Users, here are the recommended VM requirements:
 - Hard Disk: 2.00 GB.
 
 # Compile Choacury.
-If you want to compile Choacury yourself from source code, here's what you'll need.
+If you want to compile Choacury from the source code, here's what you'll need.
 1. NASM, GCC, GRUB Multiboot, Makefile, and QEMU installed. (the compiler uses the `x86_64` version of QEMU. If you don't use that version of QEMU, replace `qemu-system-x86_64` in the compiler shell script with your version of QEMU)
-2. A computer running any Linux distro (recommended but there is a Windows Compiler for Windows devices along as you have WSL enabled).
+2. A computer running any Linux distro (recommended, but there is a Windows Compiler for Windows devices as long as you have WSL enabled).
