@@ -1,7 +1,6 @@
 [![GitHub release](https://img.shields.io/github/release/Pineconium/ChoacuryOS?include_prereleases=&sort=semver&color=blue)](https://github.com/Pineconium/ChoacuryOS/releases/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue)](#license)
 [![issues - ChoacuryOS](https://img.shields.io/github/issues/Pineconium/ChoacuryOS)](https://github.com/Pineconium/ChoacuryOS/issues)
-![Discord](https://img.shields.io/discord/1109529461667414037?label=discord&color=blue)
 
 Choacury, (pronounced as coch-curry or /kʰɔx-ˈkʌr.i/), is a custom-built OS written in C and Assembly. Choacury is currently in a very **Pre-Alpha** stage, meaning some stuff isn't complete yet...
 
