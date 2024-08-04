@@ -273,7 +273,7 @@ static void handle_command(int argc, const char** argv) {
         term_write("KERNEL: ", TC_LBLUE);
         term_write("Choacury Standard (FS Testing)\n", TC_WHITE);
         term_write("SHELL: ", TC_LBLUE);
-        term_write("chsh-0.0.0.0041b-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
+        term_write("chsh-0.0.0.0041e-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_mib_buffer, TC_WHITE);
         term_write(" MiB\n", TC_WHITE);
@@ -453,6 +453,8 @@ void shell_start() {
             continue;
         }
 
+        /* we should add support for stuff like Ctrl+Alt+Del */
+
         switch (event.key) {
             case KEY_Backspace:
                 if (command_length > 0) {
@@ -468,11 +470,6 @@ void shell_start() {
                 }
                 term_write(currentDir, TC_LIME);
                 term_write("> ", TC_WHITE);
-                break;
-            case KEY_LeftCtrl:      // TODO: <-- Replace with Ctrl+G (Bell command on most other systems)
-                startbeep(800);
-                pit_sleep_ms(15);
-                mutebeep();
                 break;
             default: {
                 const char* utf8 = key_to_utf8(&event);
