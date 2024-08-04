@@ -15,6 +15,9 @@
 ### Extra Drivers
 - [ ] USB Keyboard Support.
 
+### Misc.
+- [ ] Ctrl+Alt+Del support 
+
 ### Command Line Interface (CLI)
 - [x] Scrolling.
 - [x] Barebones CLI.
