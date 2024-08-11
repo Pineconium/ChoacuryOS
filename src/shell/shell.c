@@ -32,7 +32,7 @@ static void handle_command(int argc, const char** argv) {
 	    vga_graphics_init(TC_BLUE);
         start_desktop();
 
-        /* If desktop exists, reinitialize text mode and render terminal */
+        /* If desktop exits, reinitialize text mode and render terminal */
 	    vga_text_init(TC_BLACK);
         term_rerender_buffer();
     }
@@ -163,7 +163,7 @@ static void handle_command(int argc, const char** argv) {
             return;
         }
 
-        // a shitty way of making a barebones calculator but it works //
+        /* a shitty way of making a barebones calculator but it works */
         if (strcmp(argv[2], "+") == 0 || strcmp(argv[2], "-a")  == 0) {
             MathFunction = 1;
         }
@@ -266,14 +266,14 @@ static void handle_command(int argc, const char** argv) {
         /* this is basically a stupid neofetch clone */
         char mem_mib_buffer[20];
         uint64_to_string(g_total_pmm_bytes / 1024 / 1024, mem_mib_buffer);
-        mem_mib_buffer[19] = 0; // <-- to prevent undefined behaviour
+        mem_mib_buffer[19] = 0;                                 // <-- to prevent undefined behaviour
 
         term_write("BUILD: ", TC_LBLUE);
         term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
         term_write("KERNEL: ", TC_LBLUE);
-        term_write("Choacury Standard (FS Testing)\n", TC_WHITE);
+        term_write("Choacury Standard\n", TC_WHITE);            // <-- aka. stock kernel.
         term_write("SHELL: ", TC_LBLUE);
-        term_write("chsh-0.0.0.0041e-dev\n", TC_WHITE);       // <-- Could be more automated ngl.
+        term_write("chsh-0.0.0.0041e-dev\n", TC_WHITE);         // <-- Could be more automated ngl.
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_mib_buffer, TC_WHITE);
         term_write(" MiB\n", TC_WHITE);
@@ -291,12 +291,14 @@ static void handle_command(int argc, const char** argv) {
             return;
         }
 
-        // TOADD: The actual CD stuff
-        /* PLACEHOLDER DECECTION*/
-        term_write("WARNING: CD command is still being developed, so that ", TC_YELLO);
-        term_write(argv[1], TC_BRIGHT);
-        term_write(" may not be a vaild directory and may cause issues\n", TC_YELLO);
-        // char currentDir[] = argv[1]; // <-- Sets the current directory to Arg1, making it a proper change DIR command
+        //TOFIX: Make actual 'CD' stuff.
+        term_write("CD is still yet to be added", TC_WHITE);
+
+    }
+
+    else if (strcmp(argv[0], "mf") == 0) {
+        /* this pretty much is meant to make a blank file */
+        term_write("MF is still yet to be added", TC_WHITE);
 
     }
 
