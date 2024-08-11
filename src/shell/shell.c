@@ -292,13 +292,13 @@ static void handle_command(int argc, const char** argv) {
         }
 
         //TOFIX: Make actual 'CD' stuff.
-        term_write("CD is still yet to be added", TC_WHITE);
+        term_write("CD is still yet to be added\n", TC_WHITE);
 
     }
 
     else if (strcmp(argv[0], "mf") == 0) {
         /* this pretty much is meant to make a blank file */
-        term_write("MF is still yet to be added", TC_WHITE);
+        term_write("MF is still yet to be added\n", TC_WHITE);    // <-- placeholder
 
     }
 
