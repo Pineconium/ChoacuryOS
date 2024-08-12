@@ -31,7 +31,7 @@
 - [x] Detection from CLI.
 - [x] Control from CLI. (as in stuff like `mkdir` and `format`)
 - [x] FAT Support.
-- [ ] Custom Filesystem (CFS).
+- [ ] Custom Filesystem (CHFM).
 - [ ] ext4 (Linux) Support.
 - [ ] NTFS (Windows) Support.
 
