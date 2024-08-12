@@ -8,6 +8,7 @@
 #include "../drivers/storage/device.h"
 #include "../drivers/utils.h"
 #include "../drivers/vga.h"
+#include "../drivers/vbe.h"
 #include "../gui/desktop.h"
 #include "../kernel/panic.h"
 #include "../memory/kmalloc.h"
@@ -36,6 +37,12 @@ static void handle_command(int argc, const char** argv) {
 	    vga_text_init(TC_BLACK);
         term_rerender_buffer();
     }
+	
+	else if(strcmp(argv[0], "vbetest")==0){
+		BgaSetVideoMode(FHD,VBE_DISPI_BPP_32,1,1);
+		//vbe_putpixel(0,0,0x000000ff);
+
+	}
 
     else if (strcmp(argv[0], "hello") == 0) {
         /* Basic testing command */
@@ -62,6 +69,7 @@ static void handle_command(int argc, const char** argv) {
             term_write("pause               - Pauses the terminal until a keyboard input.\n", TC_WHITE);
             term_write("pl                  - How many data devices are detected.\n", TC_WHITE);
             term_write("chstat              - Display system information.\n", TC_WHITE);
+			term_write("vbetest             - Test Bochs VBE extensions.\n", TC_WHITE);
         }
         else if (strcmp(argv[1], "calc") == 0) {
             term_write("CALC\n\n", TC_WHITE);

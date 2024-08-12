@@ -2,4 +2,4 @@
 title Choacury Compiler
 wsl ./compile.sh
 pause
-qemu -hda build/ChoacuryOS.img -display sdl -monitor stdio -s -S
+qemu -hda build/ChoacuryOS.img -display sdl
