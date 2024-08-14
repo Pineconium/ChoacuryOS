@@ -85,4 +85,6 @@ size_t FAT_Read(FAT_file_t* file, size_t offset, void* buffer, size_t buffer_len
 //   always returns the number of entries in *names_output
 size_t FAT_ListFiles(FAT_file_t* parent, char*** names_output);
 
+// Check if the file is a directory
+bool FAT_IsDirectory(FAT_file_t* file);
 //void FAT_Write(file);
