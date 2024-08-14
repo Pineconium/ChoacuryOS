@@ -623,3 +623,10 @@ size_t FAT_ListFiles(FAT_file_t* parent, char*** names_output) {
 	*names_output = info.names;
 	return info.name_count;
 }
+bool FAT_IsDirectory(FAT_file_t* file) {
+	if (file == NULL) {
+		return false; // Null pointer check
+	}
+
+	return file->is_directory;
+}

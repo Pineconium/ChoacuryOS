@@ -21,8 +21,96 @@
 #define MAX_ARGUMENTS 128
 
 static FAT_filesystem_t* s_fat_fs = NULL;
-char currentDir[] = "root";                 // <-- The current directory for stuff like 'CD' (WIP)
+char currentDir[256] = "root";
+/* Math dictionary*/
 
+// Define function prototypes for math operations
+typedef int (*math_op_t)(int, int);
+int add(int a, int b);
+int subtract(int a, int b);
+int divide(int a, int b);
+int multiply(int a, int b);
+typedef struct {
+    const char *op;
+    math_op_t func;
+} op_map_t;
+
+op_map_t operations[] = {
+    {"+", add},
+    {"-a", add},
+    {"-", subtract},
+    {"-s", subtract},
+    {"/", divide},
+    {"-d", divide},
+    {"*", multiply},
+    {"-m", multiply},
+    {NULL, NULL} // End of map
+};
+int add(int a, int b) {
+    return a + b;
+}
+
+int subtract(int a, int b) {
+    return a - b;
+}
+
+int divide(int a, int b) {
+    return a / b;
+}
+
+int multiply(int a, int b) {
+    return a * b;
+}
+char* find_last_slash(char* str) {
+    char* last_slash = NULL;
+    while (*str) {
+        if (*str == '/') {
+            last_slash = str;
+        }
+        str++;
+    }
+    return last_slash;
+}
+int starts_with(const char *str, const char *prefix) {
+    while (*prefix) {
+        if (*str != *prefix) {
+            return 0;  // Characters do not match
+        }
+        str++;
+        prefix++;
+    }
+    return 1;  // All characters matched
+}
+void cpuid(uint32_t eax_in, uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t* edx) {
+    __asm__ volatile (
+        "cpuid"
+        : "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
+        : "a" (eax_in)
+    );
+}
+
+void get_cpu_info(char* vendor, char* brand) {
+    uint32_t eax, ebx, ecx, edx;
+
+    // Get CPU vendor string
+    cpuid(0, &eax, &ebx, &ecx, &edx);
+    ((uint32_t*)vendor)[0] = ebx;
+    ((uint32_t*)vendor)[1] = edx;
+    ((uint32_t*)vendor)[2] = ecx;
+    vendor[12] = '\0';
+
+    // Get CPU brand string (if supported)
+    cpuid(0x80000000, &eax, &ebx, &ecx, &edx);
+    if (eax >= 0x80000004) {
+        uint32_t* brand_ptr = (uint32_t*)brand;
+        cpuid(0x80000002, &brand_ptr[0], &brand_ptr[1], &brand_ptr[2], &brand_ptr[3]);
+        cpuid(0x80000003, &brand_ptr[4], &brand_ptr[5], &brand_ptr[6], &brand_ptr[7]);
+        cpuid(0x80000004, &brand_ptr[8], &brand_ptr[9], &brand_ptr[10], &brand_ptr[11]);
+        brand[48] = '\0';
+    } else {
+        brand[0] = '\0';
+    }
+}
 static void handle_command(int argc, const char** argv) {
     if (argc == 0) {
         return;
@@ -149,7 +237,6 @@ static void handle_command(int argc, const char** argv) {
     }
 
     else if (strcmp(argv[0], "calc") == 0) {
-        int MathFunction = 0;
 
         if (argc != 4) {
             term_write("ERROR: Usage -> calc [number1] [func] [number2]\n", TC_LRED);
@@ -171,21 +258,16 @@ static void handle_command(int argc, const char** argv) {
             return;
         }
 
-        /* a shitty way of making a barebones calculator but it works */
-        if (strcmp(argv[2], "+") == 0 || strcmp(argv[2], "-a")  == 0) {
-            MathFunction = 1;
+        math_op_t op_func = NULL;
+        for (int i = 0; operations[i].op != NULL; i++) {
+            if (strcmp(argv[2], operations[i].op) == 0) {
+                op_func = operations[i].func;
+                break;
+            }
         }
-        else if (strcmp(argv[2], "-") == 0 || strcmp(argv[2], "-s") == 0) {
-            MathFunction = 2;
-        }
-        else if (strcmp(argv[2], "/") == 0 || strcmp(argv[2], "-d") == 0) {
-            MathFunction = 3;
-        }
-        else if (strcmp(argv[2], "*") == 0 || strcmp(argv[2], "-m")) {
-            MathFunction = 4;
-        }
-        else {
-            term_write("ERROR: Not a vaild function: ", TC_LRED);
+
+        if (op_func == NULL) {
+            term_write("ERROR: Not a valid function: ", TC_LRED);
             term_write(argv[2], TC_BRIGHT);
             term_write("Confused? Use ", TC_WHITE);
             term_write("HELP CALC", TC_BRIGHT);
@@ -193,25 +275,14 @@ static void handle_command(int argc, const char** argv) {
             return;
         }
 
-        /* Basic mathimatical functions*/
-        if (MathFunction == 1){
-            term_write_u32(number1.value + number2.value, 10, TC_WHITE);
+        // Perform the calculation and handle division by zero
+        int result = op_func(number1.value, number2.value);
+        if (op_func == divide && number2.value == 0) {
+            term_write("ERROR: Cannot divide by 0!\n", TC_LRED);
+        } else {
+            term_write_u32(result, 10, TC_WHITE);
+            term_write("\n", TC_WHITE);
         }
-        else if (MathFunction == 2){
-            term_write_u32(number1.value - number2.value, 10, TC_WHITE);
-        }
-        else if (MathFunction == 3){
-            /* prevent dividing by 0 */
-            if (number1.value == 0 || number2.value == 0) {
-                term_write("Can not divide by 0!\n", TC_LRED);
-                return;
-            }
-            else {term_write_u32(number1.value / number2.value, 10, TC_WHITE);}
-        }
-        else if (MathFunction == 4) {
-            term_write_u32(number1.value * number2.value, 10, TC_WHITE);
-        }
-        term_write("\n", TC_WHITE);
     }
 
 
@@ -275,6 +346,11 @@ static void handle_command(int argc, const char** argv) {
         char mem_mib_buffer[20];
         uint64_to_string(g_total_pmm_bytes / 1024 / 1024, mem_mib_buffer);
         mem_mib_buffer[19] = 0;                                 // <-- to prevent undefined behaviour
+        char cpu_vendor[13];
+        char cpu_brand[49];
+
+
+        get_cpu_info(cpu_vendor, cpu_brand);
 
         term_write("BUILD: ", TC_LBLUE);
         term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
@@ -285,24 +361,89 @@ static void handle_command(int argc, const char** argv) {
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_mib_buffer, TC_WHITE);
         term_write(" MiB\n", TC_WHITE);
-        term_write("CPU: ", TC_LBLUE);
-        term_write("CPU Info code goes here" "\n", TC_WHITE);
+        term_write("CPU Vendor: ", TC_LBLUE);
+        term_write(cpu_vendor, TC_WHITE);
+        term_write("\n", TC_WHITE);
+
+        term_write("CPU Brand: ", TC_LBLUE);
+        term_write(cpu_brand[0] ? cpu_brand : "N/A", TC_WHITE);  // If brand is empty, show "N/A"
+        term_write("\n", TC_WHITE);
     }
 
     else if (strcmp(argv[0], "cd") == 0) {
-        if(argc != 2){
-            term_write("ERROR: Usage -> cd PATH\n", TC_LRED);
-            return;
-        }
-        if (s_fat_fs == NULL) {
-            term_write("ERROR: Not FAT filesystem initialized\n", TC_LRED);
-            return;
-        }
-
-        //TOFIX: Make actual 'CD' stuff.
-        term_write("CD is still yet to be added\n", TC_WHITE);
-
+    if (argc != 2) {
+        term_write("ERROR: Usage -> cd PATH\n", TC_LRED);
+        return;
     }
+
+    if (s_fat_fs == NULL) {
+        term_write("ERROR: FAT filesystem not initialized\n", TC_LRED);
+        return;
+    }
+
+    const char* new_dir_path = argv[1];
+    char full_path[256];
+    int full_path_len = 0;
+
+    // Handle ".."
+    if (strcmp(new_dir_path, "..") == 0) {
+        if (strcmp(currentDir, "root") == 0 || strcmp(currentDir, "") == 0) {
+        } else {
+            char* last_slash = find_last_slash(currentDir);
+            if (last_slash != NULL) {
+                *last_slash = '\0';
+            } else {
+                strcpy(currentDir, "root");  // If somehow beyond root, reset to root
+            }
+        }
+        return;
+    }
+
+    if (strcmp(currentDir, "root") != 0) {
+        while (currentDir[full_path_len] != '\0') {
+            full_path[full_path_len] = currentDir[full_path_len];
+            full_path_len++;
+        }
+
+        full_path[full_path_len] = '/';
+        full_path_len++;
+    }
+
+    int i = 0;
+    while (new_dir_path[i] != '\0') {
+        full_path[full_path_len] = new_dir_path[i];
+        full_path_len++;
+        i++;
+    }
+
+    full_path[full_path_len] = '\0';
+
+    FAT_file_t* new_dir = FAT_OpenAbsolute(s_fat_fs, full_path);
+    if (new_dir == NULL) {
+        term_write("ERROR: Directory not found: '", TC_LRED);
+        term_write(full_path, TC_LRED);
+        term_write("'\n", TC_LRED);
+        return;
+    }
+
+    if (!FAT_IsDirectory(new_dir)) {
+        term_write("ERROR: Not a directory: '", TC_LRED);
+        term_write(full_path, TC_LRED);
+        term_write("'\n", TC_LRED);
+        FAT_Close(new_dir);
+        return;
+    }
+
+    // Update the current dir
+    strcpy(currentDir, full_path);
+
+    term_write(currentDir, TC_WHITE);
+    term_write("\n", TC_WHITE);
+
+    FAT_Close(new_dir);
+}
+
+
 
     else if (strcmp(argv[0], "mf") == 0) {
         /* this pretty much is meant to make a blank file */
@@ -356,23 +497,32 @@ static void handle_command(int argc, const char** argv) {
             return;
         }
 
-        const char* path = (argc == 2) ? argv[1] : "";
+        const char* path = (argc == 2) ? argv[1] : currentDir;
 
+        if (strcmp(path, "root") == 0 || strcmp(path, "/") == 0) {
+            path = "";
+        }
+
+        //shitty implementation to get rid of FAT_OpenAbsolute not being able to find root/BOOT for example
+        if(starts_with(path,"root/")){
+        path+=5;
+        }
         FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, path);
         if (file == NULL) {
             term_write("ERROR: Not found: '", TC_LRED);
-            term_write(argv[1], TC_LRED);
+            term_write(path, TC_LRED);
             term_write("'\n", TC_LRED);
-            FAT_Close(file);
             return;
         }
 
         char** names = NULL;
         size_t count = FAT_ListFiles(file, &names);
         if (names == NULL) {
-            term_write("EHH??", TC_YELLO);
+            term_write("ERROR: Failed to list files\n", TC_LRED);
+            FAT_Close(file);
             return;
         }
+
         for (size_t i = 0; i < count; i++) {
             term_write(names[i], TC_WHITE);
             term_putchar(' ', TC_WHITE);
@@ -383,6 +533,8 @@ static void handle_command(int argc, const char** argv) {
 
         FAT_Close(file);
     }
+
+
 
     else if (strcmp(argv[0], "compdate") == 0) {
         term_write(__DATE__ "\n", TC_WHITE);

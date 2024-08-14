@@ -72,22 +72,25 @@ void term_clear() {
 }
 
 static void term_scroll() {
-    /* scroll all lines one up */
+    /* Scroll all lines one up */
     for (u32 y = 1; y < s_term_info.height; y++) {
-        term_cell_t* row1 = &s_term_info.buffer[(y - 1) * s_term_info.width];
-        term_cell_t* row2 = &s_term_info.buffer[(y - 0) * s_term_info.width];
-        memmove(row1, row2, s_term_info.width * sizeof(term_cell_t));
+        term_cell_t* row_above = &s_term_info.buffer[(y - 1) * s_term_info.width];
+        term_cell_t* row_current = &s_term_info.buffer[y * s_term_info.width];
+        memmove(row_above, row_current, s_term_info.width * sizeof(term_cell_t));
     }
 
-    /* clear last line */
+    /* Clear the last line */
     const u32 last_offset = (s_term_info.height - 1) * s_term_info.width;
     for (u32 x = 0; x < s_term_info.width; x++) {
-        s_term_info.buffer[last_offset + x].ch = 0;
+        s_term_info.buffer[last_offset + x].ch = ' ';  // Use space character
+        s_term_info.buffer[last_offset + x].color = TC_WHITE;  // Set to default color
     }
 
-    /* render updated buffer */
+    /* Render the updated buffer */
     term_rerender_buffer();
 }
+
+
 
 void term_putchar_no_cursor_update(char ch, u8 color) {
     switch (ch) {
