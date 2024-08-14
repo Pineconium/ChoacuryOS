@@ -29,7 +29,10 @@
 - [x] Barebones.
 - [x] GPT Partitioning Support.
 - [x] Detection from CLI.
-- [x] Control from CLI. (as in stuff like `mkdir` and `format`)
+- [x] Let Users View files/dirs
+- [x] Let Users Read files/dirs
+- [ ] Let Users Modify files/dirs
+- [ ] Let Users Create files/dirs
 - [x] FAT Support.
 - [ ] Custom Filesystem (CHFM).
 - [ ] ext4 (Linux) Support.
