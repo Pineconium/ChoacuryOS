@@ -81,6 +81,36 @@ int starts_with(const char *str, const char *prefix) {
     }
     return 1;  // All characters matched
 }
+void cpuid(uint32_t eax_in, uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t* edx) {
+    __asm__ volatile (
+        "cpuid"
+        : "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
+        : "a" (eax_in)
+    );
+}
+
+void get_cpu_info(char* vendor, char* brand) {
+    uint32_t eax, ebx, ecx, edx;
+
+    // Get CPU vendor string
+    cpuid(0, &eax, &ebx, &ecx, &edx);
+    ((uint32_t*)vendor)[0] = ebx;
+    ((uint32_t*)vendor)[1] = edx;
+    ((uint32_t*)vendor)[2] = ecx;
+    vendor[12] = '\0';
+
+    // Get CPU brand string (if supported)
+    cpuid(0x80000000, &eax, &ebx, &ecx, &edx);
+    if (eax >= 0x80000004) {
+        uint32_t* brand_ptr = (uint32_t*)brand;
+        cpuid(0x80000002, &brand_ptr[0], &brand_ptr[1], &brand_ptr[2], &brand_ptr[3]);
+        cpuid(0x80000003, &brand_ptr[4], &brand_ptr[5], &brand_ptr[6], &brand_ptr[7]);
+        cpuid(0x80000004, &brand_ptr[8], &brand_ptr[9], &brand_ptr[10], &brand_ptr[11]);
+        brand[48] = '\0';
+    } else {
+        brand[0] = '\0';
+    }
+}
 static void handle_command(int argc, const char** argv) {
     if (argc == 0) {
         return;
@@ -316,6 +346,10 @@ static void handle_command(int argc, const char** argv) {
         char mem_mib_buffer[20];
         uint64_to_string(g_total_pmm_bytes / 1024 / 1024, mem_mib_buffer);
         mem_mib_buffer[19] = 0;                                 // <-- to prevent undefined behaviour
+        char cpu_vendor[13];
+        char cpu_brand[49];
+
+        get_cpu_info(cpu_vendor, cpu_brand);
 
         term_write("BUILD: ", TC_LBLUE);
         term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
@@ -326,8 +360,13 @@ static void handle_command(int argc, const char** argv) {
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_mib_buffer, TC_WHITE);
         term_write(" MiB\n", TC_WHITE);
-        term_write("CPU: ", TC_LBLUE);
-        term_write("CPU Info code goes here" "\n", TC_WHITE);
+        term_write("CPU Vendor: ", TC_LBLUE);
+        term_write(cpu_vendor, TC_WHITE);
+        term_write("\n", TC_WHITE);
+
+        term_write("CPU Brand: ", TC_LBLUE);
+        term_write(cpu_brand[0] ? cpu_brand : "N/A", TC_WHITE);  // If brand is empty, show "N/A"
+        term_write("\n", TC_WHITE);
     }
 
     else if (strcmp(argv[0], "cd") == 0) {
