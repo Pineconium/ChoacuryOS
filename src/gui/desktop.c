@@ -63,20 +63,12 @@ void clear_pointer(uint8_t* Cursor, Point position) {
     }
 }
 
-void LMB(){
-	if(MousePosition.X > 0 && MousePosition.X <= 50){
-		if(MousePosition.Y > 0 && MousePosition.Y < 50){
-			/* does something if the boxed is clicked on */
-			vga_fillrect(75,75,120,90,6);
-		}
-	}
-}
-
 void start_desktop(){
 	MousePosition.X = 0;
 	MousePosition.Y = 0;
+	vga_fillrect(0, 0, 20, 20, TC_DKRED);
+
 	draw_pointer(Cursor, MousePosition, TC_BLACK);
-	vga_fillrect(0,0,20,20,4);
 
 	for (;;) {
 		/* If ESC is pressed, exit the desktop */
@@ -89,21 +81,31 @@ void start_desktop(){
 		/* currently only handle mouse move events */
 		mouse_event_t mouse_event;
 		ps2_get_mouse_event(&mouse_event);
-		if (mouse_event.type == MOUSE_EVENT_NONE) {
-			asm volatile("hlt");
-		}
-		if (mouse_event.type != MOUSE_MOVE_EVENT) {
-			continue;
-		}
 
-		clear_pointer(Cursor, MousePosition);
-		MousePosition.X += mouse_event.move_event.rel_x;
-		MousePosition.Y -= mouse_event.move_event.rel_y;
-		
-		vga_fillrect(0,0,20,20,4);
-		
-		
-		draw_pointer(Cursor, MousePosition, TC_BLACK);
-
+		switch (mouse_event.type)
+		{
+			case MOUSE_EVENT_NONE:
+				/* wait for new event */
+				asm volatile("hlt");
+				break;
+			case MOUSE_BUTTON_EVENT:
+				if (mouse_event.button_event.pressed) {
+					if (MousePosition.X >= 0 && MousePosition.X < 20) {
+						if (MousePosition.Y >= 0 && MousePosition.Y < 20) {
+							/* does something if the boxed is clicked on */
+							vga_fillrect(75, 75, 120, 90, TC_BROWN);
+						}
+					}
+				}
+				break;
+			case MOUSE_MOVE_EVENT:
+				clear_pointer(Cursor, MousePosition);
+				MousePosition.X += mouse_event.move_event.rel_x;
+				MousePosition.Y -= mouse_event.move_event.rel_y;
+				draw_pointer(Cursor, MousePosition, TC_BLACK);
+				break;
+			default:
+				break;
+		}
 	}
 }
