@@ -9,6 +9,7 @@ CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-
 ASMFLAGS := -f elf32
 LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
+# we should wildcard this #
 SRCS :=								\
 	drivers/debug.c					\
 	drivers/filesystem/fat.c		\
