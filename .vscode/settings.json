@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.ejs": "html",
+        "guiload.h": "c",
+        "command.h": "c"
+    }
+}

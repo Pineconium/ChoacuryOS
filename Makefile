@@ -43,6 +43,8 @@ SRCS :=								\
 	shell/shell.c					\
 	shell/terminal.c				\
 	gui/desktop.c					\
+	shell/commands/command.c        \
+	shell/commands/guiload/guiload.c \
 	#gui/widgets.c					\ # remove comment when its implemented.
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))
