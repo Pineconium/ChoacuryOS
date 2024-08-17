@@ -10,7 +10,8 @@ for what the user has entered.
 
 When returning a code in a command, different numbers meen different things:
 
-| Code | Silent | Description                                    |
-|------|--------|------------------------------------------------|
-| `0`  | Yes    | Success                                        |
-| `1`  | Yes    | Generic fail (Command expected to print error) |
+| Code | Silent | Description                                          |
+|------|--------|------------------------------------------------------|
+| `0`  | Yes    | Success                                              |
+| `1`  | Yes    | Generic fail (Command expected to print error)       |
+| `2`  | No     | Incorrect args (Called help command to display args) |

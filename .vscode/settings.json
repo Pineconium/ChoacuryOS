@@ -2,6 +2,7 @@
     "files.associations": {
         "*.ejs": "html",
         "guiload.h": "c",
-        "command.h": "c"
+        "command.h": "c",
+        "terminal.h": "c"
     }
 }

@@ -115,12 +115,21 @@ void get_cpu_info(char* vendor, char* brand) {
     }
 }
 
+static void handle_return_code(int return_code, int argc, char** argv) {
+    // Look in commands/structure.md for more information
+
+    if(return_code == 2) {
+        // 2 = Incorrect arguments return code
+        // Display the help page for the specific commands (Flagged with the argument flag to be more specific)
+    }
+}
+
 static void handle_command(int argc, const char** argv) {
     if(argc == 0) {
         return; // No point in doing anything if they haven't entered a command
     }
 
-    term_write("\n--- DEBUG ---\n Commands - ", TC_BRIGHT);
+    /*term_write("\n--- DEBUG ---\n Commands - ", TC_BRIGHT);
     for (size_t i = 0; i < sizeof(shell_commands_list) / sizeof(Command); i++)
     {
         term_write(shell_commands_list[i].name, TC_WHITE);
@@ -139,7 +148,54 @@ static void handle_command(int argc, const char** argv) {
         }
     }
 
-    term_write("Command not found!\n", TC_LRED);
+    term_write("Command not found!\n", TC_LRED);*/
+
+    /*term_write("\n--- DEBUG ---\n Commands - ", TC_BRIGHT);
+    for (size_t i = 0; i < shell_commands_count; i++)
+    {
+        term_write(shell_commands_list[i].name, TC_WHITE);
+        term_write(" ", TC_WHITE);
+    }
+
+    term_write("\n--- END DEBUG ---\n", TC_BRIGHT);
+
+    for (size_t i = 0; i < shell_commands_count; i++)
+    {
+        if(strcmp(shell_commands_list[0].name, argv[0]) == 0) {
+            // Found command
+            term_write("Command found!\n", TC_GREEN);
+
+            return;
+        }
+    }
+
+    term_write("Command not found!\n", TC_LRED);*/
+
+    for (size_t i = 0; i < shell_commands_count; i++)
+    {
+        if(strcmp(shell_commands_list[i].name, argv[0]) == 0) {
+            // Found command
+
+            handle_return_code(shell_commands_list[i].func(argc, argv));
+
+            return;
+        }
+
+        for (size_t j = 0; j < sizeof(shell_commands_list[i].aliases); j++)
+        {
+            if(strcmp(shell_commands_list[i].aliases[j], argv[0]) == 0) {
+                // Found command
+
+                handle_return_code(shell_commands_list[i].func(argc, argv));
+
+                return;
+            }
+        }
+    }
+
+    //term_write("Command not found!\n", TC_LRED);
+    term_write(argv[0], TC_YELLO);
+    term_write(" is not a valid command, file, or program.\n", TC_YELLO);
 }
 
 /*static void handle_command(int argc, const char** argv) {

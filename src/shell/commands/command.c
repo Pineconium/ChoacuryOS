@@ -20,6 +20,7 @@ void shell_init_commands_list() {
 }
 
 Command shell_commands_list[] = {
-    //{"example", "arg1 arg2", "Example command", example_command},
-    {"guiload", "No args.", "Loads up the GUI (WIP!)", shell_guiload_command}
+    //{"example", (char*[]){"ex", "e.g."}, "arg1 arg2", "Example command", example_command},
+    {"guiload", (char*[]){}, "No args.", "Loads up the GUI (WIP!)", shell_guiload_command} // It complains about expecting an expression, ignore it
 };
+int shell_commands_count = sizeof(shell_commands_list) / sizeof(Command);
