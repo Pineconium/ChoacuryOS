@@ -24,7 +24,9 @@ static FAT_filesystem_t* s_fat_fs = NULL;
 char currentDir[256] = "root";
 /* Math dictionary*/
 
-/* Define math functions */
+
+// Define function prototypes for math operations
+
 typedef int (*math_op_t)(int, int);
 int add(int a, int b);
 int subtract(int a, int b);
@@ -44,7 +46,9 @@ op_map_t operations[] = {
     {"-d", divide},
     {"*", multiply},
     {"-m", multiply},
+
     {NULL, NULL} // <- End of map
+
 };
 int add(int a, int b) {
     return a + b;
@@ -92,14 +96,14 @@ void cpuid(uint32_t eax_in, uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_
 void get_cpu_info(char* vendor, char* brand) {
     uint32_t eax, ebx, ecx, edx;
 
-    /* Get CPU vendor string */
+    // Get CPU vendor string
     cpuid(0, &eax, &ebx, &ecx, &edx);
     ((uint32_t*)vendor)[0] = ebx;
     ((uint32_t*)vendor)[1] = edx;
     ((uint32_t*)vendor)[2] = ecx;
     vendor[12] = '\0';
 
-    /* Get CPU brand string (if supported) */
+    // Get CPU brand string (if supported)
     cpuid(0x80000000, &eax, &ebx, &ecx, &edx);
     if (eax >= 0x80000004) {
         uint32_t* brand_ptr = (uint32_t*)brand;
@@ -111,7 +115,6 @@ void get_cpu_info(char* vendor, char* brand) {
         brand[0] = '\0';
     }
 }
-
 static void handle_command(int argc, const char** argv) {
     if (argc == 0) {
         return;
@@ -584,17 +587,14 @@ static void parse_command(char* command, unsigned length) {
 
 /* Main CLI shell stuff. */
 void shell_start() {
-
-    // FIXME: This should be done in vfs.
+    // Existing initialization code for the shell
     s_fat_fs = FAT_Init(g_storage_devices[0]->partitions[1]);
     if (s_fat_fs == NULL) {
         term_write("Could not initialize FAT from storage_device[0], partition[1]\n", TC_YELLO);
-    }
-    else {
+    } else {
         term_write("Initialized FAT!\n", TC_WHITE);
     }
 
-    // TOADD: Ctrl Command Codes (i.e. Ctrl+C to close a program, etc.)
     char command_buffer[MAX_COMMAND_LENGTH];
     unsigned command_length = 0;
 
@@ -605,18 +605,16 @@ void shell_start() {
         key_event_t event;
         ps2_get_key_event(&event);
 
-        /* Halt the CPU until an interrupt if there is no input/ */
+        /* Halt the CPU until an interrupt if there is no input */
         if (event.key == KEY_NONE) {
             asm volatile("hlt");
             continue;
         }
 
-        /* Discard key release events. */
+        /* Discard key release events */
         if (event.modifiers & KEY_EVENT_MODIFIERS_RELEASED) {
             continue;
         }
-
-        /* we should add support for stuff like Ctrl+Alt+Del */
 
         switch (event.key) {
             case KEY_Backspace:
@@ -628,12 +626,69 @@ void shell_start() {
             case KEY_Enter:
                 term_putchar('\n', TC_WHITE);
                 if (command_length > 0) {
+                    command_buffer[command_length] = '\0';
+                    add_command_to_history(command_buffer);
+
                     parse_command(command_buffer, command_length);
                     command_length = 0;
                 }
+
+                // After processing the command, check if we need to scroll
+                if (s_term_info.row >= s_term_info.height) {
+                    term_scroll();
+                    s_term_info.row = s_term_info.height - 1;
+                }
+
                 term_write(currentDir, TC_LIME);
                 term_write("> ", TC_WHITE);
                 break;
+            case KEY_ArrowDown:
+                if (cmd_history.history_count > 0) {
+                    if (cmd_history.history_position >= 0) {
+                        cmd_history.history_position++;
+                        if (cmd_history.history_position >= cmd_history.history_count) {
+                            // If we exceed the history, reset to a blank command line
+                            cmd_history.history_position = -1;
+                        }
+
+                        // Clear the current input
+                        while (command_length > 0) {
+                            term_write("\b \b", TC_WHITE);
+                            command_length--;
+                        }
+
+                        // If we're not at the blank command line, copy the history command to the buffer
+                        if (cmd_history.history_position >= 0) {
+                            strcpy(command_buffer, cmd_history.commands[cmd_history.history_position]);
+                            command_length = strlen(command_buffer);
+                            term_write(command_buffer, TC_WHITE);
+                        }
+                    }
+                }
+                break;
+            case KEY_ArrowUp:
+                if (cmd_history.history_count > 0) {
+                    if (cmd_history.history_position < 0) {
+                        cmd_history.history_position = cmd_history.current_index - 1;
+                    } else {
+                        cmd_history.history_position--;
+                        if (cmd_history.history_position < 0) {
+                            cmd_history.history_position = cmd_history.history_count - 1;
+                        }
+                    }
+
+                    // Clear the current input
+                    while (command_length > 0) {
+                        term_write("\b \b", TC_WHITE);
+                        command_length--;
+                    }
+
+                    // Copy the history command to the buffer
+                    strcpy(command_buffer, cmd_history.commands[cmd_history.history_position]);
+                    command_length = strlen(command_buffer);
+                    term_write(command_buffer, TC_WHITE);
+                }
+            break;
             default: {
                 const char* utf8 = key_to_utf8(&event);
                 while (utf8 && *utf8) {
