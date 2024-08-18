@@ -24,7 +24,9 @@ static FAT_filesystem_t* s_fat_fs = NULL;
 char currentDir[256] = "root";
 /* Math dictionary*/
 
+
 // Define function prototypes for math operations
+
 typedef int (*math_op_t)(int, int);
 int add(int a, int b);
 int subtract(int a, int b);
@@ -44,7 +46,9 @@ op_map_t operations[] = {
     {"-d", divide},
     {"*", multiply},
     {"-m", multiply},
-    {NULL, NULL} // End of map
+
+    {NULL, NULL} // <- End of map
+
 };
 int add(int a, int b) {
     return a + b;
@@ -74,12 +78,12 @@ char* find_last_slash(char* str) {
 int starts_with(const char *str, const char *prefix) {
     while (*prefix) {
         if (*str != *prefix) {
-            return 0;  // Characters do not match
+            return 0;   // <- Characters do not match
         }
         str++;
         prefix++;
     }
-    return 1;  // All characters matched
+    return 1;           // <- All characters matched
 }
 void cpuid(uint32_t eax_in, uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t* edx) {
     __asm__ volatile (

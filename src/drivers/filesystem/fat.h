@@ -87,6 +87,8 @@ size_t FAT_ListFiles(FAT_file_t* parent, char*** names_output);
 
 // Check if the file is a directory
 bool FAT_IsDirectory(FAT_file_t* file);
+
 //static uint32_t allocate_new_cluster(FAT_filesystem_t* filesystem, uint32_t previous_cluster);
 //static void update_file_size_in_dir_entry(FAT_file_t* file);
 size_t FAT_Write(FAT_file_t* file, size_t offset, const void* src_buffer, size_t buffer_len);
+
