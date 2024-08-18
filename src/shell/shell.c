@@ -171,22 +171,30 @@ static void handle_command(int argc, const char** argv) {
 
     term_write("Command not found!\n", TC_LRED);*/
 
+    term_write("Command recieved ", TC_YELLO);
+
     for (size_t i = 0; i < shell_commands_count; i++)
     {
+        term_write("Checking command ", TC_YELLO);
         if(strcmp(shell_commands_list[i].name, argv[0]) == 0) {
             // Found command
 
-            handle_return_code(shell_commands_list[i].func(argc, argv));
+            //term_write("Found command, calling...\n", TC_YELLO);
+
+            handle_return_code(shell_commands_list[i].func(argc, argv), argc, argv);
 
             return;
         }
 
-        for (size_t j = 0; j < sizeof(shell_commands_list[i].aliases); j++)
+        for (size_t j = 0; shell_commands_list[i].aliases[j] != NULL; j++)
         {
+            term_write("Checking alias ", TC_YELLO);
             if(strcmp(shell_commands_list[i].aliases[j], argv[0]) == 0) {
                 // Found command
 
-                handle_return_code(shell_commands_list[i].func(argc, argv));
+                //term_write("Found command, calling...\n", TC_YELLO);
+
+                handle_return_code(shell_commands_list[i].func(argc, argv), argc, argv);
 
                 return;
             }

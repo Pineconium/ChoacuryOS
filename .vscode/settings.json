@@ -3,6 +3,7 @@
         "*.ejs": "html",
         "guiload.h": "c",
         "command.h": "c",
-        "terminal.h": "c"
+        "terminal.h": "c",
+        "vga.h": "c"
     }
 }

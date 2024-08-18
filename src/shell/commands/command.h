@@ -7,7 +7,8 @@ void shell_init_commands_list();
 // Command type definition
 typedef struct {
   char* name;                      // <-- Name of the command
-  char** aliases;                  // <-- Other names for the command (E.g. cls for clear) - Displayed in help after name (Comma seperated)
+  char* aliases[16];
+  //char** aliases;                  // <-- Other names for the command (E.g. cls for clear) - Displayed in help after name (Comma seperated)
   char* args;                      // <-- Argument information
   char* description;               // <-- Description of the command
   int (*func)(int, const char**);  // <-- The command returns a return code (Look in structure.md for more info on return codes)
