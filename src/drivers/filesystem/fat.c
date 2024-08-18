@@ -97,7 +97,8 @@ static bool is_power_of_two(uint32_t value) {
 static int min(int a, int b) {
 	return a < b ? a : b;
 }
-
+static uint32_t allocate_new_cluster(FAT_filesystem_t* filesystem, uint32_t previous_cluster);
+static void update_file_size_in_dir_entry(FAT_file_t* file);
 static void read_entry_name(const FAT_dir_entry_t* entry, char* buffer) {
 	int len = 0;
 
@@ -630,3 +631,270 @@ bool FAT_IsDirectory(FAT_file_t* file) {
 
 	return file->is_directory;
 }
+//todo implement this
+//gl
+size_t FAT_Write(FAT_file_t* file, size_t offset, const void* src_buffer, size_t buffer_len) {
+    FAT_filesystem_t* filesystem = file->filesystem;
+
+    if (file->is_directory) {
+        dprintln("trying to write to a directory");
+        return 0;
+    }
+
+    if (filesystem->bytes_per_sector != filesystem->storage_device->sector_size) {
+        dprintln("FAT sector size does not match with its underlying storage, not supported");
+        return 0;
+    }
+
+    uint32_t cluster_size = filesystem->bytes_per_sector * filesystem->sectors_per_cluster;
+
+    // Buffer for cluster-level operations
+    uint8_t* buffer = kmalloc(cluster_size);
+    if (buffer == NULL) {
+        dprintln("could not allocate memory for FAT cluster");
+        return 0;
+    }
+
+    uint32_t cluster = file->first_cluster;
+    uint32_t cluster_offset = offset / cluster_size;
+    size_t bytes_written = 0;
+
+    // Move to the correct cluster
+    for (uint32_t i = 0; i < cluster_offset; i++) {
+        if (!is_valid_cluster(filesystem, cluster)) {
+            cluster = get_next_cluster(filesystem, cluster);
+            if (cluster == 0) {
+                dprintln("could not find valid cluster");
+                kfree(buffer);
+                return bytes_written;
+            }
+        }
+    }
+
+    while (bytes_written < buffer_len) {
+        if (!is_valid_cluster(filesystem, cluster)) {
+            dprintln("invalid cluster");
+            break;
+        }
+
+        uint32_t cluster_start_sector = ((cluster - 2) * filesystem->sectors_per_cluster) + filesystem->first_data_sector;
+
+        // Calculate the offset within the cluster
+        uint32_t cluster_start_offset = offset % cluster_size;
+        uint32_t write_len = min(cluster_size - cluster_start_offset, buffer_len - bytes_written);
+
+        // Read current cluster content if not writing from start
+        if (cluster_start_offset != 0 || write_len < cluster_size) {
+            if (!filesystem->storage_device->read_sectors(filesystem->storage_device, buffer, cluster_start_sector, filesystem->sectors_per_cluster)) {
+                dprintln("could not read FAT cluster before writing");
+                break;
+            }
+        }
+
+        // Copy data from source buffer to cluster buffer
+        memcpy(buffer + cluster_start_offset, (uint8_t*)src_buffer + bytes_written, write_len);
+
+        // Write back the updated cluster content to the disk
+        if (!filesystem->storage_device->write_sectors(filesystem->storage_device, buffer, cluster_start_sector, filesystem->sectors_per_cluster)) {
+            dprintln("could not write to FAT cluster");
+            break;
+        }
+
+        bytes_written += write_len;
+        offset += write_len;
+
+        // Move to the next cluster
+        if (bytes_written < buffer_len) {
+            uint32_t next_cluster = get_next_cluster(filesystem, cluster);
+            if (next_cluster == 0) {
+                // Allocate a new cluster if necessary
+                // (This part of the code assumes you have a method to allocate a new cluster)
+                next_cluster = allocate_new_cluster(filesystem, cluster);
+                if (next_cluster == 0) {
+                    dprintln("could not allocate new cluster");
+                    break;
+                }
+            }
+            cluster = next_cluster;
+        }
+    }
+
+    // Update the file size if it has increased
+    if (offset > file->file_size) {
+        file->file_size = offset;
+        // (Update the directory entry to reflect the new size)
+        update_file_size_in_dir_entry(file);
+    }
+
+    kfree(buffer);
+    return bytes_written;
+}
+static uint32_t allocate_new_cluster(FAT_filesystem_t* filesystem, uint32_t previous_cluster) {
+    uint32_t fat_byte_offset, ent_offset;
+    uint32_t fat_sector, cluster;
+
+    // Find a free cluster in the FAT table
+    for (cluster = 2; cluster < filesystem->cluster_count; cluster++) {
+        switch (filesystem->fat_type) {
+            case FAT12:
+                fat_byte_offset = cluster + (cluster / 2);
+                ent_offset = fat_byte_offset % filesystem->bytes_per_sector;
+                break;
+            case FAT16:
+                fat_byte_offset = cluster * sizeof(uint16_t);
+                ent_offset = (fat_byte_offset % filesystem->bytes_per_sector) / sizeof(uint16_t);
+                break;
+            case FAT32:
+                fat_byte_offset = cluster * sizeof(uint32_t);
+                ent_offset = (fat_byte_offset % filesystem->bytes_per_sector) / sizeof(uint32_t);
+                break;
+            default:
+                return 0;
+        }
+
+        fat_sector = filesystem->first_fat_sector + fat_byte_offset / filesystem->bytes_per_sector;
+        if (filesystem->sector_buffer_sector != fat_sector) {
+            if (!filesystem->storage_device->read_sectors(filesystem->storage_device, filesystem->sector_buffer, fat_sector, 1)) {
+                return 0;
+            }
+            filesystem->sector_buffer_sector = fat_sector;
+        }
+
+        uint32_t cluster_value;
+        switch (filesystem->fat_type) {
+            case FAT12:
+                cluster_value = (filesystem->sector_buffer[ent_offset + 1] << 8) | filesystem->sector_buffer[ent_offset];
+                cluster_value = (cluster % 2 == 0) ? (cluster_value & 0xFFF) : (cluster_value >> 4);
+                break;
+            case FAT16:
+                cluster_value = ((uint16_t*)filesystem->sector_buffer)[ent_offset];
+                break;
+            case FAT32:
+                cluster_value = ((uint32_t*)filesystem->sector_buffer)[ent_offset] & 0x0FFFFFFF;
+                break;
+            default:
+                return 0;
+        }
+
+        if (cluster_value == 0) { // Free cluster
+            switch (filesystem->fat_type) {
+                case FAT12:
+                    if (cluster % 2 == 0) {
+                        filesystem->sector_buffer[ent_offset] = 0xFF;
+                        filesystem->sector_buffer[ent_offset + 1] = 0xF;
+                    } else {
+                        filesystem->sector_buffer[ent_offset] |= 0xF0;
+                    }
+                    break;
+                case FAT16:
+                    ((uint16_t*)filesystem->sector_buffer)[ent_offset] = 0xFFFF;
+                    break;
+                case FAT32:
+                    ((uint32_t*)filesystem->sector_buffer)[ent_offset] = 0x0FFFFFFF;
+                    break;
+            }
+
+            if (!filesystem->storage_device->write_sectors(filesystem->storage_device, filesystem->sector_buffer, fat_sector, 1)) {
+                return 0;
+            }
+
+            if (previous_cluster != 0) {
+                // Link the previous cluster to the new one
+                uint32_t prev_fat_byte_offset, prev_ent_offset, prev_fat_sector;
+                switch (filesystem->fat_type) {
+                    case FAT12:
+                        prev_fat_byte_offset = previous_cluster + (previous_cluster / 2);
+                        prev_ent_offset = prev_fat_byte_offset % filesystem->bytes_per_sector;
+                        break;
+                    case FAT16:
+                        prev_fat_byte_offset = previous_cluster * sizeof(uint16_t);
+                        prev_ent_offset = (prev_fat_byte_offset % filesystem->bytes_per_sector) / sizeof(uint16_t);
+                        break;
+                    case FAT32:
+                        prev_fat_byte_offset = previous_cluster * sizeof(uint32_t);
+                        prev_ent_offset = (prev_fat_byte_offset % filesystem->bytes_per_sector) / sizeof(uint32_t);
+                        break;
+                    default:
+                        return 0;
+                }
+
+                prev_fat_sector = filesystem->first_fat_sector + prev_fat_byte_offset / filesystem->bytes_per_sector;
+                if (filesystem->sector_buffer_sector != prev_fat_sector) {
+                    if (!filesystem->storage_device->read_sectors(filesystem->storage_device, filesystem->sector_buffer, prev_fat_sector, 1)) {
+                        return 0;
+                    }
+                    filesystem->sector_buffer_sector = prev_fat_sector;
+                }
+
+                switch (filesystem->fat_type) {
+                    case FAT12:
+                        if (previous_cluster % 2 == 0) {
+                            filesystem->sector_buffer[prev_ent_offset] = (uint8_t)(cluster & 0xFF);
+                            filesystem->sector_buffer[prev_ent_offset + 1] = (filesystem->sector_buffer[prev_ent_offset + 1] & 0xF0) | (cluster >> 8);
+                        } else {
+                            filesystem->sector_buffer[prev_ent_offset] = (filesystem->sector_buffer[prev_ent_offset] & 0xF) | ((cluster & 0xF) << 4);
+                            filesystem->sector_buffer[prev_ent_offset + 1] = (uint8_t)(cluster >> 4);
+                        }
+                        break;
+                    case FAT16:
+                        ((uint16_t*)filesystem->sector_buffer)[prev_ent_offset] = (uint16_t)cluster;
+                        break;
+                    case FAT32:
+                        ((uint32_t*)filesystem->sector_buffer)[prev_ent_offset] = cluster & 0x0FFFFFFF;
+                        break;
+                }
+
+                if (!filesystem->storage_device->write_sectors(filesystem->storage_device, filesystem->sector_buffer, prev_fat_sector, 1)) {
+                    return 0;
+                }
+            }
+
+            return cluster;
+        }
+    }
+
+    return 0;
+}
+static void update_file_size_in_dir_entry(FAT_file_t* file) {
+	FAT_filesystem_t* filesystem = file->filesystem;
+	uint32_t cluster = file->first_cluster;
+
+	uint8_t* buffer = kmalloc(filesystem->bytes_per_sector);
+	if (buffer == NULL) {
+		dprintln("could not allocate memory for FAT sector");
+		return;
+	}
+
+	uint32_t cluster_size = filesystem->bytes_per_sector * filesystem->sectors_per_cluster;
+
+	uint32_t cluster_start_sector = ((cluster - 2) * filesystem->sectors_per_cluster) + filesystem->first_data_sector;
+	if (!filesystem->storage_device->read_sectors(filesystem->storage_device, buffer, cluster_start_sector, filesystem->sectors_per_cluster)) {
+		dprintln("could not read FAT cluster");
+		kfree(buffer);
+		return;
+	}
+
+	FAT_dir_entry_t* entry = NULL;
+	for (uint32_t offset = 0; offset < cluster_size; offset += sizeof(FAT_dir_entry_t)) {
+		entry = (FAT_dir_entry_t*)(buffer + offset);
+
+		if (entry->name[0] == 0x00) {
+			break;
+		}
+
+		if (entry->first_cluster_lo == (file->first_cluster & 0xFFFF) &&
+			entry->first_cluster_hi == (file->first_cluster >> 16)) {
+			entry->file_size = file->file_size;
+			break;
+			}
+	}
+
+	if (entry) {
+		if (!filesystem->storage_device->write_sectors(filesystem->storage_device, buffer, cluster_start_sector, filesystem->sectors_per_cluster)) {
+			dprintln("could not update file size in directory entry");
+		}
+	}
+
+	kfree(buffer);
+}
+
