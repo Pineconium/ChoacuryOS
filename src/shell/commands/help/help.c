@@ -27,6 +27,12 @@ void print_specific_command_help(int argc, const char** argv, Command command, i
     term_write("\n", TC_WHITE);
 }
 
+void print_specific_command_args_help(int argc, const char** argv, Command command) {
+    term_write("Args: ", TC_WHITE);
+    term_write(command.args, TC_BRIGHT);
+    term_write("\n", TC_WHITE);
+}
+
 int shell_help_command(int argc, const char** argv) {
     if(argc == 1) {
         // Display the standard help screen
@@ -107,6 +113,32 @@ int shell_help_command(int argc, const char** argv) {
         term_write("help", TC_BRIGHT);
         term_write("' for the list of the available commands.\n", TC_YELLO);
         return 1;
+    } else if(argc == 3) {
+        for (size_t i = 0; i < shell_commands_count; i++)
+        {
+            if(strcmp(argv[1], shell_commands_list[i].name) == 0) {
+                // Found command
+
+                if(strcmp(argv[2], "args") == 0) {
+                    print_specific_command_args_help(argc, argv, shell_commands_list[i]);
+                }
+
+                return 0;
+            }
+
+            for (size_t j = 0; shell_commands_list[i].aliases[j] != NULL; j++)
+            {
+                if(strcmp(argv[1], shell_commands_list[i].aliases[j]) == 0) {
+                    // Found command
+
+                    if(strcmp(argv[2], "args") == 0) {
+                        print_specific_command_args_help(argc, argv, shell_commands_list[i]);
+                    }
+
+                    return 0;
+                }
+            }
+        }
     }
     
     return 0;

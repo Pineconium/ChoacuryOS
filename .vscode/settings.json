@@ -4,6 +4,7 @@
         "guiload.h": "c",
         "command.h": "c",
         "terminal.h": "c",
-        "vga.h": "c"
+        "vga.h": "c",
+        "vbe.h": "c"
     }
 }

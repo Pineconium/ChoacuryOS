@@ -1,0 +1,1 @@
+int shell_echo_command(int argc, const char** argv);

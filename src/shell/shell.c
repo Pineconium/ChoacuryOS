@@ -33,7 +33,7 @@ int add(int a, int b);
 int subtract(int a, int b);
 int divide(int a, int b);
 int multiply(int a, int b);
-typedef struct {
+/*typedef struct {
     const char *op;
     math_op_t func;
 } op_map_t;
@@ -63,7 +63,7 @@ int divide(int a, int b) {
 
 int multiply(int a, int b) {
     return a * b;
-}
+}*/
 char* find_last_slash(char* str) {
     char* last_slash = NULL;
     while (*str) {
@@ -121,6 +121,8 @@ static void handle_return_code(int return_code, int argc, char** argv) {
     if(return_code == 2) {
         // 2 = Incorrect arguments return code
         // Display the help page for the specific commands (Flagged with the argument flag to be more specific)
+        term_write("Invalid arguments.\n", TC_YELLO);
+        shell_commands_list[0].func(3, (char*[]){ "help", argv[0], "args" });
     }
 }
 
@@ -183,7 +185,7 @@ static void handle_command(int argc, const char** argv) {
 
         for (size_t j = 0; shell_commands_list[i].aliases[j] != NULL; j++)
         {
-            term_write("Checking alias ", TC_YELLO);
+            //term_write("Checking alias ", TC_YELLO);
             if(strcmp(shell_commands_list[i].aliases[j], argv[0]) == 0) {
                 // Found command
 
