@@ -50,6 +50,11 @@ SRCS :=								\
 	shell/commands/calc/calc.c      \
 	shell/commands/compdate/compdate.c \
 	shell/commands/echo/echo.c      \
+	shell/commands/pause/pause.c    \
+	shell/commands/pl/pl.c          \
+	shell/commands/chstat/chstat.c  \
+	shell/commands/cd/cd.c          \
+	shell/commands/cat/cat.c        \
 	#gui/widgets.c					\ # remove comment when its implemented.
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))

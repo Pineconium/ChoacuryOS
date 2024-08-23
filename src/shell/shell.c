@@ -23,7 +23,7 @@
 #define MAX_COMMAND_LENGTH 256
 #define MAX_ARGUMENTS 128
 
-static FAT_filesystem_t* s_fat_fs = NULL;
+FAT_filesystem_t* s_fat_fs = NULL;
 char currentDir[256] = "root";
 /* Math dictionary*/
 

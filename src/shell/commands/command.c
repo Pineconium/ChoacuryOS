@@ -8,6 +8,11 @@
 #include "calc/calc.h"
 #include "compdate/compdate.h"
 #include "echo/echo.h"
+#include "pause/pause.h"
+#include "pl/pl.h"
+#include "chstat/chstat.h"
+#include "cd/cd.h"
+#include "cat/cat.h"
 
 // Temp
 int example_command(int argc, const char** argv) {
@@ -43,16 +48,16 @@ Command shell_commands_list[] = {
     {"help",     {NULL},        "<str:command name/alias> (args)", "Shows all of the available commands",    shell_help_command},
     {"beep",     {NULL},        "[int:freq.] [int:duration]", "PC Beeper control.",   shell_beep_command}, // DONE
     {"calc",     {NULL},        "[int:number1] [str:func] [int:number2]", "Literally a calculator.", shell_calc_command}, // DONE
-    {"cat",      {NULL},        "No args.", "Print a file contents.",                      temp_shell_notimplemented_command}, // TODO
-    {"cd",       {NULL},        "No args.", "Changes the current directory.",              temp_shell_notimplemented_command}, // TODO
+    {"cat",      {NULL},        "[str:file]", "Print a file contents.",                      shell_cat_command}, // DONE
+    {"cd",       {NULL},        "[str:directory]", "Changes the current directory.",              shell_cd_command}, // DONE
     {"compdate", {NULL},        "No args.", "Shows the compilation date.",                 shell_compdate_command}, // DONE
     {"clear",    {"cls", NULL}, "No args.", "Clears the screen.",                          shell_clear_command},
     {"echo",     {NULL},        "No args.", "Prints string to the console.",               shell_echo_command}, // DONE
     {"guiload",  {NULL},        "No args.", "Loads up the GUI (WIP!)",                     shell_guiload_command},
     {"ls",       {NULL},        "No args.", "List files in a directory.",                  temp_shell_notimplemented_command}, // TODO
-    {"pause",    {NULL},        "No args.", "Pauses the terminal until a keyboard input.", temp_shell_notimplemented_command}, // TODO
-    {"pl",       {NULL},        "No args.", "Shows the connected data devices.",           temp_shell_notimplemented_command}, // TODO
-    {"chstat",   {NULL},        "No args.", "Display system information.",                 temp_shell_notimplemented_command}, // TODO
+    {"pause",    {NULL},        "(-t int:time) (-k)", "Pauses the terminal until a keyboard input.", shell_pause_command}, // DONE
+    {"pl",       {NULL},        "No args.", "Shows the connected data devices.",           shell_pl_command}, // DONE
+    {"chstat",   {NULL},        "No args.", "Display system information.",                 shell_chstat_command}, // DONE
     {"vbetest",  {NULL},        "No args.", "Test Bochs VBE extensions",                   temp_shell_notimplemented_command}, // TODO
     {"whereami", {NULL},        "No args.", "Prints the current directory",                temp_shell_notimplemented_command}  // TODO
 };
