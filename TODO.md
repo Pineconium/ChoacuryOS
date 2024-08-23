@@ -11,6 +11,7 @@
 - [x] String Message.
 - [x] Keyboard Input (PS/2 Only)
 - [ ] Multi-Tasking.
+- [ ] ML Paging
 
 ### Extra Drivers
 - [ ] USB Keyboard Support.

@@ -24,6 +24,7 @@
 #include "../shell/terminal.h"
 #include "multiboot.h"
 #include "panic.h"
+#include "process.h"
 
 /* Startup Beep*/
 void StartUp_Beeps() {
@@ -38,14 +39,20 @@ void StartUp_Beeps() {
 /* A Simple kernel written in C
  * These parameters are pushed onto the stack by the assembly kernel entry file.
  */
+
 void k_main(multiboot_info_t* mbd, uint32_t magic) {
     gdt_init();
     idt_init();
     kmalloc_init();
 
-    /* Display Info Message */
     vga_text_init(TC_BLACK);
-    term_init(VGA_width, VGA_width, vga_set_char, vga_move_cursor);
+
+    u32 term_width = VGA_width;               // Set this to the width of your VGA text mode
+    u32 visible_height = VGA_height;          // Set this to the height of your VGA text mode (visible height)
+    u32 buffer_height = visible_height + 100; // Set this to a height larger than visible to allow scrolling
+
+    term_init(term_width, buffer_height, visible_height, vga_set_char, vga_move_cursor);
+
     term_write("\n\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0\n", TC_LIME);
     term_write("Version: Build " __DATE__ " (GUI Testing)\n", TC_WHITE);
     term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
@@ -55,25 +62,21 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
     }
 
     pmm_init(mbd);
+    pic_init();
+    pit_init();
 
-    pic_init();     // <-- Enable clock stuff
-
-    pit_init();     // <-- Enable Timer
-
-    /* Enable interrupts to make keyboard work */
     asm volatile("sti");
 
     ps2_init();
-    /* FIXME: support more keymaps :) */
     ps2_init_keymap_us();
 
-    StartUp_Beeps();
+    // StartUp_Beeps();
 
-    /* Initialize storage devices */
     storage_device_init();
-
-    /* Print PCI devices */
     debug_print_pci();
 
     shell_start();
-};
+}
+
+
+
