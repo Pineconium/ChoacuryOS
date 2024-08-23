@@ -1,0 +1,1 @@
+int shell_clear_command(int argc, const char** argv);

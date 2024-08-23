@@ -17,10 +17,13 @@
 #include "terminal.h"
 #include <stdint.h>
 
+// Commands include
+#include "commands/command.h"
+
 #define MAX_COMMAND_LENGTH 256
 #define MAX_ARGUMENTS 128
 
-static FAT_filesystem_t* s_fat_fs = NULL;
+FAT_filesystem_t* s_fat_fs = NULL;
 char currentDir[256] = "root";
 /* Math dictionary*/
 
@@ -32,7 +35,7 @@ int add(int a, int b);
 int subtract(int a, int b);
 int divide(int a, int b);
 int multiply(int a, int b);
-typedef struct {
+/*typedef struct {
     const char *op;
     math_op_t func;
 } op_map_t;
@@ -64,7 +67,7 @@ int divide(int a, int b) {
 
 int multiply(int a, int b) {
     return a * b;
-}
+}*/
 char* find_last_slash(char* str) {
     char* last_slash = NULL;
     while (*str) {
@@ -115,17 +118,104 @@ void get_cpu_info(char* vendor, char* brand) {
         brand[0] = '\0';
     }
 }
+
+static void handle_return_code(int return_code, int argc, char** argv) {
+    // Look in commands/structure.md for more information
+
+    if(return_code == 2) {
+        // 2 = Incorrect arguments return code
+        // Display the help page for the specific commands (Flagged with the argument flag to be more specific)
+        term_write("Invalid arguments.\n", TC_YELLO);
+        shell_commands_list[0].func(3, (char*[]){ "help", argv[0], "args" });
+    }
+}
+
 static void handle_command(int argc, const char** argv) {
+    if(argc == 0) {
+        return; // No point in doing anything if they haven't entered a command
+    }
+
+    /*term_write("\n--- DEBUG ---\n Commands - ", TC_BRIGHT);
+    for (size_t i = 0; i < sizeof(shell_commands_list) / sizeof(Command); i++)
+    {
+        term_write(shell_commands_list[i].name, TC_WHITE);
+        term_write(" ", TC_WHITE);
+    }
+
+    term_write("\n--- END DEBUG ---\n", TC_BRIGHT);
+
+    for (size_t i = 0; i < sizeof(shell_commands_list) / sizeof(Command); i++)
+    {
+        if(strcmp(shell_commands_list[0].name, argv[0])) {
+            // Found command
+            term_write("Command found!\n", TC_GREEN);
+
+            return;
+        }
+    }
+
+    term_write("Command not found!\n", TC_LRED);*/
+
+    /*term_write("\n--- DEBUG ---\n Commands - ", TC_BRIGHT);
+    for (size_t i = 0; i < shell_commands_count; i++)
+    {
+        term_write(shell_commands_list[i].name, TC_WHITE);
+        term_write(" ", TC_WHITE);
+    }
+
+    term_write("\n--- END DEBUG ---\n", TC_BRIGHT);
+
+    for (size_t i = 0; i < shell_commands_count; i++)
+    {
+        if(strcmp(shell_commands_list[0].name, argv[0]) == 0) {
+            // Found command
+            term_write("Command found!\n", TC_GREEN);
+
+            return;
+        }
+    }
+
+    term_write("Command not found!\n", TC_LRED);*/
+
+    for (size_t i = 0; i < shell_commands_count; i++)
+    {
+        if(strcmp(shell_commands_list[i].name, argv[0]) == 0) {
+            // Found command
+
+            handle_return_code(shell_commands_list[i].func(argc, argv), argc, argv);
+
+            return;
+        }
+
+        for (size_t j = 0; shell_commands_list[i].aliases[j] != NULL; j++)
+        {
+            //term_write("Checking alias ", TC_YELLO);
+            if(strcmp(shell_commands_list[i].aliases[j], argv[0]) == 0) {
+                // Found command
+
+                handle_return_code(shell_commands_list[i].func(argc, argv), argc, argv);
+
+                return;
+            }
+        }
+    }
+
+    //term_write("Command not found!\n", TC_LRED);
+    term_write(argv[0], TC_YELLO);
+    term_write(" is not a valid command, file, or program.\n", TC_YELLO);
+}
+
+/*static void handle_command(int argc, const char** argv) {
     if (argc == 0) {
         return;
     }
 
     if(strcmp(argv[0], "guiload") == 0){
-        /* Initialize graphics mode and start desktop */
+        // Initialize graphics mode and start desktop
 	    vga_graphics_init(TC_BLUE);
         start_desktop();
 
-        /* If desktop exits, reinitialize text mode and render terminal */
+        // If desktop exits, reinitialize text mode and render terminal
 	    vga_text_init(TC_BLACK);
         term_rerender_buffer();
     }
@@ -137,13 +227,13 @@ static void handle_command(int argc, const char** argv) {
 	}
 
     else if (strcmp(argv[0], "hello") == 0) {
-        /* Basic testing command */
+        // Basic testing command
         term_write("Hello from Terminal\n", TC_WHITE);
     }
 
-    /* actual help information, might need to be rewriten in the future */
+    // actual help information, might need to be rewriten in the future
     else if (strcmp(argv[0], "help") == 0) {
-        /* if no command is present in arg 1 */
+        // if no command is present in arg 1
         if (argc == 1) {
             // TOADD:
             // - Proper file and directory creation and deletion commands, like MKDIR, MF, etc.
@@ -225,7 +315,7 @@ static void handle_command(int argc, const char** argv) {
             return;
         }
 
-        /* Use the default beep length if no value has been set by the user */
+        // Use the default beep length if no value has been set by the user
         atoi_result_t duration = { .valid = true, .value = 500 };    // <-- 500 ms
         if (argc >= 3) {
             duration = atoi(argv[2]);
@@ -315,7 +405,7 @@ static void handle_command(int argc, const char** argv) {
         }
     }
 
-    /* Show every detected storage device and their partitions */
+    // Show every detected storage device and their partitions
     else if (strcmp(argv[0], "pl") == 0) {
         term_write("Detected Devices: ", TC_WHITE);
         term_write_u32(g_storage_device_count, 10, TC_WHITE);
@@ -346,7 +436,7 @@ static void handle_command(int argc, const char** argv) {
     }
 
     else if (strcmp(argv[0], "chstat") == 0) {
-        /* this is basically a stupid neofetch clone */
+        // this is basically a stupid neofetch clone
         char mem_mib_buffer[20];
         uint64_to_string(g_total_pmm_bytes / 1024 / 1024, mem_mib_buffer);
         mem_mib_buffer[19] = 0;                                 // <-- to prevent undefined behaviour
@@ -450,7 +540,7 @@ static void handle_command(int argc, const char** argv) {
 
 
     else if (strcmp(argv[0], "mf") == 0) {
-        /* this pretty much is meant to make a blank file */
+        // this pretty much is meant to make a blank file
         term_write("MF is still yet to be added\n", TC_WHITE);    // <-- placeholder
 
     }
@@ -553,7 +643,7 @@ static void handle_command(int argc, const char** argv) {
         term_write(argv[0], TC_YELLO);
         term_write(" is not a valid command, file, or program.\n", TC_YELLO);
     }
-}
+}*/
 
 /* Parse command buffer to a null-terminated list of arguments */
 static void parse_command(char* command, unsigned length) {
@@ -597,6 +687,10 @@ void shell_start() {
 
     char command_buffer[MAX_COMMAND_LENGTH];
     unsigned command_length = 0;
+
+    term_write("Initialising commands list... ", TC_WHITE);
+    shell_init_commands_list();
+    term_write("Done!\n", TC_GREEN);
 
     term_write(currentDir, TC_LIME);
     term_write("> ", TC_WHITE);
