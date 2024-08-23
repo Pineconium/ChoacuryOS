@@ -1,0 +1,1 @@
+int shell_beep_command(int argc, const char** argv);

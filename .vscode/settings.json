@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.ejs": "html",
+        "guiload.h": "c",
+        "command.h": "c",
+        "terminal.h": "c",
+        "vga.h": "c",
+        "vbe.h": "c",
+        "whereami.h": "c",
+        "vbetest.h": "c"
+    }
+}
