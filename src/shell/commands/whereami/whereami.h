@@ -1,0 +1,1 @@
+int shell_whereami_command(int argc, const char** argv);

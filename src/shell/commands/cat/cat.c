@@ -4,7 +4,6 @@
 #include "../../terminal.h"
 #include "../../../drivers/vga.h"
 #include "../../../drivers/vbe.h"
-#include "../../../gui/desktop.h"
 #include "../../../drivers/filesystem/fat.h"
 
 int shell_cat_command(int argc, const char** argv) {

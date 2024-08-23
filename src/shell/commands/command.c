@@ -13,6 +13,9 @@
 #include "chstat/chstat.h"
 #include "cd/cd.h"
 #include "cat/cat.h"
+#include "ls/ls.h"
+#include "vbetest/vbetest.h"
+#include "whereami/whereami.h"
 
 // Temp
 int example_command(int argc, const char** argv) {
@@ -54,11 +57,11 @@ Command shell_commands_list[] = {
     {"clear",    {"cls", NULL}, "No args.", "Clears the screen.",                          shell_clear_command},
     {"echo",     {NULL},        "No args.", "Prints string to the console.",               shell_echo_command}, // DONE
     {"guiload",  {NULL},        "No args.", "Loads up the GUI (WIP!)",                     shell_guiload_command},
-    {"ls",       {NULL},        "No args.", "List files in a directory.",                  temp_shell_notimplemented_command}, // TODO
+    {"ls",       {NULL},        "(str:directory)", "List files in a directory.",                  shell_ls_command}, // DONE
     {"pause",    {NULL},        "(-t int:time) (-k)", "Pauses the terminal until a keyboard input.", shell_pause_command}, // DONE
     {"pl",       {NULL},        "No args.", "Shows the connected data devices.",           shell_pl_command}, // DONE
     {"chstat",   {NULL},        "No args.", "Display system information.",                 shell_chstat_command}, // DONE
-    {"vbetest",  {NULL},        "No args.", "Test Bochs VBE extensions",                   temp_shell_notimplemented_command}, // TODO
-    {"whereami", {NULL},        "No args.", "Prints the current directory",                temp_shell_notimplemented_command}  // TODO
+    {"vbetest",  {NULL},        "No args.", "Test Bochs VBE extensions",                   shell_vbetest_command}, // DONE
+    {"whereami", {NULL},        "No args.", "Prints the current directory",                shell_whereami_command}  // DONE
 };
 int shell_commands_count = sizeof(shell_commands_list) / sizeof(Command);

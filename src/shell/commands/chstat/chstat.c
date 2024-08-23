@@ -3,7 +3,6 @@
 #include "../../terminal.h"
 #include "../../../drivers/vga.h"
 #include "../../../drivers/vbe.h"
-#include "../../../gui/desktop.h"
 #include "../../../memory/pmm.h"
 
 int shell_chstat_command(int argc, const char** argv) {
