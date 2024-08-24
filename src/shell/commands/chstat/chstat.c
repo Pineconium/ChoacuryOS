@@ -21,7 +21,7 @@ int shell_chstat_command(int argc, const char** argv) {
         term_write("KERNEL: ", TC_LBLUE);
         term_write("Choacury Standard\n", TC_WHITE);            // <-- aka. stock kernel.
         term_write("SHELL: ", TC_LBLUE);
-        term_write("chsh-0.0.0.0041e-dev\n", TC_WHITE);         // <-- Could be more automated ngl.
+        term_write("chsh-0.0.0.0042a\n", TC_WHITE);             // <-- Could be more automated ngl.
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_mib_buffer, TC_WHITE);
         term_write(" MiB\n", TC_WHITE);
