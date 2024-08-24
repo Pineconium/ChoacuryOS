@@ -66,3 +66,8 @@
 - [ ] ARM and ARM-based (e.g. Apple Silicon)
 - [ ] PowerPC
 - [ ] MIPS
+
+### Shell
+- [ ] Arrow keys support in shell
+- [ ] Tab key implementation
+- [ ] Options for commands like ls -a -l -R.... and support for more cd commands like cd -, cd ~
