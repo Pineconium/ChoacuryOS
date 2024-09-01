@@ -176,9 +176,22 @@ void shell_start() {
     term_write("Initialising commands list... ", TC_WHITE);
     shell_init_commands_list();
     term_write("Done!\n", TC_GREEN);
+	
+	term_write("Creating test dir...\n", TC_GREEN);
+	FAT_file_t* parent_dir = FAT_OpenAbsolute(s_fat_fs, "/");
+	FAT_CreateDirectory(parent_dir,"/TEST0");
+	
+	term_write("Creating test file...\n", TC_GREEN);
+	
+	char teststr = "Hello, World!";
+	FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, "/test.txt");
+	FAT_Write(file, 0, teststr, strlen(teststr));
+	FAT_Close(file);
 
     term_write(currentDir, TC_LIME);
     term_write("> ", TC_WHITE);
+	
+
 
     for (;;) {
         key_event_t event;
