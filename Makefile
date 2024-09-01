@@ -58,6 +58,7 @@ SRCS :=								\
 	shell/commands/ls/ls.c          \
 	shell/commands/whereami/whereami.c \
 	shell/commands/vbetest/vbetest.c \
+	#shell/commands/mkdir/mkdir.c \
 	#gui/widgets.c					\ # remove comment when its implemented.
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))
