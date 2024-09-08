@@ -280,7 +280,21 @@ void shell_start() {
                     command_length = strlen(command_buffer);
                     term_write(command_buffer, TC_WHITE);
                 }
-            break;
+                break;
+            case KEY_Tab:
+                if (command_length+4>=sizeof(command_buffer)){
+                    //don't try to add the tab if the buffer doesn't have enough space
+                    break;
+                }
+                if (command_length > 0){
+                    for (int i=0;i<4;++i){
+                        term_write(" ",TC_WHITE);
+                        command_buffer[command_length] = ' ';
+                        command_length++;
+
+                    }
+                }
+                break;
             default: {
                 const char* utf8 = key_to_utf8(&event);
                 while (utf8 && *utf8) {
