@@ -1,1 +1,0 @@
-int shell_chstat_command(int argc, const char** argv);

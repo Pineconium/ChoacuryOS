@@ -1,1 +1,0 @@
-int shell_pl_command(int argc, const char** argv);

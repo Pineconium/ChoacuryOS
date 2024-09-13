@@ -1,1 +1,0 @@
-int shell_pause_command(int argc, const char** argv);
