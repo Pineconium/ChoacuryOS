@@ -54,6 +54,8 @@ fi
 
 # copy kernel to boot
 sudo cp build/ChoacuryOS.bin $MOUNT_DIR/boot/
+# copy fonts to /
+sudo cp Unifont.psf $MOUNT_DIR/
 
 # cleanup
 sudo umount "$MOUNT_DIR"
