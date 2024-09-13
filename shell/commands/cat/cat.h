@@ -1,0 +1,1 @@
+int shell_cat_command(int argc, const char** argv);

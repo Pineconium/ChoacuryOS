@@ -1,0 +1,1 @@
+int shell_vbetest_command(int argc, const char** argv);

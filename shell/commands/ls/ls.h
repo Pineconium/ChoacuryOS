@@ -1,0 +1,1 @@
+int shell_ls_command(int argc, const char** argv);
