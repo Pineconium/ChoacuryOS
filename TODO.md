@@ -34,6 +34,7 @@
 - [x] Let Users Read files/dirs
 - [ ] Let Users Modify files/dirs
 - [ ] Let Users Create files/dirs
+- [ ] Built in CLI Text Editor
 - [x] FAT Support.
 - [ ] Custom Filesystem (CHFM).
 - [ ] ext4 (Linux) Support.
