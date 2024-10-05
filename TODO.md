@@ -36,6 +36,7 @@
 - [ ] Let Users Create files/dirs
 - [ ] Built in CLI Text Editor
 - [x] FAT Support.
+- [ ] RAM Disk
 - [ ] Custom Filesystem (CHFM).
 - [ ] ext4 (Linux) Support.
 - [ ] NTFS (Windows) Support.
