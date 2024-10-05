@@ -43,7 +43,7 @@
 ### Graphics
 - [x] 4-bit colour support (16/Standard DOS colours).
 - [x] 8-bit colour support (256 colours/ANSI Support).
-- [ ] High-colour/True colour support (beyond 8-bit/>=256 colours).
+- [x] High-colour/True colour support (beyond 8-bit/>=256 colours).
 - [x] Graphical Shell (GUI).
 - [ ] Window Management System
 - [x] Mouse Drivers
