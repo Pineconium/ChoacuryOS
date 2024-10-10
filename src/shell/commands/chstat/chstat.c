@@ -6,7 +6,8 @@
 #include "../../../memory/pmm.h"
 
 int shell_chstat_command(int argc, const char** argv) {
-        char mem_mib_buffer[20];
+   	/* this is basically a stupid neofetch clone */
+	char mem_mib_buffer[20];
         uint64_to_string(g_total_pmm_bytes / 1024 / 1024, mem_mib_buffer);
         mem_mib_buffer[19] = 0;                                 // <-- to prevent undefined behaviour
         char cpu_vendor[13];
@@ -15,20 +16,22 @@ int shell_chstat_command(int argc, const char** argv) {
 
         get_cpu_info(cpu_vendor, cpu_brand);
 
-        term_write("BUILD: ", TC_LBLUE);
+	/* TODO: If the user enters GUI mode, fetch the users D.E., display size, WM, etc. */
+
+        term_write("Build: ", TC_LBLUE);
         term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
-        term_write("KERNEL: ", TC_LBLUE);
-        term_write("Choacury Standard\n", TC_WHITE);            // <-- aka. stock kernel.
-        term_write("SHELL: ", TC_LBLUE);
-        term_write("chsh-0.0.0.0042b\n", TC_WHITE);             // <-- Could be more automated ngl.
+        term_write("Kernel: ", TC_LBLUE);
+        term_write("Choacury Standard\n", TC_WHITE);            	// <-- aka. stock kernel.
+        term_write("Shell: ", TC_LBLUE);
+        term_write("chsh-0.0.0.0045a\n", TC_WHITE);             	// <-- Could be more automated ngl.
         term_write("RAM: ", TC_LBLUE);
         term_write(mem_mib_buffer, TC_WHITE);
         term_write(" MiB\n", TC_WHITE);
         term_write("CPU Vendor: ", TC_LBLUE);
         term_write(cpu_vendor, TC_WHITE);
         term_write("\n", TC_WHITE);
-
         term_write("CPU Brand: ", TC_LBLUE);
-        term_write(cpu_brand[0] ? cpu_brand : "N/A", TC_WHITE);  // <-- If brand is empty, show "N/A"
+        term_write(cpu_brand[0] ? cpu_brand : "Unknown", TC_WHITE);  	// <-- Show "Unknown" as fallback if the
+									// CPU brand can't be fetched
         term_write("\n", TC_WHITE);
 }
