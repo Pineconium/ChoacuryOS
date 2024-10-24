@@ -21,4 +21,4 @@ For VirtualBox Users, here are the recommended VM requirements:
 # Compile Choacury.
 If you want to compile Choacury from the source code, here's what you'll need.
 1. NASM, GCC, GRUB Multiboot, Makefile, and QEMU installed. (the compiler uses the `x86_64` version of QEMU. If you don't use that version of QEMU, replace `qemu-system-x86_64` in the compiler shell script with your version of QEMU)
-2. A computer running any Linux distro (recommended, but there is a Windows Compiler for Windows devices as long as you have WSL enabled).
+2. A computer running any Linux distro (recommended, but there is a batch script for Windows devices as long as you have WSL installed).
