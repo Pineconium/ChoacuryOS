@@ -2,6 +2,8 @@
 
 #include "vbe.h"
 #include "types.h"
+#include "../memory/kmalloc.h"
+
 
 
 /* move this somewhere else */
@@ -155,3 +157,13 @@ void BgaSetVideoMode(unsigned int Width, unsigned int Height, unsigned int BitDe
 void BgaSetBank(unsigned short BankNumber){
     BgaWriteRegister(VBE_DISPI_INDEX_BANK, BankNumber);
 }
+
+
+
+
+
+
+
+
+
+

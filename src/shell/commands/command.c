@@ -64,5 +64,5 @@ Command shell_commands_list[] = {
     {"chstat",   {NULL},        "No args.", "Display system information.",                                      shell_chstat_command},  
     {"vbetest",  {NULL},        "No args.", "Test Bochs VBE extensions",                                        shell_vbetest_command},  
     {"whereami", {NULL},        "No args.", "Prints the current directory",                                     shell_whereami_command} 
-}
+};
 int shell_commands_count = sizeof(shell_commands_list) / sizeof(Command);
