@@ -68,6 +68,9 @@ void start_desktop(){
 	MousePosition.Y = 0;
 	vga_fillrect(0, 0, 20, 20, TC_DKRED);
 
+	vga_fillrect(0, 0, 20, VGA_height, TC_WHITE);
+	vga_fillrect(0, 0, 20, 20, TC_DKRED);
+
 	draw_pointer(Cursor, MousePosition, TC_BLACK);
 
 	for (;;) {

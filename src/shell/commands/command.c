@@ -62,6 +62,6 @@ Command shell_commands_list[] = {
     {"pl",       {NULL},        "No args.", "Shows the connected data devices.",           shell_pl_command}, // DONE
     {"chstat",   {NULL},        "No args.", "Display system information.",                 shell_chstat_command}, // DONE
     {"vbetest",  {NULL},        "No args.", "Test Bochs VBE extensions",                   shell_vbetest_command}, // DONE
-    {"whereami", {NULL},        "No args.", "Prints the current directory",                shell_whereami_command}  // DONE
+    {"whereami", {"pwd", NULL}, "No args.", "Prints the current directory",                shell_whereami_command}  // DONE
 };
 int shell_commands_count = sizeof(shell_commands_list) / sizeof(Command);

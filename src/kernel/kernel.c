@@ -77,6 +77,3 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
 
     shell_start();
 }
-
-
-

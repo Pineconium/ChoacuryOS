@@ -7,6 +7,8 @@
         "vga.h": "c",
         "vbe.h": "c",
         "whereami.h": "c",
-        "vbetest.h": "c"
+        "vbetest.h": "c",
+        "point.h": "c",
+        "ps2_mouse.h": "c"
     }
 }
