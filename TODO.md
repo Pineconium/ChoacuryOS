@@ -34,7 +34,9 @@
 - [x] Let Users Read files/dirs
 - [ ] Let Users Modify files/dirs
 - [ ] Let Users Create files/dirs
+- [ ] Built in CLI Text Editor
 - [x] FAT Support.
+- [ ] RAM Disk
 - [ ] Custom Filesystem (CHFM).
 - [ ] ext4 (Linux) Support.
 - [ ] NTFS (Windows) Support.
@@ -42,7 +44,7 @@
 ### Graphics
 - [x] 4-bit colour support (16/Standard DOS colours).
 - [x] 8-bit colour support (256 colours/ANSI Support).
-- [ ] High-colour/True colour support (beyond 8-bit/>=256 colours).
+- [x] High-colour/True colour support (beyond 8-bit/>=256 colours).
 - [x] Graphical Shell (GUI).
 - [ ] Window Management System
 - [x] Mouse Drivers
@@ -66,3 +68,8 @@
 - [ ] ARM and ARM-based (e.g. Apple Silicon)
 - [ ] PowerPC
 - [ ] MIPS
+
+### Shell
+- [ ] Arrow keys support in shell
+- [ ] Tab key implementation
+- [ ] Options for commands like ls -a -l -R.... and support for more cd commands like cd -, cd ~

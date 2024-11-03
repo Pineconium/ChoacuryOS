@@ -18,6 +18,7 @@
 #include "../drivers/types.h"
 #include "../drivers/utils.h"
 #include "../drivers/vga.h"
+//#include "../drivers/fat.h"
 #include "../memory/kmalloc.h"
 #include "../memory/pmm.h"
 #include "../shell/shell.h"
@@ -74,6 +75,7 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
 
     storage_device_init();
     debug_print_pci();
+	
 
     shell_start();
 }

@@ -631,6 +631,109 @@ bool FAT_IsDirectory(FAT_file_t* file) {
 
 	return file->is_directory;
 }
+
+
+bool FAT_CreateDirectory(FAT_file_t* parent, const char* name) {
+    FAT_filesystem_t* filesystem = parent->filesystem;
+
+    if (!parent->is_directory) {
+        dprintln("Parent is not a directory");
+        return false;
+    }
+
+    // Check for an existing directory or file with the same name
+    FAT_file_t* existing = FAT_Open(parent, name);
+    if (existing != NULL) {
+        FAT_Close(existing);
+        dprintln("Directory or file with this name already exists");
+        return false;
+    }
+
+    // Find a free directory entry
+    uint8_t* buffer = kmalloc(filesystem->bytes_per_sector);
+    if (buffer == NULL) {
+        dprintln("Could not allocate memory for FAT sector");
+        return false;
+    }
+
+    FAT_dir_entry_t* free_entry = NULL;
+    uint32_t cluster_size = filesystem->bytes_per_sector * filesystem->sectors_per_cluster;
+    uint32_t cluster = parent->first_cluster;
+
+    while (is_valid_cluster(filesystem, cluster)) {
+        uint32_t cluster_start_sector = ((cluster - 2) * filesystem->sectors_per_cluster) + filesystem->first_data_sector;
+        if (!filesystem->storage_device->read_sectors(filesystem->storage_device, buffer, cluster_start_sector, filesystem->sectors_per_cluster)) {
+            dprintln("Could not read FAT cluster");
+            break;
+        }
+
+        for (uint32_t offset = 0; offset < cluster_size; offset += sizeof(FAT_dir_entry_t)) {
+            FAT_dir_entry_t* entry = (FAT_dir_entry_t*)(buffer + offset);
+            if (entry->name[0] == 0x00 || entry->name[0] == 0xE5) {
+                free_entry = entry;
+                break;
+            }
+        }
+
+        if (free_entry) break;
+        cluster = get_next_cluster(filesystem, cluster);
+    }
+
+    if (!free_entry) {
+        dprintln("No free directory entry found");
+        kfree(buffer);
+        return false;
+    }
+
+    // Allocate a new cluster for the directory
+    uint32_t new_cluster = allocate_new_cluster(filesystem, 0);
+    if (new_cluster == 0) {
+        dprintln("Could not allocate new cluster");
+        kfree(buffer);
+        return false;
+    }
+
+    // Initialize the new directory with "." and ".." entries
+    memset(buffer, 0, filesystem->bytes_per_sector);
+    FAT_dir_entry_t* dot_entry = (FAT_dir_entry_t*)buffer;
+    memcpy(dot_entry->name, ".          ", 11);
+    dot_entry->attr = 0x10; // Directory attribute
+    dot_entry->first_cluster_lo = new_cluster & 0xFFFF;
+    dot_entry->first_cluster_hi = new_cluster >> 16;
+
+    FAT_dir_entry_t* dotdot_entry = dot_entry + 1;
+    memcpy(dotdot_entry->name, "..         ", 11);
+    dotdot_entry->attr = 0x10; // Directory attribute
+    dotdot_entry->first_cluster_lo = parent->first_cluster & 0xFFFF;
+    dotdot_entry->first_cluster_hi = parent->first_cluster >> 16;
+
+    uint32_t cluster_start_sector = ((new_cluster - 2) * filesystem->sectors_per_cluster) + filesystem->first_data_sector;
+    if (!filesystem->storage_device->write_sectors(filesystem->storage_device, buffer, cluster_start_sector, filesystem->sectors_per_cluster)) {
+        dprintln("Could not initialize new directory");
+        kfree(buffer);
+        return false;
+    }
+
+    // Set up the directory entry for the new directory
+    memcpy(free_entry->name, name, min(strlen(name), 11));
+    free_entry->attr = 0x10; // Directory attribute
+    free_entry->first_cluster_lo = new_cluster & 0xFFFF;
+    free_entry->first_cluster_hi = new_cluster >> 16;
+    free_entry->file_size = 0;
+
+    if (!filesystem->storage_device->write_sectors(filesystem->storage_device, buffer, cluster_start_sector, filesystem->sectors_per_cluster)) {
+        dprintln("Could not write directory entry");
+        kfree(buffer);
+        return false;
+    }
+
+    kfree(buffer);
+    return true;
+}
+
+
+
+
 //todo implement this
 //gl
 size_t FAT_Write(FAT_file_t* file, size_t offset, const void* src_buffer, size_t buffer_len) {
@@ -729,6 +832,11 @@ size_t FAT_Write(FAT_file_t* file, size_t offset, const void* src_buffer, size_t
     kfree(buffer);
     return bytes_written;
 }
+
+
+
+
+
 static uint32_t allocate_new_cluster(FAT_filesystem_t* filesystem, uint32_t previous_cluster) {
     uint32_t fat_byte_offset, ent_offset;
     uint32_t fat_sector, cluster;

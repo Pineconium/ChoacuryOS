@@ -2,6 +2,7 @@
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue)](#license)
 [![issues - ChoacuryOS](https://img.shields.io/github/issues/Pineconium/ChoacuryOS)](https://github.com/Pineconium/ChoacuryOS/issues)
 
+[View documentation](https://teamchoacury.github.io/docs/)
 
 Choacury, (pronounced as coch-curry or /kʰɔx-ˈkʌr.i/), is a custom-built OS written in C and Assembly. Choacury is currently in a very **Pre-Alpha** stage, meaning some stuff isn't complete yet...
 
@@ -21,4 +22,4 @@ For VirtualBox Users, here are the recommended VM requirements:
 # Compile Choacury.
 If you want to compile Choacury from the source code, here's what you'll need.
 1. NASM, GCC, GRUB Multiboot, Makefile, and QEMU installed. (the compiler uses the `x86_64` version of QEMU. If you don't use that version of QEMU, replace `qemu-system-x86_64` in the compiler shell script with your version of QEMU)
-2. A computer running any Linux distro (recommended, but there is a Windows Compiler for Windows devices as long as you have WSL enabled).
+2. A computer running any Linux distro (recommended, but there is a batch script for Windows devices as long as you have WSL installed).

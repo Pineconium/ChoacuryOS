@@ -35,6 +35,7 @@ SRCS :=								\
 	drivers/utils.c					\
 	drivers/vga.c					\
 	drivers/vbe.c					\
+	drivers/GPU/vmsvga/vmsvga.c		\
 	kernel/kernel.c					\
 	kernel/krnentry.asm				\
 	kernel/panic.c					\

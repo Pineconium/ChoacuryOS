@@ -4,7 +4,7 @@
 #include "bindraw.h"    // <- so I can draw in binary without melting my brain.
 #include "../drivers/ps2_keyboard.h"
 #include "../drivers/ps2_mouse.h"
-#include "../drivers/vga.h"
+#include "../drivers/vbe.h"
 
 /* the mouse cursor */
 static uint8_t Cursor[] = {
@@ -36,13 +36,13 @@ void draw_pointer(uint8_t* Cursor, Point position, u8 colour) {
     int xMax = 16;
     int yMax = 16;
 
-    for (int y = 0; y < yMax && position.Y + y < (s32)VGA_height; y++){
-        for (int x = 0; x < xMax && position.X + x < (s32)VGA_width; x++){
+    for (int y = 0; y < yMax && position.Y + y < (s32)1080; y++){
+        for (int x = 0; x < xMax && position.X + x < (s32)1920; x++){
             int bit = y * 16 + x;
             int byte = bit / 8;
             if ((Cursor[byte] & (0b10000000 >> (x % 8)))) {
-                MouseCursorBuffer[x + y * 16] = vga_getpixel(position.X + x, position.Y + y);
-                vga_putpixel(position.X + x, position.Y + y, colour);
+                MouseCursorBuffer[x + y * 16] = vbe_getpixel(position.X + x, position.Y + y);
+                vbe_putpixel(position.X + x, position.Y + y, colour);
             }
         }
     }
@@ -52,12 +52,12 @@ void clear_pointer(uint8_t* Cursor, Point position) {
     s32 xMax = 16;
     s32 yMax = 16;
 
-    for (s32 y = 0; y < yMax && position.Y + y < (s32)VGA_height; y++) {
-        for (s32 x = 0; x < xMax && position.X + x < (s32)VGA_width; x++){
+    for (s32 y = 0; y < yMax && position.Y + y < (s32)1080; y++) {
+        for (s32 x = 0; x < xMax && position.X + x < (s32)1920; x++){
             int bit = y * 16 + x;
             int byte = bit / 8;
             if ((Cursor[byte] & (0b10000000 >> (x % 8)))) {
-				vga_putpixel(position.X + x, position.Y + y, MouseCursorBuffer[x + y * 16]);
+				vbe_putpixel(position.X + x, position.Y + y, MouseCursorBuffer[x + y * 16]);
             }
         }
     }
@@ -66,12 +66,10 @@ void clear_pointer(uint8_t* Cursor, Point position) {
 void start_desktop(){
 	MousePosition.X = 0;
 	MousePosition.Y = 0;
-	vga_fillrect(0, 0, 20, 20, TC_DKRED);
+	vbe_clear_screen(0x000000ff);
+	vbe_fillrect(0, 0, 20, 20, 0x00ff0000);
 
-	vga_fillrect(0, 0, 20, VGA_height, TC_WHITE);
-	vga_fillrect(0, 0, 20, 20, TC_DKRED);
-
-	draw_pointer(Cursor, MousePosition, TC_BLACK);
+	draw_pointer(Cursor, MousePosition, 0x00000000);
 
 	for (;;) {
 		/* If ESC is pressed, exit the desktop */
@@ -96,7 +94,7 @@ void start_desktop(){
 					if (MousePosition.X >= 0 && MousePosition.X < 20) {
 						if (MousePosition.Y >= 0 && MousePosition.Y < 20) {
 							/* does something if the boxed is clicked on */
-							vga_fillrect(75, 75, 120, 90, TC_BROWN);
+							vbe_fillrect(75, 75, 120, 90, 0x00964B00);
 						}
 					}
 				}
@@ -105,7 +103,7 @@ void start_desktop(){
 				clear_pointer(Cursor, MousePosition);
 				MousePosition.X += mouse_event.move_event.rel_x;
 				MousePosition.Y -= mouse_event.move_event.rel_y;
-				draw_pointer(Cursor, MousePosition, TC_BLACK);
+				draw_pointer(Cursor, MousePosition, 0x00000000);
 				break;
 			default:
 				break;

@@ -92,3 +92,6 @@ bool FAT_IsDirectory(FAT_file_t* file);
 //static void update_file_size_in_dir_entry(FAT_file_t* file);
 size_t FAT_Write(FAT_file_t* file, size_t offset, const void* src_buffer, size_t buffer_len);
 
+
+bool FAT_CreateDirectory(FAT_file_t* parent, const char* name);
+
