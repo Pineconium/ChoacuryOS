@@ -42,9 +42,24 @@ int shell_ls_command(int argc, const char** argv) {
         return 1;
     }
 
+    term_write("Name                Type\n", TC_LBLUE);
     for (size_t i = 0; i < count; i++) {
         term_write(names[i], TC_WHITE);
-        term_putchar(' ', TC_WHITE);
+
+        for (size_t j = 0; j < 20 - strlen(names[i]); j++)
+        {
+            term_putchar(' ', TC_WHITE);
+        }
+
+        FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, names[i]);
+        
+        if(FAT_IsDirectory(file)) {
+            term_write("DIR", TC_WHITE);
+        } else {
+            term_write("FILE", TC_WHITE);
+        }
+        kfree(file);
+        term_putchar('\n', TC_WHITE);
         kfree(names[i]);
     }
     term_putchar('\n', TC_WHITE);

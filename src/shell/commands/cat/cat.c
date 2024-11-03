@@ -15,7 +15,10 @@ int shell_cat_command(int argc, const char** argv) {
         return;
     }
 
-    FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, argv[1]);
+    char* dest = currentDir;
+    strcat(dest, argv[1]);
+
+    FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, dest);
     if (file == NULL) {
         term_write("ERROR: Not found: '", TC_LRED);
         term_write(argv[1], TC_LRED);
