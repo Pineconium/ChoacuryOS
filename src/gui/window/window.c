@@ -1,5 +1,7 @@
 #include "../../drivers/vbe.h"
 #include "../../shell/shell.h"
+#include "../../drivers/filesystem/fat.h"
+#include "../bitmap/bitmap.h"
 #include "window.h"
 
 void gui_window_render_titlebar(Window window) {
@@ -17,6 +19,12 @@ void gui_window_render_titlebar(Window window) {
 
     size_t title_length = sizeof(window.title);
     for(int i = 0; i < title_length; i++) {
-        putchar_custom(window.x + 3 + (9 * i), window.y + 3, window.title[i], font, 0xFFFFFF, 20, 8);
+        // 0xff is transparent
+        putchar_custom(window.x + 3 + (9 * i), window.y + 3, window.title[i], font, 0xFFFFFF, 0xff, 8, 20);
     }
+
+    FAT_file_t* test = FAT_OpenAbsolute(s_fat_fs, "/test.bmp");
+    void* testData = (void*)kmalloc(sizeof(test->file_size));
+    FAT_Read(testData, 0, 0, sizeof(test->file_size));
+    draw_bitmap(window.x + 10, window.y + 10, testData);
 }

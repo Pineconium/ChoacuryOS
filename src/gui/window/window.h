@@ -12,6 +12,7 @@ typedef struct {
     uint64_t height;
     WindowStyle style;
     char* title;
+    int should_draw; // 1 = Yes, 0 = No
 
     void (*destroy)();
     void (*draw)();

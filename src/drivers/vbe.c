@@ -84,7 +84,7 @@ void putchar(int x, int y, char c, PSF1_FONT* font, uint32_t color) {
         }
     }
 }
-void putchar_custom(int x, int y, char c, PSF1_FONT* font, uint32_t color, int font_width, int font_height) {
+void putchar_custom(int x, int y, char c, PSF1_FONT* font, uint32_t color, uint32_t bg_color, int font_width, int font_height) {
     uint8_t* glyph = (uint8_t*)font->glyphBuffer + (c * font->psf1_Header->charsize);
 
     for (int row = 0; row < font_height; row++) {
@@ -93,7 +93,7 @@ void putchar_custom(int x, int y, char c, PSF1_FONT* font, uint32_t color, int f
             if (bits & (0x80 >> col)) {
                 vbe_putpixel(x + col, y + row, color);
             } else {
-                //vbe_putpixel(x + col, y + row, 0x000000);  // Ensure the background is black
+                vbe_putpixel(x + col, y + row, bg_color);
             }
         }
     }
@@ -136,9 +136,42 @@ void vbe_fillrect(u32 sx, u32 sy, u32 ex, u32 ey, u32 color) {
 
 // DONT TRY THIS IN BOCHS! BOCHS IGNORES BANK ADDRESS WRITES WHEN
 // LFB IS ACTIVE
-void vbe_putpixel(u32 x, u32 y, u32 color) {
+/*void vbe_putpixel(u32 x, u32 y, u32 color) {
 	u32 *framebuffer = (u32*)ADDRESS;
     framebuffer[y * VBE_WIDTH + x] = color;
+}*/
+
+void vbe_putpixel(u32 x, u32 y, u32 color) {
+    u32 *framebuffer = (u32*)ADDRESS;
+    u32 *pixel = &framebuffer[y * VBE_WIDTH + x];
+
+    u32 existing_color = *pixel;
+    u8 alpha = (color >> 24) & 0xFF; // Extract alpha component from the color
+
+    if (alpha == 0xFF) {
+        // Fully transparent, do nothing
+        return;
+    } else if (alpha == 0x00) {
+        // Fully opaque, overwrite
+        *pixel = color & 0xFFFFFF; // Mask out alpha
+    } else {
+        // Blend the colors
+        u8 src_r = (color >> 16) & 0xFF;
+        u8 src_g = (color >> 8) & 0xFF;
+        u8 src_b = color & 0xFF;
+
+        u8 dst_r = (existing_color >> 16) & 0xFF;
+        u8 dst_g = (existing_color >> 8) & 0xFF;
+        u8 dst_b = existing_color & 0xFF;
+
+        // Perform alpha blending
+        u8 blended_r = ((src_r * (255 - alpha)) + (dst_r * alpha)) / 255;
+        u8 blended_g = ((src_g * (255 - alpha)) + (dst_g * alpha)) / 255;
+        u8 blended_b = ((src_b * (255 - alpha)) + (dst_b * alpha)) / 255;
+
+        // Write the blended color back to the framebuffer
+        *pixel = (blended_r << 16) | (blended_g << 8) | blended_b;
+    }
 }
 
 

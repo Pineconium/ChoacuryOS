@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdint.h>
-#include "Point.h"
 
 #ifndef BITMAP_H
 #define BITMAP_H
@@ -31,6 +30,6 @@ typedef struct {
 #pragma pack(pop)
 
 // This has no resizing functionality
-void draw_bitmap(Point position, const uint8_t *data);
+void draw_bitmap(int x, int y, const uint8_t *data);
 
 #endif // BITMAP_H

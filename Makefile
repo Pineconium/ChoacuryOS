@@ -59,6 +59,7 @@ SRCS :=								\
 	shell/commands/ls/ls.c          \
 	shell/commands/whereami/whereami.c \
 	shell/commands/vbetest/vbetest.c \
+	gui/bitmap/bitmap.c             \
 	gui/window/window.c             \
 	#gui/widgets.c					\ # remove comment when its implemented.
 

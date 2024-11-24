@@ -68,7 +68,7 @@ void vbe_clear_screen(u8 color);
 void vbe_drawline(u32 x1, u32 y1, u32 x2, u32 y2, u8 color);
 u32 vbe_getpixel(u32 x, u32 y);
 void putchar(int x, int y, char c, PSF1_FONT* font, uint32_t color);
-void putchar_custom(int x, int y, char c, PSF1_FONT* font, uint32_t color, int font_width, int font_height);
+void putchar_custom(int x, int y, char c, PSF1_FONT* font, uint32_t color, uint32_t bg_color, int font_width, int font_height);
 void print(const char* str, PSF1_FONT* font, uint32_t color);
 void reset_cursor();
 void set_cursor(int x, int y);
