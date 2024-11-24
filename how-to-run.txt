@@ -1,0 +1,5 @@
+sudo sh ./compile_no_audio.sh
+sudo sh ./create-disk_working.sh
+qemu-system-x86_64 -hda build/ChoacuryOS.img -serial stdio
+
+And just ignore the errors

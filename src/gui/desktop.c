@@ -5,6 +5,7 @@
 #include "../drivers/ps2_keyboard.h"
 #include "../drivers/ps2_mouse.h"
 #include "../drivers/vbe.h"
+#include "window/window.h"
 
 /* the mouse cursor */
 static uint8_t Cursor[] = {
@@ -70,6 +71,24 @@ void start_desktop(){
 	vbe_fillrect(0, 0, 20, 20, 0x00ff0000);
 
 	draw_pointer(Cursor, MousePosition, 0x00000000);
+
+	Window window;
+	window.width = 1000;
+	window.height = 750;
+	window.x = 25;
+	window.y = 25;
+	window.title = "Test Window";
+
+	gui_window_render_titlebar(window);
+
+	Window window2;
+	window2.width = 1000;
+	window2.height = 750;
+	window2.x = 250;
+	window2.y = 250;
+	window.title = "Test Window 2";
+
+	gui_window_render_titlebar(window2);
 
 	for (;;) {
 		/* If ESC is pressed, exit the desktop */

@@ -22,7 +22,7 @@ static inline u16 inpw(u16 port) {
 
 #define ADDRESS 0xFD000000
 #define FONT_WIDTH 8
-#define FONT_HEIGHT 16
+#define FONT_HEIGHT 20 // Was 16 now 20
 int VBE_WIDTH  = 1920;
 int VBE_HEIGHT = 1080;
 static int cursor_x = 0;
@@ -80,6 +80,20 @@ void putchar(int x, int y, char c, PSF1_FONT* font, uint32_t color) {
                 vbe_putpixel(x + col, y + row, color);
             } else {
                 vbe_putpixel(x + col, y + row, 0x000000);  // Ensure the background is black
+            }
+        }
+    }
+}
+void putchar_custom(int x, int y, char c, PSF1_FONT* font, uint32_t color, int font_width, int font_height) {
+    uint8_t* glyph = (uint8_t*)font->glyphBuffer + (c * font->psf1_Header->charsize);
+
+    for (int row = 0; row < font_height; row++) {
+        uint8_t bits = glyph[row];
+        for (int col = 0; col < font_width; col++) {
+            if (bits & (0x80 >> col)) {
+                vbe_putpixel(x + col, y + row, color);
+            } else {
+                //vbe_putpixel(x + col, y + row, 0x000000);  // Ensure the background is black
             }
         }
     }
