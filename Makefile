@@ -61,6 +61,7 @@ SRCS :=								\
 	shell/commands/vbetest/vbetest.c \
 	gui/bitmap/bitmap.c             \
 	gui/window/window.c             \
+	gui/window/drawing.c            \
 	#gui/widgets.c					\ # remove comment when its implemented.
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))

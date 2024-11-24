@@ -1,18 +1,22 @@
 #include "../../drivers/vbe.h"
 #include "../../shell/shell.h"
 #include "../../drivers/filesystem/fat.h"
+#include "../../memory/kmalloc.h"
+#include "../../drivers/utils.h"
 #include "../bitmap/bitmap.h"
+#include "drawing.h"
 #include "window.h"
 
+#define TITLEBAR_HEIGHT 30
+
 void gui_window_render_titlebar(Window window) {
-    int titlebar_height = 30;
-    vbe_fillrect(window.x, window.y, window.x + window.width, window.y + titlebar_height, 0x8A8A8A00); // Titlebar
+    /*vbe_fillrect(window.x, window.y, window.x + window.width, window.y + TITLEBAR_HEIGHT, 0x8A8A8A00); // Titlebar
     vbe_drawline(window.x, window.y, window.x, window.y + window.height, 0x8A8A8A00); // Top left -> Bottom left
     vbe_drawline(window.x, window.y, window.x + window.width, window.y, 0x8A8A8A00); // Top left -> Top right
     vbe_drawline(window.x, window.y + window.height, window.x + window.width, window.x + window.height, 0x8A8A8A00); // Bottom left -> Bottom right
     vbe_drawline(window.x + window.width, window.y, window.x + window.width, window.y + window.height, 0x8A8A8A00); // Top right -> Bottom right
 
-    vbe_fillrect(window.x + 1, window.y + titlebar_height, window.x + window.width, window.y + window.height, 0x000000);
+    vbe_fillrect(window.x + 1, window.y + TITLEBAR_HEIGHT, window.x + window.width, window.y + window.height, 0x000000);
 
     //vbe_fillrect(window.x + window.width - (titlebar_height / 3), window.y + (titlebar_height / 3), window.x + window.width - (titlebar_height / 3) - 40, window.y + (titlebar_height / 3 * 2), 0xFF0000);
     vbe_fillrect(window.x + 5, window.y + 5, window.x + 20, window.y + 5, 0xFF0000);
@@ -26,5 +30,58 @@ void gui_window_render_titlebar(Window window) {
     FAT_file_t* test = FAT_OpenAbsolute(s_fat_fs, "/test.bmp");
     void* testData = (void*)kmalloc(sizeof(test->file_size));
     FAT_Read(testData, 0, 0, sizeof(test->file_size));
-    draw_bitmap(window.x + 10, window.y + 10, testData);
+    draw_bitmap(window.x + 10, window.y + 10, testData);*/
+
+    framebuffer_fillrect(window.buffer, window.x, window.y, window.x + window.width, window.y + TITLEBAR_HEIGHT, 0x8A8A8A00); // Titlebar
+    framebuffer_drawline(window.buffer, window.x, window.y, window.x, window.y + window.height, 0x8A8A8A00); // Top left -> Bottom left
+    framebuffer_drawline(window.buffer, window.x, window.y, window.x + window.width, window.y, 0x8A8A8A00); // Top left -> Top right
+    framebuffer_drawline(window.buffer, window.x, window.y + window.height, window.x + window.width, window.x + window.height, 0x8A8A8A00); // Bottom left -> Bottom right
+    framebuffer_drawline(window.buffer, window.x + window.width, window.y, window.x + window.width, window.y + window.height, 0x8A8A8A00); // Top right -> Bottom right
+}
+
+void gui_window_render(Window window) {
+    gui_window_render_titlebar(window);
+    window.draw(window.buffer, window.x, window.y + TITLEBAR_HEIGHT, window.x + window.width, window.y + 30 + window.height);
+
+    uint32_t *framebuffer = (uint32_t*)0xFD000000;
+    int framebuffer_index = (window.y) * 1920 + (window.x); //(y + y_offset) * SCREEN_WIDTH + (x + x_offset);
+    int window_index = window.y * window.width + window.x;
+    framebuffer[framebuffer_index] = window.buffer[window_index];
+
+    // Temporary
+    for (size_t y = 0; y < window.height; y++)
+    {
+        for (size_t x = 0; x < window.width; x++)
+        {
+            //vbe_putpixel(window.x + x, window.y + y, window.buffer[y * window.width + x]);
+        }
+    }
+}
+
+void gui_window_initialise(Window window) {
+    window.buffer = kmalloc(window.width * window.height * sizeof(uint32_t));
+    memset(window.buffer, 0xFFFFFF, sizeof(window.buffer));
+
+    for (size_t y = 0; y < window.height; y++)
+    {
+        for (size_t x = 0; x < window.width; x++)
+        {
+            //framebuffer_putpixel(window.buffer, x, y, 0xff);
+        }
+    }
+}
+
+void gui_window_resize(Window window, int width, int height) {
+    uint32_t* old_buffer = window.buffer;
+    window.buffer = kmalloc(width * height * sizeof(uint32_t));
+    for (size_t y = 0; y < window.height; y++)
+    {
+        
+        for (size_t x = 0; x < window.height; x++)
+        {
+            window.buffer[y * window.width + x] = old_buffer[y * width + x];
+        }
+    }
+    window.width = width;
+    window.height = height;
 }

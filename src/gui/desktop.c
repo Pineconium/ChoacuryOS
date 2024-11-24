@@ -6,6 +6,7 @@
 #include "../drivers/ps2_mouse.h"
 #include "../drivers/vbe.h"
 #include "window/window.h"
+#include "window/drawing.h"
 
 /* the mouse cursor */
 static uint8_t Cursor[] = {
@@ -64,6 +65,21 @@ void clear_pointer(uint8_t* Cursor, Point position) {
     }
 }
 
+void test_window_render(uint32_t* buffer, int64_t x , int64_t y, int64_t width, uint64_t height) {
+	uint32_t color = 0x00000000;
+
+	for (size_t _y = 0; _y < height; _y++) {
+        for (size_t _x = 0; _x < width; _x++) {
+			color += 0x1;
+			color += 0x001;
+			color += 0x0001;
+			color += 0x00001;
+
+            framebuffer_putpixel(buffer, x + _x, y + _y, color);
+        }
+    }
+}
+
 void start_desktop(){
 	MousePosition.X = 0;
 	MousePosition.Y = 0;
@@ -77,18 +93,23 @@ void start_desktop(){
 	window.height = 750;
 	window.x = 25;
 	window.y = 25;
-	window.title = "Test Window";
+	window.title = "RGB window";
+	window.draw = test_window_render;
+	gui_window_initialise(window);
 
-	gui_window_render_titlebar(window);
+	//gui_window_render_titlebar(window);
+	gui_window_render(window);
 
 	Window window2;
-	window2.width = 1000;
-	window2.height = 750;
+	window2.width = 800;
+	window2.height = 450;
 	window2.x = 250;
 	window2.y = 250;
-	window.title = "Test Window 2";
+	window.title = "RGB Window 2";
+	//window2.draw = test_window_render;
+	gui_window_initialise(window2);
 
-	gui_window_render_titlebar(window2);
+	gui_window_render(window2);
 
 	for (;;) {
 		/* If ESC is pressed, exit the desktop */

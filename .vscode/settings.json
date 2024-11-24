@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "*.ejs": "html",
-        "fat.h": "c"
+        "fat.h": "c",
+        "kmalloc.h": "c",
+        "bitmap.h": "c"
     }
 }
