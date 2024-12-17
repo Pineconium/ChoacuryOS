@@ -1,4 +1,5 @@
 #include "../../drivers/vbe.h"
+//#include "window.h"
 
 uint32_t framebuffer_getpixel(uint32_t *framebuffer, uint32_t x, uint32_t y);
 void framebuffer_drawline(uint32_t *framebuffer, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, uint32_t color);

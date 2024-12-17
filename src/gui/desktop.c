@@ -89,16 +89,16 @@ void start_desktop(){
 	draw_pointer(Cursor, MousePosition, 0x00000000);
 
 	Window window;
-	window.width = 1000;
-	window.height = 750;
-	window.x = 25;
-	window.y = 25;
+	window.width = 1920 - 10; //1000;
+	window.height = 1080 - 10; //750;
+	window.x = 0 + 1; //25;
+	window.y = 0 + 1; //25;
 	window.title = "RGB window";
-	window.draw = test_window_render;
+	//window.draw = test_window_render;
 	gui_window_initialise(window);
 
 	//gui_window_render_titlebar(window);
-	gui_window_render(window);
+	//gui_window_render(window);
 
 	Window window2;
 	window2.width = 800;
@@ -106,7 +106,7 @@ void start_desktop(){
 	window2.x = 250;
 	window2.y = 250;
 	window.title = "RGB Window 2";
-	//window2.draw = test_window_render;
+	window2.draw = test_window_render;
 	gui_window_initialise(window2);
 
 	gui_window_render(window2);
