@@ -13,10 +13,9 @@ typedef struct {
     WindowStyle style;
     char* title;
     int should_draw; // 1 = Yes, 0 = No
-    uint32_t* buffer;
 
     void (*destroy)();
-    void (*draw)(uint32_t*, int64_t, int64_t, int64_t, uint64_t);
+    void (*draw)(int64_t, int64_t, int64_t, uint64_t);
     void (*update)();
     int (*move)(int64_t, int64_t);
     void (*maximise)();
