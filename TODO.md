@@ -11,10 +11,15 @@
 - [x] String Message.
 - [x] Keyboard Input (PS/2 Only)
 - [ ] Multi-Tasking.
+- [ ] Multi Core.
+- [ ] Multi Threading.
 - [ ] ML Paging
+- [ ] More CPU features supported (e.g. AVX10, AVX512, SSE5...)
 
 ### Extra Drivers
 - [ ] USB Keyboard Support.
+- [ ] Network Card support.
+- [ ] USB Mouse Support.
 
 ### Misc.
 - [ ] Ctrl+Alt+Del support 
@@ -50,6 +55,13 @@
 - [x] Mouse Drivers
 - [ ] Virtual Terminal/Command Prompt
 - [ ] Basic GUI Apps. (e.g. File Manager, Program Launcher)
+- [x] VMWare SVGA II drivers
+- [x] Bochs Graphics Adaptor
+- [ ] Intel HD drivers
+- [ ] NVIDIA drivers
+- [ ] AMD drivers
+- [ ] 3D acceleration
+- [x] Possible switch to GPU framebuffer
 
 ### Audio
 - [x] PC Speaker/DOS Beeps.
@@ -73,3 +85,5 @@
 - [ ] Arrow keys support in shell
 - [ ] Tab key implementation
 - [ ] Options for commands like ls -a -l -R.... and support for more cd commands like cd -, cd ~
+- [ ] Stop using VGA text mode
+

@@ -15,8 +15,9 @@ int shell_cat_command(int argc, const char** argv) {
         return;
     }
 
-    char* dest = currentDir;
-    strcat(dest, argv[1]);
+    char dest[256];
+    strcpy(dest,currentDir);
+    strcat(dest,argv[1]);
 
     FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, dest);
     if (file == NULL) {
