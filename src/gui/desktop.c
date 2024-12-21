@@ -6,6 +6,7 @@
 #include "../drivers/ps2_mouse.h"
 #include "../drivers/vbe.h"
 #include "window/window.h"
+//#include "window/manager/manager.h"
 
 /* the mouse cursor */
 static uint8_t Cursor[] = {
@@ -98,7 +99,8 @@ void start_desktop(){
 	//gui_window_initialise(window);
 
 	//gui_window_render_titlebar(window);
-	gui_window_render(window);
+	//gui_window_render(window);
+	gui_window_manager_register_window(window); // This should handle all of the drawing and stuff
 
 	/*Window window2;
 	window2.width = 800;

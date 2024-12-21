@@ -6,7 +6,7 @@
 #include "../bitmap/bitmap.h"
 #include "window.h"
 
-#define TITLEBAR_HEIGHT 30
+//#define TITLEBAR_HEIGHT 30 // Moved to window.h
 
 void gui_window_render_titlebar(Window window) {
     vbe_fillrect(window.x, window.y, window.x + window.width, window.y + TITLEBAR_HEIGHT, 0x8A8A8A00); // Titlebar
@@ -35,6 +35,15 @@ void gui_window_render_titlebar(Window window) {
 void gui_window_render(Window window) {
     gui_window_render_titlebar(window);
     window.draw(window.x, window.y + TITLEBAR_HEIGHT, window.x + window.width, window.y + 30 + window.height);
+}
+
+int gui_window_move(Window* window, int64_t new_x, int64_t new_y) {
+    window->x = new_x;
+    window->y = new_y;
+
+    gui_window_render(*window);
+
+    return 1;
 }
 
 void gui_window_initialise(Window window) {
