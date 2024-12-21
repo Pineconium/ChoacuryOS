@@ -67,8 +67,8 @@ void clear_pointer(uint8_t* Cursor, Point position) {
 void test_window_render(int64_t x, int64_t y, int64_t width, uint64_t height) {
 	uint32_t color = 0x00000000;
 
-	for (size_t _y = 0; _y < height; _y++) {
-        for (size_t _x = 0; _x < width; _x++) {
+	for (uint64_t _y = 0; _y < height; _y++) {
+        for (uint64_t _x = 0; _x < width; _x++) {
 			/*color += 0x1;
 			color += 0x001;
 			color += 0x0001;
