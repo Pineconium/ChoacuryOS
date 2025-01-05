@@ -47,3 +47,4 @@ static Window* active_window = NULL;
 void gui_window_manager_register_window(Window window);
 int gui_window_manager_mouse_over_titlebar(Window* window, int mouse_x, int mouse_y);
 void gui_window_manager_handle_mouse_move(int mouse_x, int mouse_y);
+void gui_window_manager_handle_mouse_click(int mouse_x, int mouse_y);

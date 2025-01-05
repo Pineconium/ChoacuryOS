@@ -90,19 +90,21 @@ void start_desktop(){
 	draw_pointer(Cursor, MousePosition, 0x00000000);
 
 	Window window;
-	window.width = 1000;
-	window.height = 750;
-	window.x = 0 + 1; //25;
-	window.y = 0 + 1; //25;
+	window.width = 100; //1000;
+	window.height = 75; //750;
+	window.x = 25;
+	window.y = 25;
 	window.title = "RGB window";
 	window.draw = test_window_render;
+	window.drag_offset_x = 0; //150;
+	window.drag_offset_y = 0; //150;
 	//gui_window_initialise(window);
 
 	//gui_window_render_titlebar(window);
 	//gui_window_render(window);
 	gui_window_manager_register_window(window); // This should handle all of the drawing and stuff
 
-	/*Window window2;
+	Window window2;
 	window2.width = 800;
 	window2.height = 450;
 	window2.x = 250;
@@ -111,7 +113,10 @@ void start_desktop(){
 	window2.draw = test_window_render;
 	//gui_window_initialise(window2);
 
-	gui_window_render(window2);*/
+	//gui_window_render(window2);
+	gui_window_manager_register_window(window2);
+
+	gui_window_move(&window, 26, 26);
 
 	for (;;) {
 		/* If ESC is pressed, exit the desktop */
@@ -133,6 +138,8 @@ void start_desktop(){
 				break;
 			case MOUSE_BUTTON_EVENT:
 				if (mouse_event.button_event.pressed) {
+					gui_window_manager_handle_mouse_click(MousePosition.X, MousePosition.Y);
+
 					if (MousePosition.X >= 0 && MousePosition.X < 20) {
 						if (MousePosition.Y >= 0 && MousePosition.Y < 20) {
 							/* does something if the boxed is clicked on */
@@ -146,6 +153,8 @@ void start_desktop(){
 				MousePosition.X += mouse_event.move_event.rel_x;
 				MousePosition.Y -= mouse_event.move_event.rel_y;
 				draw_pointer(Cursor, MousePosition, 0x00000000);
+
+				gui_window_manager_handle_mouse_move(MousePosition.X, MousePosition.Y);
 				break;
 			default:
 				break;

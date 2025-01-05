@@ -34,10 +34,13 @@ void gui_window_render_titlebar(Window window) {
 
 void gui_window_render(Window window) {
     gui_window_render_titlebar(window);
-    window.draw(window.x, window.y + TITLEBAR_HEIGHT, window.x + window.width, window.y + 30 + window.height);
+    //window.draw(window.x, window.y + TITLEBAR_HEIGHT, window.x + window.width, window.y + 30 + window.height);
+    window.draw(window.x + 1, window.y + TITLEBAR_HEIGHT, window.width - 1, window.height - TITLEBAR_HEIGHT);
 }
 
 int gui_window_move(Window* window, int64_t new_x, int64_t new_y) {
+    vbe_fillrect(window->x, window->y, window->width, window->height, 0x000000ff);
+
     window->x = new_x;
     window->y = new_y;
 
