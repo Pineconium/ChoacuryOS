@@ -62,10 +62,11 @@ SRCS :=								\
 	shell/commands/whereami/whereami.c \
 	shell/commands/vbetest/vbetest.c \
 	gui/bitmap/bitmap.c             \
-	gui/window/window.c             \
-	gui/window/manager/manager.c    \
+	gui/window/window.cpp           \
+	#gui/window/manager/manager.c    \
 	#gui/widgets.c					\ # remove comment when its implemented.
 # gui/desktop.cpp (See line 46) was previously a C file
+# gui/window/window.cpp (See line 65) was previously a C file
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))
 DEPS := $(addprefix $(BUILD_DIR)/,$(addsuffix .d,$(filter-out %.asm,$(SRCS))))
