@@ -2,10 +2,12 @@ BUILD_DIR := build
 SRC_DIR   := src
 
 CC  := gcc
+CXX := g++ # C++
 LD  := ld
 ASM := nasm
 
 CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra -I$(SRC_DIR)
+CXXFLAGS := $(CFLAGS) -fno-exceptions -fno-rtti
 ASMFLAGS := -f elf32
 LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto
 
@@ -43,7 +45,7 @@ SRCS :=								\
 	memory/pmm.c					\
 	shell/shell.c					\
 	shell/terminal.c				\
-	gui/desktop.c					\
+	gui/desktop.cpp					\
 	shell/commands/command.c        \
 	shell/commands/guiload/guiload.c \
 	shell/commands/clear/clear.c    \
@@ -63,6 +65,7 @@ SRCS :=								\
 	gui/window/window.c             \
 	gui/window/manager/manager.c    \
 	#gui/widgets.c					\ # remove comment when its implemented.
+# gui/desktop.cpp (See line 46) was previously a C file
 
 OBJS := $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(SRCS)))
 DEPS := $(addprefix $(BUILD_DIR)/,$(addsuffix .d,$(filter-out %.asm,$(SRCS))))
@@ -89,6 +92,10 @@ clean:
 $(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c Makefile
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+
+$(BUILD_DIR)/%.cpp.o: $(SRC_DIR)/%.cpp Makefile
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
 $(BUILD_DIR)/%.asm.o: $(SRC_DIR)/%.asm
 	@mkdir -p $(@D)
