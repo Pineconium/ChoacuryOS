@@ -79,6 +79,12 @@ public:
     /// @return If it was successful or not
     /// @note This only sets every pixel to 0x000000ff, needs to be done properly in future
     bool derender();
+    /// @brief Renders a specific part of the window on the screen
+    /// @param x Start position (x)
+    /// @param y Start position (y)
+    /// @param width End position (width)
+    /// @param height End position (height)
+    bool render_part(int32_t _x, int32_t _y, int32_t width, int32_t height);
     // Dragging functionality
     /// @brief Sets the drag offset
     /// @param x The X drag offset

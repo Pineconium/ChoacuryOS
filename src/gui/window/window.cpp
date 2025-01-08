@@ -33,6 +33,7 @@ bool Window::move(int64_t x, int64_t y) {
     this->x = x;
     this->y = y;
     this->render();
+    return true;
 }
 
 bool Window::resize(int64_t width, int64_t height) {
@@ -61,6 +62,21 @@ bool Window::render() {
     // Draw each pixel on the screen
     for(int64_t y = 0; y < this->height; y++) {
         for(int64_t x = 0; x < this->width; x++) {
+            vbe_putpixel(this->x + x, this->y + y, this->buffer[y * this->width + x]);
+        }
+    }
+    // Return success
+    return true;
+}
+
+bool Window::render_part(int32_t _x, int32_t _y, int32_t width, int32_t height) {
+    // If the buffer is empty, do nothing
+    if(this->buffer == nullptr) return false;
+    if(_x > this->width || _x < 0 || _y > this->height || _y < 0) return false;
+
+    // Draw each pixel on the screen
+    for(int64_t y = _y; y < height; y++) {
+        for(int64_t x = _x; x < width; x++) {
             vbe_putpixel(this->x + x, this->y + y, this->buffer[y * this->width + x]);
         }
     }

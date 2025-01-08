@@ -85,7 +85,7 @@ extern "C" void start_desktop() {
     FallBackWM wm = FallBackWM();
 
     Window window = Window(10, 10, 500, 500, WindowStyle::Standard, WindowState::Open, (char**)"Test");
-    //window.render(); // The WM will deal with getting this part set up
+    window.render(); // The WM will deal with getting this part set up
 
     wm.register_window(&window);
 
@@ -108,6 +108,7 @@ extern "C" void start_desktop() {
             case MOUSE_BUTTON_EVENT:
                 if(mouse_event.button_event.pressed) {
                     // Pass to basic window manager for it to deal with it
+                    window.move(MousePosition.X, MousePosition.Y);
                 }
                 break;
             case MOUSE_MOVE_EVENT:
