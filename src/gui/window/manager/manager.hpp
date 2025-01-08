@@ -38,4 +38,7 @@ public:
     /// @brief Registers a window
     /// @param window The window
     void register_window(Window* window);
+    /// @brief Renders the base fallback wm layout on the window buffer
+    /// @param window The window
+    void render_base(Window* window);
 };

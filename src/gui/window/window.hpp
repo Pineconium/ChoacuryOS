@@ -20,7 +20,7 @@ typedef enum {
 } WindowState;
 
 class Window {
-private:
+public:
     int64_t x;
     int64_t y;
     int64_t width;
@@ -32,7 +32,7 @@ private:
     int32_t drag_offset_x = -1;
     int32_t drag_offset_y = -1;
     uint32_t* buffer = nullptr;
-public:
+    
     /// @brief Window initializer
     /// @param _x Window position (X)
     /// @param _y Window position (Y)

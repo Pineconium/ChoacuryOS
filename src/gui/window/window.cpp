@@ -11,6 +11,7 @@ extern "C" {
 inline void* operator new(size_t size) { return kmalloc(size); }
 
 Window::~Window() {
+    this->derender();
     kfree(this);
 }
 
@@ -88,7 +89,7 @@ bool Window::derender() {
     // Replace everything with the default background colour
     // This needs to be done in future by figuring out if
     // anything needs to be drawn that is below it.
-    vbe_fillrect(this->x, this->y, this->width, this->height, 0x000000ff);
+    vbe_fillrect(this->x, this->y, this->x + this->width, this->y + this->height, 0x000000ff);
     return true;
 }
 

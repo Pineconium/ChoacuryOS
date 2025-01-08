@@ -85,6 +85,7 @@ extern "C" void start_desktop() {
     FallBackWM wm = FallBackWM();
 
     Window window = Window(10, 10, 500, 500, WindowStyle::Standard, WindowState::Open, (char**)"Test");
+    wm.render_base(&window);
     window.render(); // The WM will deal with getting this part set up
 
     wm.register_window(&window);

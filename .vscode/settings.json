@@ -4,6 +4,7 @@
         "fat.h": "c",
         "kmalloc.h": "c",
         "bitmap.h": "c",
-        "window.h": "c"
+        "window.h": "c",
+        "stdint.h": "c"
     }
 }
