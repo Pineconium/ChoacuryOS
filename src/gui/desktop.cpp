@@ -6,6 +6,7 @@ extern "C" {
 #include "../drivers/ps2_mouse.h"
 #include "../drivers/vbe.h"
 #include "window/window.hpp"
+#include "window/manager/manager.hpp"
 }
 
 // Cursor
@@ -81,8 +82,12 @@ extern "C" void start_desktop() {
     // Draw the cursor
     draw_pointer(Cursor, MousePosition, 0x00000000);
 
+    FallBackWM wm = FallBackWM();
+
     Window window = Window(10, 10, 500, 500, WindowStyle::Standard, WindowState::Open, (char**)"Test");
-    window.render();
+    //window.render(); // The WM will deal with getting this part set up
+
+    wm.register_window(&window);
 
     for(;;) {
         // Handle keyboard events

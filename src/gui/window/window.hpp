@@ -54,6 +54,8 @@ public:
         //buffer = new uint32_t[_width * _height];
         resize(_width, _height);
     }
+    /// @brief Window deinitializer
+    ~Window();
     /// @brief Changes the window state
     /// @param state The new window state
     void change_state(WindowState state);
@@ -81,9 +83,11 @@ public:
     /// @brief Sets the drag offset
     /// @param x The X drag offset
     /// @param y The Y drag offset
+    /// @note This could be set to the relative coordinates of the mouse over the window so that the window doesn't just teleport to (0, 0)
     void set_drag_offset(int32_t x, int32_t y);
-    /// @brief Begins dragging, use set_drag_offset before or this will fail
+    /// @brief Begins dragging
     /// @returns If it was successful or not
+    /// @attention You need to use set_drag_offset (Even if you just set it to 0)
     bool begin_drag();
     /// @brief Ends dragging
     /// @return If it was successful or not
@@ -100,11 +104,5 @@ public:
     /// @param key The key that was pressed
     void handle_key_pressed(char key);
 };
-
-namespace WindowManager {
-    Window** windows;
-    int32_t window_count;
-    uint32_t focused_window;
-}
 
 #endif // WINDOW_H
