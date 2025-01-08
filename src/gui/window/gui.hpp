@@ -52,10 +52,39 @@ namespace GUI {
         int32_t y;
     };
 
+    /// @brief Clears a window with a certain colour
+    /// @param window The window
+    /// @param color The colour to clear it with
     void clear(Window* window, uint32_t color);
+    /// @brief Gets the pixel from a window at a certain position
+    /// @param window The window
+    /// @param point The point on the window
+    /// @return The colour of the pixel
     uint32_t get_pixel(Window* window, uPoint32 point);
+    /// @brief Draws a pixel on a window at a certain position
+    /// @param window The window
+    /// @param point The point on the window
+    /// @param color The colour
     void put_pixel(Window* window, uPoint32 point, uint32_t color);
+    /// @brief Draws a line from point a to point b
+    /// @param window The window
+    /// @param a Point A
+    /// @param b Point B
+    /// @param color The colour
     void draw_line(Window* window, uPoint32 a, uPoint32 b, uint32_t color);
+    /// @brief Draws a rectangle on the window
+    /// @param window The window
+    /// @param rect The rectangle
+    /// @param color The colour
     void rect(Window* window, uRect32 rect, uint32_t color);
+    /// @brief Draws a filled rectangle on the window
+    /// @param window The window
+    /// @param rect The rectangle
+    /// @param color The colour
     void fill_rect(Window* window, uRect32 rect, uint32_t color);
+    /// @brief Sees if a point is in a rectangle
+    /// @param point The point
+    /// @param rect The rectangle
+    /// @return Returns true if the point is in the rectangle
+    bool point_in_rect(uPoint32 point, uRect32 rect);
 }
