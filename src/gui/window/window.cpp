@@ -29,7 +29,15 @@ bool Window::move(int64_t x, int64_t y) {
 bool Window::resize(int64_t width, int64_t height) {
     // (If new size smaller) De-render, reallocate buffer, render
     if(this->width > width || this->height > height) this->derender();
-    buffer = new uint32_t[width * height];
+    buffer = (uint32_t*)kmalloc(width * height  * sizeof(uint32_t));
+
+    for(int64_t y = 0; y < this->height; y++) {
+        for(int64_t x = 0; x < this->width; x++) {
+            // Clear the buffer with black
+            this->buffer[y * this->width + x] = 0x0;
+        }
+    }
+    
     render();
     return true;
 }
@@ -66,7 +74,7 @@ bool Window::end_drag() {
 }
 
 void Window::handle_mouse_move(int32_t x, int32_t y) {
-    
+    this->move(x + this->drag_offset_x, y + this->drag_offset_y);
 }
 
 void Window::handle_mouse_press() {

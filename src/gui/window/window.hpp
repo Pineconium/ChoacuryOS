@@ -51,7 +51,8 @@ public:
         style = _style;
         state = _state;
 
-        buffer = new uint32_t[_width * _height];
+        //buffer = new uint32_t[_width * _height];
+        resize(_width, _height);
     }
     /// @brief Changes the window state
     /// @param state The new window state
