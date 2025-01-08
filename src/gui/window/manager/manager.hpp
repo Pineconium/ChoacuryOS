@@ -41,4 +41,7 @@ public:
     /// @brief Renders the base fallback wm layout on the window buffer
     /// @param window The window
     void render_base(Window* window);
+    /// @brief Sets the active window
+    /// @param index The index of the active window
+    void make_window_active(uint32_t index);
 };

@@ -108,7 +108,9 @@ bool Window::end_drag() {
 }
 
 void Window::handle_mouse_move(int32_t x, int32_t y) {
-    this->move(x + this->drag_offset_x, y + this->drag_offset_y);
+    if(this->is_dragging) {
+        this->move(x + this->drag_offset_x, y + this->drag_offset_y);
+    }
 }
 
 void Window::handle_mouse_press() {

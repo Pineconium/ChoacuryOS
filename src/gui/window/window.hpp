@@ -28,11 +28,11 @@ public:
     WindowStyle style;
     WindowState state;
     char** title;
-    bool is_dragging;
+    bool is_dragging = false;
     int32_t drag_offset_x = -1;
     int32_t drag_offset_y = -1;
     uint32_t* buffer = nullptr;
-    
+
     /// @brief Window initializer
     /// @param _x Window position (X)
     /// @param _y Window position (Y)

@@ -89,6 +89,7 @@ extern "C" void start_desktop() {
     window.render(); // The WM will deal with getting this part set up
 
     wm.register_window(&window);
+    wm.make_window_active(1);
 
     for(;;) {
         // Handle keyboard events
@@ -101,6 +102,8 @@ extern "C" void start_desktop() {
         mouse_event_t mouse_event;
         ps2_get_mouse_event(&mouse_event);
 
+        wm.handle_mouse_event(mouse_event, MousePosition.X, MousePosition.Y);
+
         switch(mouse_event.type) {
             case MOUSE_EVENT_NONE:
                 // No mouse event, do nothing
@@ -109,7 +112,7 @@ extern "C" void start_desktop() {
             case MOUSE_BUTTON_EVENT:
                 if(mouse_event.button_event.pressed) {
                     // Pass to basic window manager for it to deal with it
-                    window.move(MousePosition.X, MousePosition.Y);
+                    //window.move(MousePosition.X, MousePosition.Y);
                 }
                 break;
             case MOUSE_MOVE_EVENT:
