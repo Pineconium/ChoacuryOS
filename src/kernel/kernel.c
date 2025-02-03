@@ -56,7 +56,7 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
 
     term_write("\n\xB0\xB1\xB2\xDB Welcome to Choacury! \xDB\xB2\xB1\xB0\n", TC_LIME);
     term_write("Version: Build " __DATE__ " (GUI Testing)\n", TC_WHITE);
-    term_write("(C)opyright: \2 Pineconium 2023, 2024.\n\n", TC_WHITE);
+    term_write("(C)opyright: \2 Pineconium 2023-2025.\n\n", TC_WHITE);
 
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
         panic("Bootloader did not provide multiboot information\n");
