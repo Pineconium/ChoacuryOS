@@ -16,7 +16,26 @@ Window::~Window() {
 }
 
 void Window::change_state(WindowState state) {
+    if(state == WindowState::Maximized) {
+        this->mm_x = this->x;
+        this->mm_y = this->y;
+        this->mm_width = this->width;
+        this->mm_height = this->height;
+
+        // This part needs to be more dynamic when we get mutliple sizes for vbe.c
+        this->x = 0;
+        this->y = 0;
+        this->width = 1920;
+        this->height = 1080;
+    } else {
+        this->x = this->mm_x;
+        this->y = this->mm_y;
+        this->width = this->mm_width;
+        this->height = this->mm_height;
+    }
     this->state = state;
+    this->derender();
+    this->render();
 }
 
 void Window::change_style(WindowStyle style) {

@@ -21,10 +21,16 @@ typedef enum {
 
 class Window {
 public:
+    // Normal
     int64_t x;
     int64_t y;
     int64_t width;
     int64_t height;
+    // Maximized
+    int64_t mm_x;
+    int64_t mm_y;
+    int64_t mm_width;
+    int64_t mm_height;
     WindowStyle style;
     WindowState state;
     char** title;

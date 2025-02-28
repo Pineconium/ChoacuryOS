@@ -2,8 +2,6 @@
 #include "../../drivers/vbe.h"
 
 // Mostly from the internet, modified to fit what we use and our naming and stuff.
-
-//
 void draw_bitmap(int x, int y, const uint8_t *data) {
     BITMAPFILEHEADER *file_header = (BITMAPFILEHEADER *)data;
     BITMAPINFOHEADER *info_header = (BITMAPINFOHEADER *)(data + sizeof(BITMAPFILEHEADER));

@@ -86,6 +86,34 @@ int abs(int x) {
 	return x < 0 ? -x : x;
 }
 
+// sin and cos need fixing before it will compile
+int sin(int x) {
+    x = fmod(x, 2 * M_PI);
+    if (x < -M_PI) x += 2 * M_PI;
+    if (x > M_PI) x -= 2 * M_PI;
+    int term = x;
+    int sinValue = term;
+    for (int i = 1; i < 10; ++i) {
+        term *= -x * x / ((2 * i) * (2 * i + 1));
+        sinValue += term;
+    }
+    return sinValue;
+}
+
+int cos(int x) {
+    x = fmod(x, 2 * M_PI);
+    if (x < -M_PI) x += 2 * M_PI;
+    if (x > M_PI) x -= 2 * M_PI;
+
+    int term = 1.0f;
+    int cosValue = term;
+    for (int i = 1; i < 10; ++i) {
+        term *= -x * x / ((2 * i - 1) * (2 * i));
+        cosValue += term;
+    }
+    return cosValue;
+}
+
 int strlen(const char *str) {
     int i = 0;
     while (str[i]) {

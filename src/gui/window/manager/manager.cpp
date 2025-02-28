@@ -16,6 +16,15 @@ void FallBackWM::render_base(Window* window) {
     rect(window, uRect32(0, 0, window->width, window->height), 0x8A8A8A00);
 
     fill_rect(window, uRect32(window->width - 25, 5, 20, 20), 0xFF0000);
+    fill_rect(window, uRect32(window->width - (25 + 5 + 25), 5, 20, 20), 0xFFFF00);
+    fill_rect(window, uRect32(window->width - (25 + 5 + 25 + 5 + 25), 5, 20, 20), 0x00FF00);
+
+    // Testing
+    draw_line(window, uPoint32(0, 30), uPoint32(500, 500), 0xFFFFFF);
+    rect(window, uRect32(10, 10 + 30, 100, 100), 0xFF0000);
+    fill_rect(window, uRect32(10 + 110, 10 + 30, 100, 100), 0xFF0000);
+    draw_circle(window, uCircle32(10, 10 + 30, 50), 0x00FF00);
+    draw_filled_circle(window, uCircle32(10 + 110, 10 + 30, 50), 0x00FF00);
 }
 
 void FallBackWM::handle_mouse_event(mouse_event_t mouse_event, int32_t mouse_x, int32_t mouse_y) {
@@ -37,6 +46,12 @@ void FallBackWM::handle_mouse_event(mouse_event_t mouse_event, int32_t mouse_x, 
                         active_window->~Window();
                         // Unregister window
                     }
+            } else if(GUI::point_in_rect(uPoint32(mouse_x, mouse_y), uRect32(active_window->width - (25 + 5 + 25), 5, 20, 20))) {
+                if(active_window->state == WindowState::Open) {
+                    active_window->change_state(WindowState::Maximized);
+                } else {
+                    active_window->change_state(WindowState::Open);
+                }
             } else {
                 if(mouse_x >= active_window->x && mouse_x < active_window->x + active_window->width) {
                     if(mouse_y >= active_window->y && mouse_y < active_window->y + titlebar_height) {

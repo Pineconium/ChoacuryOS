@@ -1,4 +1,7 @@
 #include "GUI.hpp"
+#include "headers/bitmap.hpp"
+#include "headers/rim.hpp"
+#include "../../drivers/utils.h"
 
 void GUI::clear(Window* window, uint32_t color) {
     for (uint32_t y = 0; y < window->height; y++) {
@@ -94,4 +97,85 @@ bool GUI::point_in_rect(uPoint32 point, uRect32 rect) {
         }
     }
     return false;
+}
+
+void GUI::draw_bitmap(Window* window, uBitmap bitmap) {
+    BITMAPFILEHEADER *file_header = (BITMAPFILEHEADER *)bitmap.data;
+    BITMAPINFOHEADER *info_header = (BITMAPINFOHEADER *)(bitmap.data + sizeof(BITMAPFILEHEADER));
+
+    // 4D42 is BM in HEX
+    if(file_header->bfType != 0x4D42) {
+        return;
+    }
+
+    int row_size = ((info_header->biBitCount * info_header->biWidth + 31) / 32) * 4;
+    const uint8_t *pixel_data = bitmap.data + file_header->bfOffBits;
+
+    for(int _y = 0; _y < abs(info_header->biHeight); _y++) {
+        for(int _x = 0; _y < info_header->biWidth; _x++) {
+            int idx = _y * row_size + _x * (info_header->biBitCount / 8);
+            uint8_t g = pixel_data[idx + 2];
+            uint8_t b = pixel_data[idx];
+            uint8_t r = pixel_data[idx + 1];
+            uint8_t a = 256; // Bitmaps don't support transparency, so just have this
+
+            // RGB -> HEX                            Red                  Green               Blue         Alpha
+            GUI::put_pixel(window, uPoint32(bitmap.x + _x, bitmap.y + _y), ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff) + ((a & 0xff) << 24));
+        }
+    }
+}
+
+void GUI::draw_rim(Window* window, uRIM rim) {
+    RIMFILEHEADER *file_header = (RIMFILEHEADER *)rim.data;
+    RIMINFOHEADER *info_header = (RIMINFOHEADER *)(rim.data + sizeof(RIMFILEHEADER));
+
+    // 5249 is RI in HEX
+	if (file_header->bfType != 0x5249) {
+		return;
+	}
+
+    int row_size = ((info_header->biBitCount * info_header->biWidth + 31) / 32) * 4;
+    const uint8_t *pixel_data = rim.data + file_header->bfOffBits;
+
+    for(int _y = 0; _y < abs(info_header->biHeight); _y++) {
+        for(int _x = 0; _y < info_header->biWidth; _x++) {
+            int idx = _y * row_size + _x * (info_header->biBitCount / 8);
+            uint8_t r = pixel_data[idx + 0];
+            uint8_t g = pixel_data[idx + 1];
+            uint8_t b = pixel_data[idx + 2];
+            uint8_t a = pixel_data[idx + 3];
+
+            // RGB -> HEX                            Red                  Green               Blue         Alpha
+            GUI::put_pixel(window, uPoint32(rim.x + _x, rim.y + _y), ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff) + ((a & 0xff) << 24));
+        }
+    }
+}
+
+void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
+    // Needs sin and cos fixing in utils.c
+    /*int width = circle.radius * 2;
+    int height = circle.radius * 2;
+
+    for(uint32_t angle = 0; angle < 360; angle++) {
+        int x = (circle.radius * cos(angle));
+        int y = (circle.radius * sin(angle));
+
+        int cx = height / 2 + x;
+        int cy = width / 2 + y;
+
+        put_pixel(window, uPoint32(circle.x + cx, circle.y + cy), color);
+    }*/
+}
+
+void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {
+    uint32_t center_x = circle.x + circle.radius;
+    uint32_t center_y = circle.y + circle.radius;
+
+    for(uint32_t y = -circle.radius; y <= circle.radius; y++) {
+        for(uint32_t x = -circle.radius; x <= circle.radius; x++) {
+            if((x^2) * (y^2) <= (circle.radius^2)) {
+                put_pixel(window, uPoint32(circle.x + x, circle.y + y), color);
+            }
+        }
+    }
 }
