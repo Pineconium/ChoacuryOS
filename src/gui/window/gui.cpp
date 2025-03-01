@@ -169,7 +169,7 @@ void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
 }
 
 void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {
-    uint32_t center_x = circle.x + circle.radius;
+    /*uint32_t center_x = circle.x + circle.radius;
     uint32_t center_y = circle.y + circle.radius;
 
     for(uint32_t y = -circle.radius; y <= circle.radius; y++) {
@@ -177,6 +177,28 @@ void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {
             if((x * x) * (y * y) <= (circle.radius * circle.radius)) {
                 put_pixel(window, uPoint32(circle.x + x, circle.y + y), color);
             }
+        }
+    }*/
+
+    int x = circle.radius;
+    int y = 0;
+    int decisionOver2 = 1 - x;
+
+    while (y <= x) {
+        for (int i = -x; i <= x; i++) {
+            put_pixel(window, uPoint32(circle.x + i, circle.y + y), color);
+            put_pixel(window, uPoint32(circle.x + i, circle.y - y), color);
+        }
+        for (int i = -y; i <= y; i++) {
+            put_pixel(window, uPoint32(circle.x + i, circle.y + x), color);
+            put_pixel(window, uPoint32(circle.x + i, circle.y - x), color);
+        }
+        y++;
+        if (decisionOver2 <= 0) {
+            decisionOver2 += 2 * y + 1;
+        } else {
+            x--;
+            decisionOver2 += 2 * (y - x) + 1;
         }
     }
 
