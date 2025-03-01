@@ -9,10 +9,6 @@ void FallBackWM::register_window(Window* window) {
     this->window_count++;
 }
 
-#define FIXED_POINT_FRACTIONAL_BITS 16
-#define FIXED_POINT_SCALE (1 << FIXED_POINT_FRACTIONAL_BITS)
-#define FLOAT_TO_FIXED(x) ((int32_t)((x) * FIXED_POINT_SCALE))
-
 void FallBackWM::render_base(Window* window) {
     int titlebar_height = 30;
 
@@ -30,12 +26,6 @@ void FallBackWM::render_base(Window* window) {
     draw_circle(window, uCircle32(10, 10 + 30 + 110, 50), 0x00FF00);
     draw_filled_circle(window, uCircle32(10 + 110, 10 + 30 + 110, 50), 0x00FF00);
     draw_line(window, uPoint32(0, 500), uPoint32(500, 30), 0xFFFFFF);
-
-    if(cos(6) == FLOAT_TO_FIXED(0.994521895)) {
-        draw_line(window, uPoint32(0, 500), uPoint32(500, 30), 0x00FF00);
-    } else {
-        draw_line(window, uPoint32(0, 500), uPoint32(500, 30), 0xFF0000);
-    }
 }
 
 void FallBackWM::handle_mouse_event(mouse_event_t mouse_event, int32_t mouse_x, int32_t mouse_y) {

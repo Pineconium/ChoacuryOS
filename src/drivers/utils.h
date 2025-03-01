@@ -13,9 +13,12 @@ typedef struct {
 } atoi_result_t;
 atoi_result_t atoi(const char*);
 
+#define M_PI 3.14159265358979323846
+
 int abs(int x);
-int32_t sin(int32_t x);
-int32_t cos(int32_t x);
+float fmod(float x, float y);
+float sin(float x);
+float cos(float x);
 
 void uint64_to_string(uint64_t number, char* buffer);
 int strlen(const char *str);

@@ -6,7 +6,7 @@ CXX := g++ # C++
 LD  := ld
 ASM := nasm
 
-CFLAGS   := -m32 -march=i386 -O2 -lto -mgeneral-regs-only -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra -I$(SRC_DIR)
+CFLAGS   := -m32 -O2 -lto -static -fPIC -fstack-protector -ffreestanding -Wall -Wextra -I$(SRC_DIR)
 CXXFLAGS := $(CFLAGS) -fno-exceptions -fno-rtti
 ASMFLAGS := -f elf32
 LDFLAGS  := -m elf_i386 -T $(SRC_DIR)/linker.ld -nostdlib -flto

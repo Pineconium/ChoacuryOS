@@ -151,17 +151,13 @@ void GUI::draw_rim(Window* window, uRIM rim) {
     }
 }
 
-#define FIXED_POINT_FRACTIONAL_BITS 16
-#define FIXED_POINT_SCALE (1 << FIXED_POINT_FRACTIONAL_BITS)
-#define FLOAT_TO_FIXED(x) ((int32_t)((x) * FIXED_POINT_SCALE))
-
 void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
     int width = circle.radius * 2;
     int height = circle.radius * 2;
 
     for(uint32_t angle = 0; angle < 360; angle++) {
-        int x = (circle.radius * cos(angle * FLOAT_TO_FIXED(3.14159265358979323846) / 180));
-        int y = (circle.radius * sin(angle * FLOAT_TO_FIXED(3.14159265358979323846) / 180));
+        int x = (circle.radius * cos(angle * M_PI / 180));
+        int y = (circle.radius * sin(angle * M_PI / 180));
 
         int cx = height / 2 + x;
         int cy = width / 2 + y;
