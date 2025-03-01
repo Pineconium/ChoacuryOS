@@ -86,32 +86,64 @@ int abs(int x) {
 	return x < 0 ? -x : x;
 }
 
-// sin and cos need fixing before it will compile
-int sin(int x) {
-    x = fmod(x, 2 * M_PI);
-    if (x < -M_PI) x += 2 * M_PI;
-    if (x > M_PI) x -= 2 * M_PI;
-    int term = x;
-    int sinValue = term;
-    for (int i = 1; i < 10; ++i) {
-        term *= -x * x / ((2 * i) * (2 * i + 1));
-        sinValue += term;
-    }
-    return sinValue;
+// VuleSuma
+#define FIXED_POINT_FRACTIONAL_BITS 16
+#define FIXED_POINT_SCALE (1 << FIXED_POINT_FRACTIONAL_BITS)
+#define INT_TO_FIXED(x) ((x) << FIXED_POINT_FRACTIONAL_BITS)
+#define FIXED_TO_INT(x) ((x) >> FIXED_POINT_FRACTIONAL_BITS)
+#define FLOAT_TO_FIXED(x) ((int32_t)((x) * FIXED_POINT_SCALE))
+#define FIXED_TO_FLOAT(x) ((float)(x) / FIXED_POINT_SCALE)
+
+// Fixed point multiplication
+static int32_t fixed_multiply(int32_t a, int32_t b) {
+    return (int32_t)(((int64_t)a * b) >> FIXED_POINT_FRACTIONAL_BITS);
 }
 
-int cos(int x) {
-    x = fmod(x, 2 * M_PI);
-    if (x < -M_PI) x += 2 * M_PI;
-    if (x > M_PI) x -= 2 * M_PI;
+// Fixed point division
+static int32_t fixed_divide(int32_t a, int32_t b) {
+    return (int32_t)(((int64_t)a << FIXED_POINT_FRACTIONAL_BITS) / b);
+}
 
-    int term = 1.0f;
-    int cosValue = term;
-    for (int i = 1; i < 10; ++i) {
-        term *= -x * x / ((2 * i - 1) * (2 * i));
-        cosValue += term;
+// Fixed point sin
+int32_t sin(int32_t x) {
+    // Normalize x to range [-Pi, Pi]
+    int32_t pi = FLOAT_TO_FIXED(3.14159265358979323846);
+    int32_t two_pi = FLOAT_TO_FIXED(2 * 3.14159265358979323846);
+    while (x > pi) x -= two_pi;
+    while (x < -pi) x += two_pi;
+
+    int32_t result = x;
+    int32_t term = x;
+    for (int n = 1; n < 10; n++) {
+        term = fixed_multiply(fixed_multiply(term, x), x) / ((2 * n) * (2 * n + 1));
+        if (n % 2 == 0) {
+            result += term;
+        } else {
+            result -= term;
+        }
     }
-    return cosValue;
+    return result;
+}
+
+// Fixed point cos
+int32_t cos(int32_t x) {
+    // Normalize x to range [-Pi, Pi]
+    int32_t pi = FLOAT_TO_FIXED(3.14159265358979323846);
+    int32_t two_pi = FLOAT_TO_FIXED(2 * 3.14159265358979323846);
+    while (x > pi) x -= two_pi;
+    while (x < -pi) x += two_pi;
+
+    int32_t result = INT_TO_FIXED(1);
+    int32_t term = INT_TO_FIXED(1);
+    for (int n = 1; n < 10; n++) {
+        term = fixed_multiply(fixed_multiply(term, x), x) / ((2 * n - 1) * (2 * n));
+        if (n % 2 == 0) {
+            result += term;
+        } else {
+            result -= term;
+        }
+    }
+    return result;
 }
 
 int strlen(const char *str) {

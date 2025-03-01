@@ -151,20 +151,25 @@ void GUI::draw_rim(Window* window, uRIM rim) {
     }
 }
 
+#define FIXED_POINT_FRACTIONAL_BITS 16
+#define FIXED_POINT_SCALE (1 << FIXED_POINT_FRACTIONAL_BITS)
+#define FLOAT_TO_FIXED(x) ((int32_t)((x) * FIXED_POINT_SCALE))
+
 void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
-    // Needs sin and cos fixing in utils.c
-    /*int width = circle.radius * 2;
+    int width = circle.radius * 2;
     int height = circle.radius * 2;
 
     for(uint32_t angle = 0; angle < 360; angle++) {
-        int x = (circle.radius * cos(angle));
-        int y = (circle.radius * sin(angle));
+        int x = (circle.radius * cos(angle * FLOAT_TO_FIXED(3.14159265358979323846) / 180));
+        int y = (circle.radius * sin(angle * FLOAT_TO_FIXED(3.14159265358979323846) / 180));
 
         int cx = height / 2 + x;
         int cy = width / 2 + y;
 
         put_pixel(window, uPoint32(circle.x + cx, circle.y + cy), color);
-    }*/
+    }
+
+    GUI::draw_line(window, uPoint32(circle.x, circle.y), uPoint32(circle.x + (circle.radius * 2), circle.y + (circle.radius * 2)), 0xFFFFFF);
 }
 
 void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {
@@ -173,9 +178,11 @@ void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {
 
     for(uint32_t y = -circle.radius; y <= circle.radius; y++) {
         for(uint32_t x = -circle.radius; x <= circle.radius; x++) {
-            if((x^2) * (y^2) <= (circle.radius^2)) {
+            if((x * x) * (y * y) <= (circle.radius * circle.radius)) {
                 put_pixel(window, uPoint32(circle.x + x, circle.y + y), color);
             }
         }
     }
+
+    GUI::draw_line(window, uPoint32(circle.x, circle.y), uPoint32(circle.x + (circle.radius * 2), circle.y + (circle.radius * 2)), 0xFFFFFF);
 }
