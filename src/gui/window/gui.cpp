@@ -184,14 +184,17 @@ void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {
     int y = 0;
     int decisionOver2 = 1 - x;
 
+    int ex = circle.radius;
+    int ey = circle.radius;
+
     while (y <= x) {
         for (int i = -x; i <= x; i++) {
-            put_pixel(window, uPoint32(circle.x + i, circle.y + y), color);
-            put_pixel(window, uPoint32(circle.x + i, circle.y - y), color);
+            put_pixel(window, uPoint32(circle.x + i + ex, circle.y + y + ey), color);
+            put_pixel(window, uPoint32(circle.x + i + ex, circle.y - y + ey), color);
         }
         for (int i = -y; i <= y; i++) {
-            put_pixel(window, uPoint32(circle.x + i, circle.y + x), color);
-            put_pixel(window, uPoint32(circle.x + i, circle.y - x), color);
+            put_pixel(window, uPoint32(circle.x + i + ex, circle.y + x + ey), color);
+            put_pixel(window, uPoint32(circle.x + i + ex, circle.y - x + ey), color);
         }
         y++;
         if (decisionOver2 <= 0) {
