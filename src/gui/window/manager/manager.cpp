@@ -1,6 +1,7 @@
 #include "../window.hpp"
 #include "manager.hpp"
 #include "../gui.hpp"
+#include "../icons.hpp"
 
 using namespace GUI;
 
@@ -18,6 +19,10 @@ void FallBackWM::render_base(Window* window) {
     fill_rect(window, uRect32(window->width - 25, 5, 20, 20), 0xFF0000);
     fill_rect(window, uRect32(window->width - (25 + 5 + 25), 5, 20, 20), 0xFFFF00);
     fill_rect(window, uRect32(window->width - (25 + 5 + 25 + 5 + 25), 5, 20, 20), 0x00FF00);
+
+    //draw_rim(window, uRIM(window->width - 25, 5, minimise_rim_data));
+    //draw_rim(window, uRIM(window->width - (25 + 5 + 25), 5, maximise_rim_data));
+    //draw_rim(window, uRIM(window->width - (25 + 5 + 25 + 5 + 25), 5, close_rim_data));
 
     // Testing
     draw_line(window, uPoint32(0, 30), uPoint32(500, 500), 0xFFFFFF);
@@ -50,12 +55,15 @@ void FallBackWM::handle_mouse_event(mouse_event_t mouse_event, int32_t mouse_x, 
             } else if(GUI::point_in_rect(uPoint32(mouse_x, mouse_y), uRect32(active_window->width - (25 + 5 + 25), 5, 20, 20))) {
                 if(active_window->state == WindowState::Open) {
                     active_window->change_state(WindowState::Maximized);
+                    if(active_window->style == WindowStyle::Standard) render_base(active_window);
                 } else {
                     active_window->change_state(WindowState::Open);
+                    if(active_window->style == WindowStyle::Standard) render_base(active_window);
                 }
             } else {
                 if(mouse_x >= active_window->x && mouse_x < active_window->x + active_window->width) {
                     if(mouse_y >= active_window->y && mouse_y < active_window->y + titlebar_height) {
+                        if(active_window->state == WindowState::Fullscreen || WindowState::Maximized) return;
                         if(active_window->is_dragging) {
                             active_window->end_drag();
                         } else {

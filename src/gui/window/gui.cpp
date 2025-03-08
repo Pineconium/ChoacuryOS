@@ -75,7 +75,7 @@ void GUI::rect(Window* window, uRect32 rect, uint32_t color) {
     draw_line(window, uPoint32(sx, sy), uPoint32(ex, sy), color); // Top line
     draw_line(window, uPoint32(ex, sy), uPoint32(ex, ey), color); // Right line
     draw_line(window, uPoint32(sx, ey), uPoint32(ex, ey), color); // Bottom line
-    draw_line(window, uPoint32(ex, ey), uPoint32(sx, ey), color); // Left line
+    draw_line(window, uPoint32(sx, ey), uPoint32(sx, sy), color); // Left line
 }
 
 void GUI::fill_rect(Window* window, uRect32 rect, uint32_t color) {
@@ -151,7 +151,7 @@ void GUI::draw_rim(Window* window, uRIM rim) {
     }
 }
 
-void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
+/*void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
     int width = circle.radius * 2;
     int height = circle.radius * 2;
 
@@ -166,6 +166,35 @@ void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
     }
 
     GUI::draw_line(window, uPoint32(circle.x, circle.y), uPoint32(circle.x + (circle.radius * 2), circle.y + (circle.radius * 2)), 0xFFFFFF);
+}*/
+
+void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
+    // Provided by @Imalaia3 on Discord
+
+    uint32_t x = 0;
+    uint32_t y = circle.radius;
+    int32_t d = 3 - 2 * circle.radius;
+
+    int ex = circle.radius;
+    int ey = circle.radius;
+
+    while (x <= y) {
+        put_pixel(window, uPoint32(circle.x + x + ex, circle.y + y + ey), color);
+        put_pixel(window, uPoint32(circle.x - x + ex, circle.y + y + ey), color);
+        put_pixel(window, uPoint32(circle.x + x + ex, circle.y - y + ey), color);
+        put_pixel(window, uPoint32(circle.x - x + ex, circle.y - y + ey), color);
+        put_pixel(window, uPoint32(circle.x + y + ex, circle.y + x + ey), color);
+        put_pixel(window, uPoint32(circle.x - y + ex, circle.y + x + ey), color);
+        put_pixel(window, uPoint32(circle.x + y + ex, circle.y - x + ey), color);
+        put_pixel(window, uPoint32(circle.x - y + ex, circle.y - x + ey), color);
+        if (d > 0) {
+            d = d + 4 * (x - y) + 10;
+            y--;
+        } else {
+            d = d + 4 * x + 6;
+        }
+        x++;
+    }
 }
 
 void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {

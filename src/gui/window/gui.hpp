@@ -189,24 +189,19 @@ namespace GUI {
     /// @param circle The circle
     void draw_filled_circle(Window* window, uCircle32 circle, uint32_t color);
 
-    /*namespace Elements {
-        class UIElement {
+    /// @brief Widgets namespace
+    namespace Widgets {
+        class UIWidget {
         public:
-            UIElement* children;
+            UIWidget** children;
             uint32_t children_count = 0;
             void render(Window* window);
         };
 
-        class Button : UIElement {
+        class Button : UIWidget {
         public:
-            Button(uRect32 rect, char** text) {
-                this->rect = rect;
-                this->text = text;
-            }
-            Button(uRect32 rect, const char** text) {
-                this->rect = rect;
-                this->text = (char**)text;
-            }
+            Button(uRect32 rect, char** text) : rect(rect), text(text) { }
+            Button(uRect32 rect, const char** text) : rect(rect), text((char**)text) { }
             void render(Window* window);
             uRect32 rect;
             char** text;
@@ -222,7 +217,7 @@ namespace GUI {
             uint32_t disabled_fg_colour;
 
             /// @brief The button state (0 = Normal, 1 = Hover, 2 = Clicked, 3 = Disabled)
-            char state = 0;
+            uint8_t state = 0;
         };
-    }*/
+    }
 }

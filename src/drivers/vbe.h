@@ -72,3 +72,6 @@ void putchar_custom(int x, int y, char c, PSF1_FONT* font, uint32_t color, uint3
 void print(const char* str, PSF1_FONT* font, uint32_t color);
 void reset_cursor();
 void set_cursor(int x, int y);
+
+void print_string(const char* str, u32 x, u32 y, u32 color);
+void print_chr_line(unsigned int line, u32 x, u32 y, u32 color);

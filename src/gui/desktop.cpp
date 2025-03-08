@@ -91,6 +91,8 @@ extern "C" void start_desktop() {
     wm.register_window(&window);
     wm.make_window_active(1);
 
+    print_string("Test", 10, 510, 0x00ffffff); // Test text
+
     for(;;) {
         // Handle keyboard events
         key_event_t key_event;
@@ -120,7 +122,8 @@ extern "C" void start_desktop() {
                 clear_pointer(Cursor, MousePosition);
                 MousePosition.X += mouse_event.move_event.rel_x;
                 MousePosition.Y -= mouse_event.move_event.rel_y;
-                draw_pointer(Cursor, MousePosition, 0x00000000);
+                //draw_pointer(Cursor, MousePosition, 0x00000000);
+                draw_pointer(Cursor, MousePosition, 0xFFFFFF00);
                 break;
             default:
                 break;
