@@ -27,6 +27,9 @@
 #include "panic.h"
 #include "process.h"
 
+extern void (*__init_array[])();
+extern void (*__init_array_end[])();
+
 /* Startup Beep*/
 void StartUp_Beeps() {
     startbeep(450);
@@ -60,6 +63,12 @@ void k_main(multiboot_info_t* mbd, uint32_t magic) {
 
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
         panic("Bootloader did not provide multiboot information\n");
+    }
+
+    // For the stuff on lines 30-31
+    for (size_t i = 0; &__init_array[i] != __init_array_end; i++)
+    {
+        __init_array[i]();
     }
 
     pmm_init(mbd);

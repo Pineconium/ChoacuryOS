@@ -5,6 +5,7 @@
         "kmalloc.h": "c",
         "bitmap.h": "c",
         "window.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "sstream": "cpp"
     }
 }

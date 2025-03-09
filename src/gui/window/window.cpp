@@ -16,6 +16,7 @@ Window::~Window() {
 }
 
 void Window::change_state(WindowState state) {
+    this->state = state;
     if(state == WindowState::Maximized) {
         this->mm_x = this->x;
         this->mm_y = this->y;
@@ -33,7 +34,6 @@ void Window::change_state(WindowState state) {
         this->width = this->mm_width;
         this->height = this->mm_height;
     }
-    this->state = state;
     this->derender();
     this->render();
 }

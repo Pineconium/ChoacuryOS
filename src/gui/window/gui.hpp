@@ -3,7 +3,24 @@ extern "C" {
 #include "../../drivers/utils.h"
 }
 
+#pragma once
+#ifndef GUI_HPP
+
 namespace GUI {
+    // Stuff for PSF1 fonts
+    typedef struct {
+        unsigned char magic[2];
+        unsigned char mode;
+        unsigned char charsize;
+    } PSF1_HEADER;
+
+    typedef struct {
+        PSF1_HEADER* psf1_Header;
+        void* glyphBuffer;
+    } PSF1_FONT;
+
+    extern unsigned char unifont[10294];
+
     struct uRect32 {
         //uRect32();
         uRect32(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
@@ -136,6 +153,37 @@ namespace GUI {
         // Needs resizing functionality, can come later
     };
 
+    /// @brief Provides an area where text can be drawn to (Allows for multiline)
+    struct uTextClip {
+
+    };
+
+    struct uText {
+        uText(char* text, uint32_t x, uint32_t y, PSF1_FONT* font, uint32_t color) :
+            text(text), x(x), y(y), font(font), color(color) { }
+    public:
+        char* text;
+        uint32_t x;
+        uint32_t y;
+        uint32_t font_width = 8;
+        uint32_t font_height = 20;
+        uint32_t color;
+        PSF1_FONT* font;
+    };
+
+    struct Text {
+        Text(char* text, int32_t x, int32_t y, PSF1_FONT* font, int32_t color) :
+            text(text), x(x), y(y), font(font), color(color) { }
+    public:
+        char* text;
+        int32_t x;
+        int32_t y;
+        int32_t font_width = 8;
+        int32_t font_height = 20;
+        int32_t color;
+        PSF1_FONT* font;
+    };
+
     /// @brief Clears a window with a certain colour
     /// @param window The window
     /// @param color The colour to clear it with
@@ -188,6 +236,28 @@ namespace GUI {
     /// @brief The window
     /// @param circle The circle
     void draw_filled_circle(Window* window, uCircle32 circle, uint32_t color);
+    /// @brief Draws text on the window
+    /// @param window The window
+    /// @param text The text
+    void draw_text(Window* window, uText text);
+
+    /// @brief Utilities to make it easier to do things, and also separates out a few things
+    namespace Utils {
+        /// @brief Draws a character to the position provided on the window's buffer
+        /// @param window The window to draw the character on
+        /// @param font The PSF1 font to draw the text with
+        /// @param c The character
+        /// @param x The top-left x position of the character
+        /// @param y The top-left y position of the character
+        /// @param width The width of the font
+        /// @param height The height of the font
+        void text_draw_char(Window* window, PSF1_FONT* font, char c, uint32_t x, uint32_t y,
+            uint32_t width, uint32_t height, uint32_t color);
+        /// @brief Converts raw data to a PSF1_FONT
+        /// @param font The pointer to the PSF1_FONT
+        /// @param data The pointer to the data
+        void data_to_psf1(PSF1_FONT* font, void* data);
+    }
 
     /// @brief Widgets namespace
     namespace Widgets {
@@ -221,3 +291,5 @@ namespace GUI {
         };
     }
 }
+
+#endif // GUI_HPP

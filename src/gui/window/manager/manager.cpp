@@ -20,6 +20,11 @@ void FallBackWM::render_base(Window* window) {
     fill_rect(window, uRect32(window->width - (25 + 5 + 25), 5, 20, 20), 0xFFFF00);
     fill_rect(window, uRect32(window->width - (25 + 5 + 25 + 5 + 25), 5, 20, 20), 0x00FF00);
 
+    PSF1_FONT default_font;
+    Utils::data_to_psf1(&default_font, unifont);
+
+    draw_text(window, uText((char*)window->title, 5, 5, &default_font, 0x00FFFFFF)); // Doesn't do anything for some reason
+
     //draw_rim(window, uRIM(window->width - 25, 5, minimise_rim_data));
     //draw_rim(window, uRIM(window->width - (25 + 5 + 25), 5, maximise_rim_data));
     //draw_rim(window, uRIM(window->width - (25 + 5 + 25 + 5 + 25), 5, close_rim_data));
@@ -31,6 +36,8 @@ void FallBackWM::render_base(Window* window) {
     draw_circle(window, uCircle32(10, 10 + 30 + 110, 50), 0x00FF00);
     draw_filled_circle(window, uCircle32(10 + 110, 10 + 30 + 110, 50), 0x00FF00);
     draw_line(window, uPoint32(0, 500), uPoint32(500, 30), 0xFFFFFF);
+
+    draw_text(window, uText("Test", 5, 35, &default_font, 0x00FF0000));
 }
 
 void FallBackWM::handle_mouse_event(mouse_event_t mouse_event, int32_t mouse_x, int32_t mouse_y) {
