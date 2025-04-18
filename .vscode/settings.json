@@ -6,6 +6,19 @@
         "bitmap.h": "c",
         "window.h": "c",
         "stdint.h": "c",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "pmm.h": "c",
+        "vbe.h": "c",
+        "terminal.h": "c",
+        "utils.h": "c",
+        "pit.h": "c",
+        "device.h": "c",
+        "debug.h": "c",
+        "ps2_keyboard.h": "c",
+        "sound.h": "c",
+        "desktop.h": "c",
+        "panic.h": "c",
+        "vga.h": "c",
+        "command.h": "c"
     }
 }

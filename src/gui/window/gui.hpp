@@ -184,6 +184,70 @@ namespace GUI {
         PSF1_FONT* font;
     };
 
+    /// @brief Provides a structured buffer, with a buffer, width, and height
+    struct Buffer {
+        Buffer(uint32_t* buffer, uint32_t width, uint32_t height) :
+            buffer(buffer), width(width), height(height) { }
+    public:
+        uint32_t* buffer;
+        uint32_t width;
+        uint32_t height;
+    };
+
+    // Buffer definitions
+    /// @brief Clears a buffer with a certain colour
+    /// @param buffer The buffer
+    /// @param color The colour to clear it with
+    void clear(Buffer buffer, uint32_t color);
+    /// @brief Gets the pixel from a buffer at a certain position
+    /// @param buffer The buffer
+    /// @param point The point on the buffer
+    /// @return The colour of the pixel
+    uint32_t get_pixel(Buffer buffer, uPoint32 point);
+    /// @brief Draws a pixel on a buffer at a certain position
+    /// @param buffer The buffer
+    /// @param point The point on the buffer
+    /// @param color The colour
+    void put_pixel(Buffer buffer, uPoint32 point, uint32_t color);
+    /// @brief Draws a line from point a to point b
+    /// @param buffer The buffer
+    /// @param a Point A
+    /// @param b Point B
+    /// @param color The colour
+    void draw_line(Buffer buffer, uPoint32 a, uPoint32 b, uint32_t color);
+    /// @brief Draws a rectangle on the buffer
+    /// @param buffer The buffer
+    /// @param rect The rectangle
+    /// @param color The colour
+    void rect(Buffer buffer, uRect32 rect, uint32_t color);
+    /// @brief Draws a filled rectangle on the buffer
+    /// @param buffer The buffer
+    /// @param rect The rectangle
+    /// @param color The colour
+    void fill_rect(Buffer buffer, uRect32 rect, uint32_t color);
+    /// @brief Draws a bitmap to the buffer
+    /// @param buffer The buffer
+    /// @param bitmap The bitmap
+    void draw_bitmap(Buffer buffer, uBitmap bitmap);
+    /// @brief Draws a RIM to the buffer
+    /// @param buffer The buffer
+    /// @param rim The RIM
+    /// @note Look at the documentation to see how to convert/edit RIM files
+    void draw_rim(Buffer buffer, uRIM rim);
+    /// @brief Draws a circle on the buffer
+    /// @param buffer The buffer
+    /// @param circle The circle
+    void draw_circle(Buffer buffer, uCircle32 circle, uint32_t color);
+    /// @brief Draws a filled circle on the buffer
+    /// @param buffer The buffer
+    /// @param circle The circle
+    void draw_filled_circle(Buffer buffer, uCircle32 circle, uint32_t color);
+    /// @brief Draws text on the buffer
+    /// @param buffer The buffer
+    /// @param text The text
+    void draw_text(Buffer buffer, uText text);
+
+    // Window definitions
     /// @brief Clears a window with a certain colour
     /// @param window The window
     /// @param color The colour to clear it with
@@ -241,8 +305,28 @@ namespace GUI {
     /// @param text The text
     void draw_text(Window* window, uText text);
 
+    /// @brief Draws part of the buffer to the screen
+    /// @param buffer The buffer
+    /// @param rect The part of the buffer to be rendered
+    void vbe_render_part(Buffer buffer, uPoint32 point, uRect32 rect);
+    /// @brief Draws the whole buffer to the screen
+    /// @param buffer The buffer
+    /// @param point The starting position
+    void vbe_render_all(Buffer buffer, uPoint32 point);
+
     /// @brief Utilities to make it easier to do things, and also separates out a few things
     namespace Utils {
+        /// @brief Draws a character to the position provided on the buffer
+        /// @param buffer The buffer to draw the character on
+        /// @param font The PSF1 font to draw the text with
+        /// @param c The character
+        /// @param x The top-left x position fo the character
+        /// @param y The top-left y position of the character
+        /// @param width The width of the font
+        /// @param height The height of the font
+        void text_draw_char(Buffer buffer, PSF1_FONT* font, char c, uint32_t x, uint32_t y,
+            uint32_t width, uint32_t height, uint32_t color);
+
         /// @brief Draws a character to the position provided on the window's buffer
         /// @param window The window to draw the character on
         /// @param font The PSF1 font to draw the text with

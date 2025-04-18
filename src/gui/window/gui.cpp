@@ -2,21 +2,67 @@
 #include "headers/bitmap.hpp"
 #include "headers/rim.hpp"
 #include "../../drivers/utils.h"
+#include "../../drivers/vbe.h"
+
+void GUI::clear(Buffer buffer, uint32_t color) {
+	for (uint32_t y = 0; y < buffer.height; y++) {
+		for (uint32_t x = 0; x < buffer.width; x++) {
+			GUI::put_pixel(buffer, GUI::uPoint32(x, y), color);
+		}
+	}
+}
 
 void GUI::clear(Window* window, uint32_t color) {
-    for (uint32_t y = 0; y < window->height; y++) {
+    /*for (uint32_t y = 0; y < window->height; y++) {
         for (uint32_t x = 0; x < window->width; x++) {
             GUI::put_pixel(window, GUI::uPoint32(x, y), color);
         }
-    }
+    }*/
+	GUI::clear(GUI::Buffer(window->buffer, window->width, window->height), color);
+}
+
+uint32_t GUI::get_pixel(Buffer buffer, uPoint32 point) {
+	return buffer.buffer[point.y * buffer.width + point.x];
 }
 
 uint32_t GUI::get_pixel(Window* window, uPoint32 point) {
     return window->buffer[point.y * window->width + point.x];
 }
 
+void GUI::put_pixel(Buffer buffer, uPoint32 point, uint32_t color) {
+	uint32_t *pixel = &buffer.buffer[point.y * buffer.width + point.x];
+
+	uint32_t existing_color = *pixel;
+	uint8_t alpha = (color >> 24) & 0xFF; // Extract alpha component from the color
+
+	if (alpha == 0xFF) {
+		// Fully transparent, do nothing
+		return;
+	} else if (alpha == 0x00) {
+		// Fully opaque, overwrite
+		*pixel = color & 0xFFFFFF; // Mask out alpha
+	} else {
+		// Blend the colors
+		uint8_t src_r = (color >> 16) & 0xFF;
+		uint8_t src_g = (color >> 8) & 0xFF;
+		uint8_t src_b = color & 0xFF;
+
+		uint8_t dst_r = (existing_color >> 16) & 0xFF;
+		uint8_t dst_g = (existing_color >> 8) & 0xFF;
+		uint8_t dst_b = existing_color & 0xFF;
+
+		// Perform alpha blending
+		uint8_t blended_r = ((src_r * (255 - alpha)) + (dst_r * alpha)) / 255;
+		uint8_t blended_g = ((src_g * (255 - alpha)) + (dst_g * alpha)) / 255;
+		uint8_t blended_b = ((src_b * (255 - alpha)) + (dst_b * alpha)) / 255;
+
+		// Write the blended color back to the framebuffer
+		*pixel = (blended_r << 16) | (blended_g << 8) | blended_b;
+	}
+}
+
 void GUI::put_pixel(Window* window, uPoint32 point, uint32_t color) {
-    uint32_t *pixel = &window->buffer[point.y * window->width + point.x];
+    /*uint32_t *pixel = &window->buffer[point.y * window->width + point.x];
 
     uint32_t existing_color = *pixel;
     uint8_t alpha = (color >> 24) & 0xFF; // Extract alpha component from the color
@@ -44,11 +90,32 @@ void GUI::put_pixel(Window* window, uPoint32 point, uint32_t color) {
 
         // Write the blended color back to the framebuffer
         *pixel = (blended_r << 16) | (blended_g << 8) | blended_b;
-    }
+    }*/
+
+	GUI::put_pixel(GUI::Buffer(window->buffer, window->width, window->height), point, color);
+}
+
+void GUI::draw_line(Buffer buffer, uPoint32 a, uPoint32 b, uint32_t color) {
+	uint32_t x1 = a.x;
+	uint32_t y1 = a.y;
+	uint32_t x2 = b.x;
+	uint32_t y2 = b.y;
+
+	int dx = abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
+	int dy = -abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
+	int err = dx + dy, e2;
+
+	while (1) {
+		GUI::put_pixel(buffer, uPoint32(x1, y1), color);
+		if (x1 == x2 && y1 == y2) break;
+		e2 = 2 * err;
+		if (e2 >= dy) { err += dy; x1 += sx; }
+		if (e2 <= dx) { err += dx; y1 += sy; }
+	}
 }
 
 void GUI::draw_line(Window* window, uPoint32 a, uPoint32 b, uint32_t color) {
-    uint32_t x1 = a.x;
+    /*uint32_t x1 = a.x;
     uint32_t y1 = a.y;
     uint32_t x2 = b.x;
     uint32_t y2 = b.y;
@@ -63,11 +130,25 @@ void GUI::draw_line(Window* window, uPoint32 a, uPoint32 b, uint32_t color) {
         e2 = 2 * err;
         if (e2 >= dy) { err += dy; x1 += sx; }
         if (e2 <= dx) { err += dx; y1 += sy; }
-    }
+    }*/
+
+	GUI::draw_line(GUI::Buffer(window->buffer, window->width, window->height), a, b, color);
+}
+
+void GUI::rect(Buffer buffer, uRect32 rect, uint32_t color) {
+	uint32_t sx = rect.x;
+	uint32_t sy = rect.y;
+	uint32_t ex = rect.x + rect.width;
+	uint32_t ey = rect.y + rect.height;
+
+	draw_line(buffer, uPoint32(sx, sy), uPoint32(ex, sy), color); // Top line
+	draw_line(buffer, uPoint32(ex, sy), uPoint32(ex, ey), color); // Right line
+	draw_line(buffer, uPoint32(sx, ey), uPoint32(ex, ey), color); // Bottom line
+	draw_line(buffer, uPoint32(sx, ey), uPoint32(sx, sy), color); // Left line
 }
 
 void GUI::rect(Window* window, uRect32 rect, uint32_t color) {
-    uint32_t sx = rect.x;
+    /*uint32_t sx = rect.x;
     uint32_t sy = rect.y;
     uint32_t ex = rect.x + rect.width;
     uint32_t ey = rect.y + rect.height;
@@ -75,11 +156,25 @@ void GUI::rect(Window* window, uRect32 rect, uint32_t color) {
     draw_line(window, uPoint32(sx, sy), uPoint32(ex, sy), color); // Top line
     draw_line(window, uPoint32(ex, sy), uPoint32(ex, ey), color); // Right line
     draw_line(window, uPoint32(sx, ey), uPoint32(ex, ey), color); // Bottom line
-    draw_line(window, uPoint32(sx, ey), uPoint32(sx, sy), color); // Left line
+    draw_line(window, uPoint32(sx, ey), uPoint32(sx, sy), color); // Left line*/
+
+	GUI::rect(GUI::Buffer(window->buffer, window->width, window->height), rect, color);
+}
+
+void GUI::fill_rect(Buffer buffer, uRect32 rect, uint32_t color) {
+	uint32_t sx = rect.x;
+	uint32_t sy = rect.y;
+	uint32_t ex = rect.x + rect.width;
+	uint32_t ey = rect.y + rect.height;
+	for (uint32_t y = sy; y < ey; y++) {
+		for (uint32_t x = sx; x < ex; x++) {
+			GUI::put_pixel(buffer, uPoint32(x, y), color);
+		}
+	}
 }
 
 void GUI::fill_rect(Window* window, uRect32 rect, uint32_t color) {
-    uint32_t sx = rect.x;
+    /*uint32_t sx = rect.x;
     uint32_t sy = rect.y;
     uint32_t ex = rect.x + rect.width;
     uint32_t ey = rect.y + rect.height;
@@ -87,7 +182,9 @@ void GUI::fill_rect(Window* window, uRect32 rect, uint32_t color) {
         for (uint32_t x = sx; x < ex; x++) {
             GUI::put_pixel(window, uPoint32(x, y), color);
         }
-    }
+    }*/
+
+	GUI::fill_rect(GUI::Buffer(window->buffer, window->width, window->height), rect, color);
 }
 
 bool GUI::point_in_rect(uPoint32 point, uRect32 rect) {
@@ -168,8 +265,37 @@ void GUI::draw_rim(Window* window, uRIM rim) {
     GUI::draw_line(window, uPoint32(circle.x, circle.y), uPoint32(circle.x + (circle.radius * 2), circle.y + (circle.radius * 2)), 0xFFFFFF);
 }*/
 
+void GUI::draw_circle(Buffer buffer, uCircle32 circle, uint32_t color) {
+	// Provided by @Imalaia3 on Discord
+
+	uint32_t x = 0;
+	uint32_t y = circle.radius;
+	int32_t d = 3 - 2 * circle.radius;
+
+	int ex = circle.radius;
+	int ey = circle.radius;
+
+	while (x <= y) {
+		put_pixel(buffer, uPoint32(circle.x + x + ex, circle.y + y + ey), color);
+		put_pixel(buffer, uPoint32(circle.x - x + ex, circle.y + y + ey), color);
+		put_pixel(buffer, uPoint32(circle.x + x + ex, circle.y - y + ey), color);
+		put_pixel(buffer, uPoint32(circle.x - x + ex, circle.y - y + ey), color);
+		put_pixel(buffer, uPoint32(circle.x + y + ex, circle.y + x + ey), color);
+		put_pixel(buffer, uPoint32(circle.x - y + ex, circle.y + x + ey), color);
+		put_pixel(buffer, uPoint32(circle.x + y + ex, circle.y - x + ey), color);
+		put_pixel(buffer, uPoint32(circle.x - y + ex, circle.y - x + ey), color);
+		if (d > 0) {
+			d = d + 4 * (x - y) + 10;
+			y--;
+		} else {
+			d = d + 4 * x + 6;
+		}
+		x++;
+	}
+}
+
 void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
-    // Provided by @Imalaia3 on Discord
+    /*// Provided by @Imalaia3 on Discord
 
     uint32_t x = 0;
     uint32_t y = circle.radius;
@@ -194,7 +320,36 @@ void GUI::draw_circle(Window* window, uCircle32 circle, uint32_t color) {
             d = d + 4 * x + 6;
         }
         x++;
-    }
+    }*/
+
+	GUI::draw_circle(GUI::Buffer(window->buffer, window->width, window->height), circle, color);
+}
+
+void GUI::draw_filled_circle(Buffer buffer, uCircle32 circle, uint32_t color) {
+	int x = circle.radius;
+	int y = 0;
+	int decisionOver2 = 1 - x;
+
+	int ex = circle.radius;
+	int ey = circle.radius;
+
+	while (y <= x) {
+		for (int i = -x; i <= x; i++) {
+			put_pixel(buffer, uPoint32(circle.x + i + ex, circle.y + y + ey), color);
+			put_pixel(buffer, uPoint32(circle.x + i + ex, circle.y - y + ey), color);
+		}
+		for (int i = -y; i <= y; i++) {
+			put_pixel(buffer, uPoint32(circle.x + i + ex, circle.y + x + ey), color);
+			put_pixel(buffer, uPoint32(circle.x + i + ex, circle.y - x + ey), color);
+		}
+		y++;
+		if (decisionOver2 <= 0) {
+			decisionOver2 += 2 * y + 1;
+		} else {
+			x--;
+			decisionOver2 += 2 * (y - x) + 1;
+		}
+	}
 }
 
 void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {
@@ -209,7 +364,7 @@ void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {
         }
     }*/
 
-    int x = circle.radius;
+    /*int x = circle.radius;
     int y = 0;
     int decisionOver2 = 1 - x;
 
@@ -234,7 +389,9 @@ void GUI::draw_filled_circle(Window* window, uCircle32 circle, uint32_t color) {
         }
     }
 
-    GUI::draw_line(window, uPoint32(circle.x, circle.y), uPoint32(circle.x + (circle.radius * 2), circle.y + (circle.radius * 2)), 0xFFFFFF);
+    GUI::draw_line(window, uPoint32(circle.x, circle.y), uPoint32(circle.x + (circle.radius * 2), circle.y + (circle.radius * 2)), 0xFFFFFF);*/
+
+	GUI::draw_filled_circle(GUI::Buffer(window->buffer, window->width, window->height), circle, color);
 }
 
 extern unsigned char GUI::unifont[10294] = {
@@ -927,8 +1084,33 @@ extern unsigned char GUI::unifont[10294] = {
 	0xFF, 0xFF, 0xFF
 };
 
+void GUI::draw_text(Buffer buffer, uText text) {
+	int cursor_x = 0;
+	int cursor_y = 0;
+	while (*text.text) {
+		if (*text.text == '\n') {
+			cursor_x = 0;
+			cursor_y += text.font_height;
+		} else if (*text.text == '\r') {
+			cursor_x = 0;
+		} else {
+			GUI::Utils::text_draw_char(buffer, text.font, cursor_x, cursor_y, *text.text, cursor_x, cursor_y, text.color);
+			cursor_x += text.font_width;
+			if (cursor_x >= 1920) {
+				cursor_x = 0;
+				cursor_y += text.font_height;
+			}
+		}
+		text.text++;
+
+		if (cursor_y >= 1080) {
+			cursor_y = 0;  // Reset to the top if needed
+		}
+	}
+}
+
 void GUI::draw_text(Window* window, uText text) {
-    fill_rect(window, uRect32(text.x, text.y, 100, 16), 0x00000000); // Test rectangle
+    /*fill_rect(window, uRect32(text.x, text.y, 100, 16), 0x00000000); // Test rectangle
 
     int cursor_x = 0;
     int cursor_y = 0;
@@ -951,12 +1133,44 @@ void GUI::draw_text(Window* window, uText text) {
         if (cursor_y >= 1080) {
             cursor_y = 0;  // Reset to the top if needed
         }
+    }*/
+
+	GUI::draw_text(GUI::Buffer(window->buffer, window->width, window->height), text);
+}
+
+void GUI::vbe_render_part(Buffer buffer, uPoint32 point, uRect32 rect) {
+	for(int64_t y = 0; y < rect.height; y++) {
+        for(int64_t x = 0; x < rect.width; x++) {
+            vbe_putpixel(point.x + x, point.y + y, buffer.buffer[y * buffer.width + x]);
+        }
     }
+}
+
+void GUI::vbe_render_all(Buffer buffer, uPoint32 point) {
+	for(int64_t y = 0; y < buffer.height; y++) {
+        for(int64_t x = 0; x < buffer.width; x++) {
+            vbe_putpixel(point.x + x, point.y + y, buffer.buffer[y * buffer.width + x]);
+        }
+    }
+}
+
+void GUI::Utils::text_draw_char(Buffer buffer, PSF1_FONT* font, char c, uint32_t x, uint32_t y,
+	uint32_t width, uint32_t height, uint32_t color) {
+	uint8_t* glyph = (uint8_t*)font->glyphBuffer + (c * font->psf1_Header->charsize);
+
+	for (int row = 0; row < height; row++) {
+		uint8_t bits = glyph[row];
+		for (int col = 0; col < width; col++) {
+			if (bits & (0x80 >> col)) {
+				put_pixel(buffer, uPoint32(x + col, y + row), color);
+			}
+		}
+	}
 }
 
 void GUI::Utils::text_draw_char(Window* window, PSF1_FONT* font, char c, uint32_t x, uint32_t y,
     uint32_t width, uint32_t height, uint32_t color) {
-    uint8_t* glyph = (uint8_t*)font->glyphBuffer + (c * font->psf1_Header->charsize);
+    /*uint8_t* glyph = (uint8_t*)font->glyphBuffer + (c * font->psf1_Header->charsize);
 
     for (int row = 0; row < height; row++) {
         uint8_t bits = glyph[row];
@@ -965,7 +1179,9 @@ void GUI::Utils::text_draw_char(Window* window, PSF1_FONT* font, char c, uint32_
                 put_pixel(window, uPoint32(x + col, y + row), color);
             }
         }
-    }
+    }*/
+
+	GUI::Utils::text_draw_char(GUI::Buffer(window->buffer, window->width, window->height), font, c, x, y, width, height, color);
 }
 
 void GUI::Utils::data_to_psf1(PSF1_FONT* font, void* data) {

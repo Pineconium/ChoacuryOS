@@ -61,7 +61,13 @@ typedef struct {
 
 void BgaSetVideoMode(unsigned int Width, unsigned int Height, unsigned int BitDepth, int UseLinearFrameBuffer, int ClearVideoMemory);
 void BgaSetBank(unsigned short BankNumber);
+#ifdef __cplusplus
+extern "C" {
+#endif
 void vbe_putpixel(u32 x, u32 y, u32 color);
+#ifdef __cplusplus
+}
+#endif
 void vbe_fillrect(u32 sx, u32 sy, u32 ex, u32 ey, u32 color);
 
 void vbe_clear_screen(u8 color);
