@@ -257,10 +257,23 @@ void vbe_drawline(u32 x1, u32 y1, u32 x2, u32 y2, u8 color) {
     }
 }
 
-void vbe_fillrect(u32 sx, u32 sy, u32 ex, u32 ey, u32 color) {
+/*void vbe_fillrect(u32 sx, u32 sy, u32 ex, u32 ey, u32 color) {
     for (u32 y = sy; y < ey; y++) {
         for (u32 x = sx; x < ex; x++) {
             vbe_putpixel(x, y, color);
+        }
+    }
+}*/
+
+void vbe_fillrect(u32 sx, u32 sy, u32 ex, u32 ey, u32 color) {
+    u32* framebuffer = (u32*)ADDRESS;
+    u32 pitch_pixels = 1920;
+
+    for (u32 y = sy; y < ey; y++) {
+        u32* row_start = framebuffer + (y * pitch_pixels);
+        u32* pixel_ptr = row_start + sx;
+        for (u32 x = sx; x < ex; x++) {
+            *pixel_ptr++ = color;
         }
     }
 }
