@@ -6,3 +6,7 @@ void shell_start();
 
 extern FAT_filesystem_t* s_fat_fs;
 extern char currentDir[256];
+
+// PSF1
+#include "../drivers/vbe.h"
+extern PSF1_FONT* font;

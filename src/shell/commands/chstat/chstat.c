@@ -27,10 +27,15 @@ int shell_chstat_command(int argc, const char** argv) {
     term_write("CPU Vendor: ", TC_LBLUE);
     term_write(cpu_vendor, TC_WHITE);
     term_write("\n", TC_WHITE);
+    term_write("CPU Brand: ", TC_LBLUE);
+    term_write(cpu_brand[0] ? cpu_brand : "Unknown", TC_WHITE); // <-- Show "Unknown" as fallback if the
+                                                                // CPU brand can't be fetched
+    term_write("\n", TC_WHITE);
 
 	/* TODO: If the user enters GUI mode, fetch the users D.E., display size, WM, etc. */
 
-        term_write("Build: ", TC_LBLUE);
+        // Commented out because we don't have a functioning terminal in GUI mode yet
+        /*term_write("Build: ", TC_LBLUE);
         term_write(__DATE__ " @ " __TIME__ "\n", TC_WHITE);
         term_write("Kernel: ", TC_LBLUE);
         term_write("Choacury Standard\n", TC_WHITE);            	// <-- aka. stock kernel.
@@ -45,5 +50,5 @@ int shell_chstat_command(int argc, const char** argv) {
         term_write("CPU Brand: ", TC_LBLUE);
         term_write(cpu_brand[0] ? cpu_brand : "Unknown", TC_WHITE);  	// <-- Show "Unknown" as fallback if the
 									// CPU brand can't be fetched
-        term_write("\n", TC_WHITE);
+        term_write("\n", TC_WHITE);*/
 }

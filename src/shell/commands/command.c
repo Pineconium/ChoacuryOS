@@ -16,6 +16,7 @@
 #include "ls/ls.h"
 #include "vbetest/vbetest.h"
 #include "whereami/whereami.h"
+#include "recovery/recovery.h"
 
 // Temp
 int example_command(int argc, const char** argv) {
@@ -63,6 +64,7 @@ Command shell_commands_list[] = {
     {"pl",       {NULL},        "No args.", "Shows the connected data devices.",                                shell_pl_command},  
     {"chstat",   {NULL},        "No args.", "Display system information.",                                      shell_chstat_command},  
     {"vbetest",  {NULL},        "No args.", "Test Bochs VBE extensions",                                        shell_vbetest_command},  
-    {"whereami", {NULL},        "No args.", "Prints the current directory",                                     shell_whereami_command} 
+    {"whereami", {NULL},        "No args.", "Prints the current directory",                                     shell_whereami_command},
+    {"recovery", {NULL},        "No args.", "Recovery mode (WIP)",                                              shell_recovery_command}
 };
 int shell_commands_count = sizeof(shell_commands_list) / sizeof(Command);

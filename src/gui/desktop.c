@@ -5,6 +5,8 @@
 #include "../drivers/ps2_keyboard.h"
 #include "../drivers/ps2_mouse.h"
 #include "../drivers/vbe.h"
+#include "window/window.h"
+//#include "window/manager/manager.h"
 
 /* the mouse cursor */
 static uint8_t Cursor[] = {
@@ -63,6 +65,22 @@ void clear_pointer(uint8_t* Cursor, Point position) {
     }
 }
 
+void test_window_render(int64_t x, int64_t y, int64_t width, uint64_t height) {
+	uint32_t color = 0x00000000;
+
+	for (uint64_t _y = 0; _y < height; _y++) {
+        for (uint64_t _x = 0; _x < width; _x++) {
+			/*color += 0x1;
+			color += 0x001;
+			color += 0x0001;
+			color += 0x00001;*/
+			color += 0x111111;
+
+            vbe_putpixel(x + _x, y + _y, color);
+        }
+    }
+}
+
 void start_desktop(){
 	MousePosition.X = 0;
 	MousePosition.Y = 0;
@@ -70,6 +88,35 @@ void start_desktop(){
 	vbe_fillrect(0, 0, 20, 20, 0x00ff0000);
 
 	draw_pointer(Cursor, MousePosition, 0x00000000);
+
+	Window window;
+	window.width = 100; //1000;
+	window.height = 75; //750;
+	window.x = 25;
+	window.y = 25;
+	window.title = "RGB window";
+	window.draw = test_window_render;
+	window.drag_offset_x = 0; //150;
+	window.drag_offset_y = 0; //150;
+	//gui_window_initialise(window);
+
+	//gui_window_render_titlebar(window);
+	//gui_window_render(window);
+	gui_window_manager_register_window(window); // This should handle all of the drawing and stuff
+
+	Window window2;
+	window2.width = 800;
+	window2.height = 450;
+	window2.x = 250;
+	window2.y = 250;
+	window.title = "RGB Window 2";
+	window2.draw = test_window_render;
+	//gui_window_initialise(window2);
+
+	//gui_window_render(window2);
+	gui_window_manager_register_window(window2);
+
+	gui_window_move(&window, 26, 26);
 
 	for (;;) {
 		/* If ESC is pressed, exit the desktop */
@@ -91,6 +138,8 @@ void start_desktop(){
 				break;
 			case MOUSE_BUTTON_EVENT:
 				if (mouse_event.button_event.pressed) {
+					gui_window_manager_handle_mouse_click(MousePosition.X, MousePosition.Y);
+
 					if (MousePosition.X >= 0 && MousePosition.X < 20) {
 						if (MousePosition.Y >= 0 && MousePosition.Y < 20) {
 							/* does something if the boxed is clicked on */
@@ -104,6 +153,8 @@ void start_desktop(){
 				MousePosition.X += mouse_event.move_event.rel_x;
 				MousePosition.Y -= mouse_event.move_event.rel_y;
 				draw_pointer(Cursor, MousePosition, 0x00000000);
+
+				gui_window_manager_handle_mouse_move(MousePosition.X, MousePosition.Y);
 				break;
 			default:
 				break;

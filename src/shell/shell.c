@@ -160,6 +160,102 @@ static void parse_command(char* command, unsigned length) {
     handle_command(argument_count, arguments);
 }
 
+// PSF1
+
+#define PSF1_MAGIC0 0x36
+#define PSF1_MAGIC1 0x04
+/*
+typedef struct {
+	unsigned char magic[2];
+	unsigned char mode;
+	unsigned char charsize;
+} PSF1_HEADER;
+
+typedef struct {
+	PSF1_HEADER* psf1_Header;
+	void* glyphBuffer;
+} PSF1_FONT;
+*/
+
+PSF1_FONT* font = NULL;
+
+PSF1_FONT* LoadFont() {
+    // Open the font file
+    FAT_file_t* font = FAT_OpenAbsolute(s_fat_fs, "/Unifont.psf");
+    if (font == NULL) {
+		term_write("FAT_ERR: CANNOT OPEN PSF1 FONT FILE! (1/1)\n", TC_LRED);
+        return NULL; // Handle error if file can't be opened
+    }
+
+    // Allocate memory for the PSF1_FONT structure
+    PSF1_FONT* loadedFont = (PSF1_FONT*)kmalloc(sizeof(PSF1_FONT));
+    if (loadedFont == NULL) {
+        FAT_Close(font);
+		term_write("MALLOC_ERR: MEM ALLOCATION FAIL! (1/3)\n", TC_LRED);
+        return NULL; // Handle memory allocation failure
+    }
+
+    // Allocate memory for the PSF1 header and read it from the file
+    loadedFont->psf1_Header = (PSF1_HEADER*)kmalloc(sizeof(PSF1_HEADER));
+    if (loadedFont->psf1_Header == NULL) {
+        kfree(loadedFont);
+        FAT_Close(font);
+		term_write("MALLOC_ERR: MEM ALLOCATION FAIL! (2/3)\n", TC_LRED);
+        return NULL; // Handle memory allocation failure
+    }
+
+    // Read the PSF1 header
+    size_t bytesRead = FAT_Read(font, 0, loadedFont->psf1_Header, sizeof(PSF1_HEADER));
+    if (bytesRead != sizeof(PSF1_HEADER)) {
+        kfree(loadedFont->psf1_Header);
+        kfree(loadedFont);
+        FAT_Close(font);
+		term_write("PSF1_ERR: READ FAIL! (1/2)\n", TC_LRED);
+        return NULL; // Handle read failure
+    }
+
+    // Check if the file is a valid PSF1 font by verifying the magic number
+    if (loadedFont->psf1_Header->magic[0] != PSF1_MAGIC0 || loadedFont->psf1_Header->magic[1] != PSF1_MAGIC1) {
+        kfree(loadedFont->psf1_Header);
+        kfree(loadedFont);
+        FAT_Close(font);
+		term_write("PSF1_ERR: INVALID FONT! (1/1)\n", TC_LRED);
+        return NULL; // Handle invalid PSF1 font
+    }
+
+    // Calculate the size of the glyph buffer and allocate memory
+    size_t glyphBufferSize = loadedFont->psf1_Header->charsize * 256; // Standard PSF1 fonts have 256 glyphs
+    if (loadedFont->psf1_Header->mode == 1) {
+        glyphBufferSize *= 2; // PSF1 fonts with mode 1 have 512 glyphs
+    }
+
+    loadedFont->glyphBuffer = kmalloc(glyphBufferSize);
+    if (loadedFont->glyphBuffer == NULL) {
+        kfree(loadedFont->psf1_Header);
+        kfree(loadedFont);
+        FAT_Close(font);
+		term_write("MALLOC_ERR: MEM ALLOCATION FAIL! (3/3)\n", TC_LRED);
+        return NULL; // Handle memory allocation failure
+    }
+
+    // Read the glyph data into the buffer
+    bytesRead = FAT_Read(font, 0, loadedFont->glyphBuffer, glyphBufferSize);
+    if (bytesRead != glyphBufferSize) {
+        kfree(loadedFont->glyphBuffer);
+        kfree(loadedFont->psf1_Header);
+        kfree(loadedFont);
+        FAT_Close(font);
+		term_write("PSF1_ERR: READ FAIL! (2/2)\n", TC_LRED);
+        return NULL; // Handle read failure
+    }
+
+    // Close the font file
+    FAT_Close(font);
+
+    // Return the loaded font structure
+    return loadedFont;
+}
+
 /* Main CLI shell stuff. */
 void shell_start() {
     // Existing initialization code for the shell
@@ -187,6 +283,10 @@ void shell_start() {
 	FAT_file_t* file = FAT_OpenAbsolute(s_fat_fs, "/test.txt");
 	FAT_Write(file, 0, teststr, strlen(teststr));
 	FAT_Close(file);
+
+    term_write("Loading font... ", TC_WHITE);
+    font = LoadFont();
+    term_write("Done!\n", TC_GREEN);
 
     term_write(currentDir, TC_LIME);
     term_write("> ", TC_WHITE);

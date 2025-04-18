@@ -86,6 +86,40 @@ int abs(int x) {
 	return x < 0 ? -x : x;
 }
 
+// VuleSuma
+float fmod(float x, float y) {
+    return x - (x / y) * y;
+}
+
+// Fixed point sin
+float sin(float x) {
+    x = fmod(x, 2 * M_PI);
+    if (x < -M_PI) x += 2 * M_PI;
+    if (x > M_PI) x -= 2 * M_PI;
+    float term = x;
+    float sinValue = term;
+    for (int i = 1; i < 10; ++i) {
+        term *= -x * x / ((2 * i) * (2 * i + 1));
+        sinValue += term;
+    }
+    return sinValue;
+}
+
+// Fixed point cos
+float cos(float x) {
+    x = fmod(x, 2 * M_PI);
+    if (x < -M_PI) x += 2 * M_PI;
+    if (x > M_PI) x -= 2 * M_PI;
+
+    float term = 1.0f;
+    float cosValue = term;
+    for (int i = 1; i < 10; ++i) {
+        term *= -x * x / ((2 * i - 1) * (2 * i));
+        cosValue += term;
+    }
+    return cosValue;
+}
+
 int strlen(const char *str) {
     int i = 0;
     while (str[i]) {
