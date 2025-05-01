@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="450" src="https://raw.githubusercontent.com/Pineconium/ChoacuryOS/main/projectlogo.png">
+</p>
+
 [![GitHub release](https://img.shields.io/github/release/Pineconium/ChoacuryOS?include_prereleases=&sort=semver&color=blue)](https://github.com/Pineconium/ChoacuryOS/releases/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue)](#license)
 [![issues - ChoacuryOS](https://img.shields.io/github/issues/Pineconium/ChoacuryOS)](https://github.com/Pineconium/ChoacuryOS/issues)
